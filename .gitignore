@@ -1,0 +1,12 @@
+# fichiers binaires générées
+.DS_Store
+*.o
+*.out
+
+# fichiers de l'IDE
+.vscode/
+
+# fichiers de sauvegarde de l'éditeur de texte
+*~
+
+
