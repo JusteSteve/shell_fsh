@@ -1,7 +1,9 @@
-# fichiers binaires générées
+# fichiers générées
 .DS_Store
 *.o
 *.out
+objects/
+fsh
 
 # fichiers de l'IDE
 .vscode/
