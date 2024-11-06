@@ -4,11 +4,13 @@
 *.out
 objects/
 fsh
+.sy5-2024-2025-projet-fsh-autotests.nosync
 
 # fichiers de l'IDE
 .vscode/
 
 # fichiers de sauvegarde de l'éditeur de texte
 *~
+
 
 

@@ -21,6 +21,6 @@ $(OBJETS): $(SRCS)
 
 # `make clean` supprime tous les fichiers compilés
 clean:
-	rm -rf objects fsh
+	rm -rf objects fsh .sy5-2024-2025-projet-fsh-autotests.nosync
 
 .PHONY: all clean
