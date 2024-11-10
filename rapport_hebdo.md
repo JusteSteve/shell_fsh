@@ -25,8 +25,8 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
   - **Avancement** : [Description de l'avancement ici]
 
 - **[ Nic ]** :
-  - **Tâche** : _A DEFINIR_
-  - **Avancement** : [Description de l'avancement ici]
+  - **Tâche** : Issue #4
+  - **Avancement** : pwd.c et son implémentation dans le main
 
 ---
 
