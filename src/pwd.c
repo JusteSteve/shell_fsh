@@ -1,4 +1,4 @@
-#include <linux/limits.h>
+//#include <linux/limits.h> // on va le define nous même car sur macos ça marche pas
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,6 +6,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+
+#define PATH_MAX 4096
 
 int cmd_pwd() {
     char *cwd_buffer = malloc(PATH_MAX);

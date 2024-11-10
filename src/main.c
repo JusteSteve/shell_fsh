@@ -1,5 +1,5 @@
 #include "../headers/fsh.h"
-#include "../headers/pwd.h"
+#include "../headers/internal_cmds.h"
 /**
  * Fichier main du projet fsh
  */
