@@ -1,25 +1,33 @@
+#include <linux/limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
-void print_path() {
-    char buffer[256];  // Un buffer pour stocker le chemin du répertoire
-    ssize_t len;
+int print_path() {
+    char *cwd_buffer = malloc(PATH_MAX * sizeof(char));
 
-    // Ouvre le lien symbolique /proc/self/cwd, len - 1 à cause du fonctionnement de readlink
-    len = readlink("/proc/self/cwd", buffer, sizeof(buffer) - 1);
-
-    if (len < 0) { // si readlink a échoué, sinon il retourne la taille du chemin donc 0 soucis
-        perror("print_path");
-        return;
+    // ça devrait pas arriver mais au cas où
+    if (cwd_buffer == NULL || getcwd(cwd_buffer, PATH_MAX) == NULL) {
+        perror ("pwd : malloc failed");
+        goto error;
     }
 
-    // chaîne est bien terminée par un '\0' comme on travaille avec readlink
-    buffer[len] = '\0';
+    if (getcwd(cwd_buffer, PATH_MAX) != NULL) {
+        printf("%s\n", cwd_buffer);
+        free(cwd_buffer);
+        return 0;
+    } 
+    else {
+        perror ("print_path");
+        goto error;
+    }
 
-
-    printf("pwd : %s\n", buffer);
+    // gestion d'erreur
+    error :
+    free(cwd_buffer);
+    return 1;
 }
