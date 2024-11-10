@@ -64,10 +64,9 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
     return 0; 
   }
   
-  // Si l'utilisateur a tapé "pwd", on path_print de pwd.c
+  // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strcmp(line, "pwd") == 0) {
-    print_path(); 
-    return 1;  // je sais pas 0 ou 1 mais on laisse sur 1 pour le moment
+    return !cmd_pwd();
   }  
   return 1;  // Par défaut, on continue la boucle
 }

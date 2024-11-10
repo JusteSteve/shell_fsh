@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-int print_path() {
+int cmd_pwd() {
     char *cwd_buffer = malloc(PATH_MAX);
 
     // ça devrait pas arriver mais au cas où
