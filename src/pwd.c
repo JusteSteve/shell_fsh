@@ -8,7 +8,7 @@
 #include <dirent.h>
 
 int print_path() {
-    char *cwd_buffer = malloc(PATH_MAX * sizeof(char));
+    char *cwd_buffer = malloc(PATH_MAX);
 
     // ça devrait pas arriver mais au cas où
     if (cwd_buffer == NULL || getcwd(cwd_buffer, PATH_MAX) == NULL) {
