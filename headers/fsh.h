@@ -7,12 +7,49 @@
 #define FSH_H
 
 // ***=== Inclusions ===***
-#include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 // ***=== Prototypes ===***
+
+// ***=== prompt.c ===***
+#define PROMPT_MAX_LENGTH 54
+
+/**
+ * Change la couleur du texte en fonction de la couleur passée en paramètre
+ * @param s la chaîne de caractères
+ * @param color: caractère représentatn la couleur (v: vert, j: jaune, b:  bleu, r: rouge)
+ * @return le nombre de caractères ajoutés
+ */
+int switch_color(char *s, char color);
+
+/**
+ * Ajoute la chaîne src à la chaîne dst
+ * @param dst pointeur vers la chaîne de destination
+ * @param src pointeur vers la chaîne source
+ * @return le nombre de caractères ajoutés
+ */
+int add_prompt(char *dst, char *src);
+
+/**
+ * Tronque le chemin passé en paramètre
+ * @param path le chemin à tronquer
+ * @param max_length la taille maximale du chemin
+ * @return le chemin tronqué
+ */
+char *truncate_path(char *path, int max_length);
+
+/**
+ * Génère une chaine de caractères représentant le prompt
+ * @return la chaîne de caractères représentant le prompt
+ */
+char *display_prompt(int last_return_value);
+
 
 /**
  * Affiche le prompt et récupère la saisie de l'utilisateur
