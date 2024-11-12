@@ -4,6 +4,8 @@
  * Fichier main du projet fsh
  */
 
+int prev_status;
+
 int main()
 {
   char *line = NULL;
@@ -60,13 +62,19 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
   }
 
   // Si l'utilisateur a tapé "exit", on arrête la boucle
-  if (strcmp(line, "exit") == 0) {
+  if (strncmp(line, "exit", 4) == 0) {
+    char *val = NULL;
+    if (strlen(line) > 5) {
+      val = line + 5;  // "exit " donc offset de 5 comme pour "cd " au final
+    }
+    cmd_exit(val);
     return 0; 
   }
   
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
-  if (strcmp(line, "pwd") == 0) {
-    return !cmd_pwd();
+  if (strncmp(line, "pwd", 3) == 0) {
+    prev_status = cmd_pwd(); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    return !prev_status;
   }  
 
   // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
@@ -77,8 +85,8 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
     if (strlen(line) > 3) {
         path = line + 3;  // on prend en compte cd + espace avant le /repertoire/titi/machin
     }
-    
-    return !(cmd_cd(path));
+    prev_status = cmd_cd(path); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    return !prev_status;
   }
 
   return 1;  // Par défaut, on continue la boucle

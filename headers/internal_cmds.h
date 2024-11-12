@@ -28,4 +28,10 @@ int cmd_pwd(void);
  */
 int cmd_cd(char *path);
 
+/**
+ * quitte fsh avec un code de sortie
+ * @return val, sinon prev_status
+ */
+int cmd_exit(char *val);
+
 #endif
