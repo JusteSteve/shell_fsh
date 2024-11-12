@@ -74,18 +74,20 @@ char *display_prompt(int last_return_value)
 
   // FIXME: valeur de retour
   // début du prompt [0] ou [1]
-  if (last_return_value == 0)
+  switch (last_return_value)
   {
+  case 0:
     idx += add_to_prompt(prompt + idx, COLOR_GREEN);
     idx += add_to_prompt(prompt + idx, "[0]");
-  }
-  else if (last_return_value == 1)
-  {
+    break;
+  case 1:
     idx += add_to_prompt(prompt + idx, COLOR_RED);
     idx += add_to_prompt(prompt + idx, "[1]");
-  } else {
+    break;
+  default:
     idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
     idx += add_to_prompt(prompt + idx, "[SIG]");
+    break;
   }
 
   // récupérer le chemin du répertoire courant
