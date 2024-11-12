@@ -1,4 +1,19 @@
+/**
+ * @file prompt.c
+ * Ce fichier contient les fonctions nécessaires pour générer le prompt du shell.
+ *
+ * Fonctions principales:
+ * - add_to_prompt: ajoute une chaîne de caractère au prompt.
+ * - truncate_path: tronque le chemin passé en paramètre si sa longueur dépasse une limite spécifiée.
+ * - display_prompt: génère le prompt du shell en incluant la couleur, le statut de la dernière commande et le chemin courant
+ */
+
 #include "../headers/fsh.h"
+
+/*
+  FIXME: j'ai enlevé les caractères de contrôle '\001' et '\002' car ils ne sont pas nécessaires pour la coloration
+  peut-être rajouté plus tard si c'est obligatoire
+*/
 
 #define COLOR_GREEN "\033[32m"
 #define COLOR_YELLOW "\033[33m"
@@ -6,38 +21,7 @@
 #define COLOR_RED "\033[91m"
 #define COLOR_DEFAULT "\033[00m"
 
-int switch_color(char *s, char color)
-{
-  if (s == NULL)
-  {
-    return -1; // erreur: pointeur null
-  }
-  char *c;
-  switch (color)
-  {
-  case 'v': // vert
-    c = "\033[32m";
-    break;
-  case 'j': // jaune
-    c = "\033[33m";
-    break;
-  case 'b': // bleu
-    c = "\033[34m";
-    break;
-  case 'r': // rouge
-    c = "\033[91m";
-    break;
-
-  default: // normal
-    c = "\033[00m";
-    break;
-  }
-  int size = strlen(c);
-  memcpy(s, c, size);
-  return size;
-}
-
-int add_prompt(char *dst, char *src)
+int add_to_prompt(char *dst, char *src)
 {
   if (dst == NULL || src == NULL)
   {
@@ -50,12 +34,10 @@ int add_prompt(char *dst, char *src)
 
 char *truncate_path(char *path, int max_length)
 {
-
   if (path == NULL)
   {
     return NULL; // erreur: pointeur null
   }
-
   char *new_path = calloc(max_length + 1, 1);
   if (new_path == NULL)
   {
@@ -81,36 +63,36 @@ char *truncate_path(char *path, int max_length)
 
 char *display_prompt(int last_return_value)
 {
-
   char *prompt = calloc(PROMPT_MAX_LENGTH, sizeof(char));
   if (prompt == NULL)
   {
-    perror("[display_prompt]> Erreur : calloc a échoué");
+    perror("[display_prompt]>calloc:");
     return NULL;
   }
 
   int idx = 0;
-  // FIXME: régler le problème de la couleur qui ne s'applique pas sur le prompt
-  // chemin du répertoire
-  prompt[idx++] = '\001';
-  idx += switch_color(prompt + idx, 'j');
-  prompt[idx++] = '\002';
 
   // FIXME: valeur de retour
+  // début du prompt [0] ou [1]
   if (last_return_value == 0)
   {
-    idx += add_prompt(prompt + idx, "[0]");
+    idx += add_to_prompt(prompt + idx, COLOR_GREEN);
+    idx += add_to_prompt(prompt + idx, "[0]");
   }
-  else
+  else if (last_return_value == 1)
   {
-    idx += add_prompt(prompt + idx, "[1]");
+    idx += add_to_prompt(prompt + idx, COLOR_RED);
+    idx += add_to_prompt(prompt + idx, "[1]");
+  } else {
+    idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
+    idx += add_to_prompt(prompt + idx, "[SIG]");
   }
 
-  // récupérer le chemin courant
-  char *dir = getenv("PWD"); // répertoire courant
+  // récupérer le chemin du répertoire courant
+  char *dir = getenv("PWD");
   if (dir == NULL)
   {
-    perror("[display_prompt]> Erreur : getenv a échoué");
+    perror("[display_prompt]>getenv:");
     goto error;
   }
 
@@ -122,19 +104,16 @@ char *display_prompt(int last_return_value)
   {
     goto error;
   }
-  idx += add_prompt(prompt + idx, new_path); // ajouter le chemin tronqué
+  idx += add_to_prompt(prompt + idx, COLOR_DEFAULT);
+  idx += add_to_prompt(prompt + idx, new_path); // ajouter le chemin tronqué
   free(new_path);
 
-  // deuxième couleur et $
-  prompt[idx++] = '\001';
-  idx += switch_color(prompt + idx, 'b');
-  prompt[idx++] = '\002';
-  idx += add_prompt(prompt + idx, "$ ");
+  // fin du prompt $ et espace
+  idx += add_to_prompt(prompt + idx, COLOR_BLUE);
+  idx += add_to_prompt(prompt + idx, "$ ");
 
   // couleur du retour
-  prompt[idx++] = '\001';
-  idx += switch_color(prompt + idx, 'x');
-  prompt[idx++] = '\002';
+  idx += add_to_prompt(prompt + idx, COLOR_DEFAULT);
 
   return prompt;
 

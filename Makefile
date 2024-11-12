@@ -1,4 +1,4 @@
-CFLAGS = -Wall -g -Werror -Wextra  -I./include
+CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
 
 # fichiers sources
 SRCS = src/main.c src/prompt.c 
