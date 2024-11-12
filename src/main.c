@@ -68,6 +68,19 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
   if (strcmp(line, "pwd") == 0) {
     return !cmd_pwd();
   }  
+
+  // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
+  if (strncmp(line, "cd", 2) == 0) {
+    char *path = NULL;
+
+    // Si un chemin est fourni après "cd", on le récupère
+    if (strlen(line) > 3) {
+        path = line + 3;  // on prend en compte cd + espace avant le /repertoire/titi/machin
+    }
+    
+    return !(cmd_cd(path));
+  }
+
   return 1;  // Par défaut, on continue la boucle
 }
 

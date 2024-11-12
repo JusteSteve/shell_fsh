@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <string.h>
 
 // ***=== pwd.c ===***
 #define PATH_MAX 4096
@@ -20,5 +21,11 @@
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int cmd_pwd(void);
+
+/**
+ * Change le répertoire courant
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int cmd_cd(char *path);
 
 #endif
