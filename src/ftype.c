@@ -4,29 +4,26 @@
  */
 #include "../headers/internal_cmds.h"
 
-#include <sys/stat.h>
-#include <stdio.h>
-
 int cmd_ftype(const char *ref) {
     struct stat sb;
 
     // Récupère les informations sur le fichier
     if (stat(ref, &sb) == -1) {
-        perror("ftype");
+        perror("ftype Error");
         return 1;  // Erreur
     }
 
     // Utilise switch pour déterminer le type de fichier
-    printf("%s : ", ref);
+    dprintf(STDOUT_FILENO, "%s : ", ref);
     switch (sb.st_mode & S_IFMT) {
-        case S_IFBLK:  printf("block device\n");            break;
-        case S_IFCHR:  printf("character device\n");        break;
-        case S_IFDIR:  printf("directory\n");               break;
-        case S_IFIFO:  printf("FIFO/pipe\n");               break;
-        case S_IFLNK:  printf("symlink\n");                 break;
-        case S_IFREG:  printf("regular file\n");            break;
-        case S_IFSOCK: printf("socket\n");                  break;
-        default:       printf("unknown type\n");            break;
+        case S_IFBLK:  dprintf(STDOUT_FILENO, "block device\n");    break;
+        case S_IFCHR:  dprintf(STDOUT_FILENO, "character device\n"); break;
+        case S_IFDIR:  dprintf(STDOUT_FILENO, "directory\n");        break;
+        case S_IFIFO:  dprintf(STDOUT_FILENO, "FIFO/pipe\n");        break;
+        case S_IFLNK:  dprintf(STDOUT_FILENO, "symlink\n");          break;
+        case S_IFREG:  dprintf(STDOUT_FILENO, "regular file\n");     break;
+        case S_IFSOCK: dprintf(STDOUT_FILENO, "socket\n");           break;
+        default:       dprintf(STDOUT_FILENO, "unknown type\n");     break;
     }
 
     return 0;  // Succès

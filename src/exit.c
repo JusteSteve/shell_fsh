@@ -3,7 +3,6 @@
  * @file exit.c
  */
 #include "../headers/internal_cmds.h"
-#include <stdlib.h>
 
 extern int prev_status; 
 
@@ -12,13 +11,13 @@ int cmd_exit(char *val) {
 
     // Si val est non NULL, on convertit val en entier car on a des char car line 
     if (val != NULL) {
-        status = atoi(val); // magie ! String into int
+        status = atoi(val); // Convertit la chaîne en entier
     } 
     else {
-        status = prev_status; // Sinon on prend le status précédent
+        status = prev_status; // Sinon on prend le statut précédent
     }
     
     // Libération des ressources et sortie avec status
-    printf("Exiting fsh with code %d\n", status);
+    dprintf(STDOUT_FILENO, "Exiting fsh with code %d\n", status); // Remplace printf par dprintf
     exit(status);
 }
