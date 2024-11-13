@@ -1,5 +1,6 @@
 #include "../headers/fsh.h"
 #include "../headers/internal_cmds.h"
+
 /**
  * Fichier main du projet fsh
  */
@@ -8,6 +9,7 @@ int prev_status;
 
 int main()
 {
+  /*
   char *line = NULL;
   size_t line_size = 0;
   printf("--- Test Boucle ---\n");
@@ -25,9 +27,34 @@ int main()
     }
     */
   }
+  */
 
-  free(line);
-  printf("\nFin du programme\n");
+  char *prompt;
+  char *cmd;
+  int last_return_value = 0;
+  printf("tapez 'exit' pour quitter\n");
+    rl_outstream = stderr;
+  while (1)
+  {
+    prompt = display_prompt(last_return_value);
+
+    cmd = readline(prompt);
+    free(prompt);
+
+    if (cmd == NULL)
+    {
+      //printf("Sortie\n");
+      break;
+    }
+
+    // TODO: Mettre à jour la valeur de retour
+    last_return_value++;
+    last_return_value %= 2;
+
+    add_history(cmd);
+    //printf("Commande saisie: %s\n", cmd);
+    free(cmd);
+  }
 
   return 0;
 }
