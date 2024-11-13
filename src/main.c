@@ -89,6 +89,22 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
     return !prev_status;
   }
 
+  // Si l'utilisateur a tapé "ftype", on cmd_ftype de ftype.c
+  if (strncmp(line, "ftype", 5) == 0) {
+        char *ref = NULL;
+        if (strlen(line) > 6) {
+            ref = line + 6;  // on prend en compte "ftype " avant le fichier/répertoire
+        }
+        if (ref != NULL) {
+            prev_status = cmd_ftype(ref);
+            return !prev_status;
+        } 
+        else { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
+            printf("ftype: missing reference argument\n");
+            return 1;
+        }
+    }
+
   return 1;  // Par défaut, on continue la boucle
 }
 

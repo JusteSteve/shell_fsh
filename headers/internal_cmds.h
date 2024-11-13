@@ -34,4 +34,10 @@ int cmd_cd(char *path);
  */
 int cmd_exit(char *val);
 
+/**
+ * Affiche le type de fichier
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int cmd_ftype(const char *ref);
+
 #endif

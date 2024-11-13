@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 # fichiers sources
-SRCS = src/main.c src/pwd.c src/cd.c src/exit.c
+SRCS = src/main.c src/pwd.c src/cd.c src/exit.c src/ftype.c
 
 # fichiers objets
 OBJETS = $(SRCS:src/%.c=objects/%.o)
