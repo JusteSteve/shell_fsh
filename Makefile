@@ -1,7 +1,9 @@
+# Makefile
+CC = gcc
 CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
 
 # fichiers sources
-SRCS = src/main.c src/prompt.c 
+SRCS = src/main.c src/prompt.c src/pwd.c src/cd.c src/exit.c src/ftype.c src/ls.c src/cat.c
 
 # fichiers objets
 OBJDIR = objects
@@ -10,17 +12,19 @@ OBJETS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
 # exécution de `make` crée l'exécutable `fsh`
 all: fsh
 
+# Crée l'exécutable fsh
 fsh: $(OBJETS)
-	@echo $(OBJETS)
 	gcc $(CFLAGS) $(OBJETS) -o $@ -lreadline
 
 $(OBJDIR)/%.o: %.c 
-	@echo $^
 	@mkdir -p $(@D)
 	gcc $(CFLAGS) -c $< -o $@
 
+# Compilation des fichiers .c en fichiers .o
 
-
+#objects/%.o: src/%.c
+#	@mkdir -p objects  # Crée le dossier objects si nécessaire
+#	$(CC) $(CFLAGS) -c $< -o $@
 
 # `make clean` supprime tous les fichiers compilés
 clean:
