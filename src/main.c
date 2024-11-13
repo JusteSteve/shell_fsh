@@ -91,22 +91,42 @@ int display_prompt_test(char *line, int line_num, size_t line_size)
 
   // Si l'utilisateur a tapé "ftype", on cmd_ftype de ftype.c
   if (strncmp(line, "ftype", 5) == 0) {
-        char *ref = NULL;
-        if (strlen(line) > 6) {
-            ref = line + 6;  // on prend en compte "ftype " avant le fichier/répertoire
-        }
-        if (ref != NULL) {
-            prev_status = cmd_ftype(ref);
-            return !prev_status;
-        } 
-        else { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
-            printf("ftype: missing reference argument\n");
-            return 1; 
-            // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
-            // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
-            // donc ça va retourner !prev_status, à voir pour l'instant donc.
-        }
+    char *ref = NULL;
+    if (strlen(line) > 6) {
+      ref = line + 6;  // on prend en compte "ftype " avant le fichier/répertoire
     }
+    if (ref != NULL) {
+      prev_status = cmd_ftype(ref);
+      return !prev_status;
+    } 
+    else { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
+      printf("ftype: missing reference argument\n");
+      return 1; 
+      // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
+      // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
+      // donc ça va retourner !prev_status, à voir pour l'instant donc.
+    }
+  }
+
+  // Si l'utilisateur a tapé "ls", on cmd_ls de ls.c
+  if (strncmp(line, "ls", 2) == 0) {
+    char *path = NULL;
+    if (strlen(line) > 3) {
+      path = line + 3;  // idem
+    }
+    prev_status = cmd_ls(path);
+    return !prev_status;
+  }
+
+  // Si l'utilisateur a tapé "cat", on cmd_cat de cat.c
+  if (strncmp(line, "cat", 3) == 0) {
+    char *path = NULL;
+    if (strlen(line) > 4) {
+      path = line + 4; 
+    }
+    prev_status = cmd_cat(path);
+    return !prev_status;
+  }
 
   return 1;  // Par défaut, on continue la boucle
 }
