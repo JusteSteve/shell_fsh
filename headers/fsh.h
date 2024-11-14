@@ -7,20 +7,48 @@
 #define FSH_H
 
 // ***=== Inclusions ===***
-#include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
-// ***=== Prototypes ===***
+// ===***=== Prototypes ===***===
+
+// ***=== prompt.c ===***
+#define PROMPT_MAX_LENGTH 54
 
 /**
- * Affiche le prompt et récupère la saisie de l'utilisateur
- * @param line la ligne saisie par l'utilisateur
- * @param line_num le numéro de la ligne
- * @param line_size la taille de la ligne
- * @return 1 si l'utilisateur n'a pas saisi 'exit', 0 sinon
+ * Ajoute la chaîne src à la chaîne dst
+ * @param dst pointeur vers la chaîne de destination
+ * @param src pointeur vers la chaîne source
+ * @return le nombre de caractères ajoutés
  */
-int display_prompt_test(char *line, int line_num, size_t line_size);
+int add_to_prompt(char *dst, char *src);
+
+/**
+ * Tronque le chemin passé en paramètre
+ * @param path le chemin à tronquer
+ * @param max_length la taille maximale du chemin
+ * @return le chemin tronqué
+ */
+char *truncate_path(char *path, int max_length);
+
+/**
+ * Génère une chaine de caractères représentant le prompt
+ * @return la chaîne de caractères représentant le prompt
+ */
+char *display_prompt(int last_return_value);
+
+// ***=== main.c ===***
+
+/**
+ * Exécute la commande passée en paramètre
+ * @param line la commande à exécuter
+ * @return le code de retour de la commande 0 ou 1
+ */
+int run_command(char *line);
 
 #endif
