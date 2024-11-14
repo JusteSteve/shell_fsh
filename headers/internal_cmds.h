@@ -1,9 +1,8 @@
-// headers/pwd.h
 #ifndef INTERNAL_CMDS_H
 #define INTERNAL_CMDS_H
 
 // ***=== Inclusions ===***
-//#include <linux/limits.h> // on va le define nous même car sur macos ça marche pas
+// #include <linux/limits.h> // on va le define nous même car sur macos ça marche pas
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,7 +12,6 @@
 #include <dirent.h>
 #include <string.h>
 
-// ***=== pwd.c ===***
 #define PATH_MAX 4096
 
 /**

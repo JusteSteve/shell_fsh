@@ -42,13 +42,13 @@ char *truncate_path(char *path, int max_length);
  */
 char *display_prompt(int last_return_value);
 
+// ***=== main.c ===***
+
 /**
- * Affiche le prompt et récupère la saisie de l'utilisateur
- * @param line la ligne saisie par l'utilisateur
- * @param line_num le numéro de la ligne
- * @param line_size la taille de la ligne
- * @return 1 si l'utilisateur n'a pas saisi 'exit', 0 sinon
+ * Exécute la commande passée en paramètre
+ * @param line la commande à exécuter
+ * @return le code de retour de la commande 0 ou 1
  */
-int display_prompt_test(char *line, int line_num, size_t line_size);
+int run_command(char *line);
 
 #endif

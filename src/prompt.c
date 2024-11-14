@@ -41,7 +41,7 @@ char *truncate_path(char *path, int max_length)
   char *new_path = calloc(max_length + 1, 1);
   if (new_path == NULL)
   {
-    perror("[truncate_path]> Erreur : calloc a échoué");
+    perror("[truncate_path]>calloc:");
     return NULL;
   }
 
@@ -70,9 +70,8 @@ char *display_prompt(int last_return_value)
     return NULL;
   }
 
-  int idx = 0;
+  int idx = 0; // curseur qui se déplace dans le prompt au fur et à mesure de l'ajout des éléments
 
-  // FIXME: valeur de retour
   // début du prompt [0] ou [1]
   switch (last_return_value)
   {
@@ -91,7 +90,7 @@ char *display_prompt(int last_return_value)
   }
 
   // récupérer le chemin du répertoire courant
-  char *dir = getenv("PWD");
+  char *dir = getcwd(NULL, 0);
   if (dir == NULL)
   {
     perror("[display_prompt]>getenv:");
