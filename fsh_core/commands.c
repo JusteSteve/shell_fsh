@@ -8,4 +8,4 @@ struct command {  //tailles des tableaux à moduler au cas où
     char arg2[100];  //2ème argument de la commande
     char args[200];  //si plus de 2 arguments
     char options[40];  //pour toutes les options associées
-}
+};

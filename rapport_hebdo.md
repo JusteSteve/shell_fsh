@@ -44,14 +44,16 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
 
 - **[ Andréa ]** :
 
-  - **Tâche** : _A déterminer_
+  - **Tâche** :
+    - boucles `for` sans option, avec corps de boucle limité à une commande simple.
+    - Implémentation des fonctions nécéssaires pour la struct command.
 
 - **[ Nic ]** :
 
-  - **Tâche** : _A déterminer_
+  - **Tâche** : Redirection vers des fichiers.
 
 - **[ Sylvain ]** :
-  - **Tâche** : _A déterminer_
+  - **Tâche** : Mise en place des commandes externes.
 
 ---
 
