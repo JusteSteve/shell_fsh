@@ -36,7 +36,7 @@ int main()
 
 int run_command(char *line)
 {
-  size_t len = strlen(line);
+  int len = strlen(line);
   if (len < 0)
   {
     fprintf(stderr, "Erreur de lecture\n");
