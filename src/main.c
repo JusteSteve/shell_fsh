@@ -1,5 +1,6 @@
 #include "../headers/fsh.h"
 #include "../headers/internal_cmds.h"
+#include "../headers/external_cmds.h"
 
 /**
  * Fichier main du projet fsh
@@ -25,16 +26,27 @@ int main()
     {
       break;
     }
-    // on met à jour le code de retour de la commande
-    last_return_value = run_command(cmd);
+    char **args = split_cmd(cmd);
+
+    if (is_internal_cmd(args[0]))
+    {
+      // on met à jour le code de retour de la commande
+      last_return_value = exec_internal_cmds(cmd);
+    }
+    else
+    {
+      last_return_value = exec_external_cmds(args);
+      // last_return_value = 1;
+    }
 
     add_history(cmd);
     free(cmd);
+    free_words(args);
   }
   return 0;
 }
 
-int run_command(char *line)
+int exec_internal_cmds(char *line)
 {
   int len = strlen(line);
   if (len < 0)
@@ -131,4 +143,10 @@ int run_command(char *line)
   }
 
   return 1; // Par défaut, on continue la boucle
+}
+
+int is_internal_cmd(char *cmd)
+{
+
+  return (!strcmp(cmd, "cd") || !strcmp(cmd, "pwd") || !strcmp(cmd, "ftype") || !strcmp(cmd, "exit"));
 }

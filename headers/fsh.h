@@ -42,13 +42,8 @@ char *truncate_path(char *path, int max_length);
  */
 char *display_prompt(int last_return_value);
 
-// ***=== main.c ===***
 
-/**
- * Exécute la commande passée en paramètre
- * @param line la commande à exécuter
- * @return le code de retour de la commande 0 ou 1
- */
-int run_command(char *line);
+
+
 
 #endif

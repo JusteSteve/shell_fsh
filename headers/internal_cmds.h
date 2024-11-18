@@ -50,4 +50,16 @@ int cmd_ls(char *path);
  */
 int cmd_cat(char *path);
 
+
+// ***=== main.c ===***
+
+int is_internal_cmd(char *cmd);
+/**
+ * Exécute la commande passée en paramètre
+ * @param line la commande à exécuter
+ * @return le code de retour de la commande 0 ou 1
+ */
+int exec_internal_cmds(char *line);
+
+
 #endif
