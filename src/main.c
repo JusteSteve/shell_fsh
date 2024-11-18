@@ -106,6 +106,7 @@ int run_command(char *line)
     }
   }
 
+  /*
   // Si l'utilisateur a tapé "ls", on cmd_ls de ls.c
   if (strncmp(line, "ls", 2) == 0)
   {
@@ -129,6 +130,7 @@ int run_command(char *line)
     prev_status = cmd_cat(path);
     return prev_status;
   }
+  */
 
   return 1; // Par défaut, on continue la boucle
 }
