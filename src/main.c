@@ -1,5 +1,6 @@
 #include "../headers/fsh.h"
 #include "../headers/internal_cmds.h"
+#include "../headers/for.h"
 
 /**
  * Fichier main du projet fsh
@@ -128,6 +129,11 @@ int run_command(char *line)
     }
     prev_status = cmd_cat(path);
     return prev_status;
+  }
+
+  if (strncmp(line, "for", 2) == 0){  //partie où l'on cherche si c'est une commande structurée type boucle for
+    //comFor *commande = fillCommandFor(initialiseComFor());
+    //parcoursFor()
   }
 
   return 1; // Par défaut, on continue la boucle

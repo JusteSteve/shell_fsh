@@ -1,11 +1,45 @@
-//fichier contenant la structure des commandes
+//fichier contenant la structure des commandes, leur initialisation et son remplissage
 
-#include <stdio.h>
+#include "../headers/commands.h"
 
-struct command {  //tailles des tableaux à moduler au cas où
-    char exe[20];  //nom de l'exécutable pour la commande
-    char arg1[100];  //1er argument de la commande
-    char arg2[100];  //2ème argument de la commande
-    char args[200];  //si plus de 2 arguments
-    char options[40];  //pour toutes les options associées
-};
+
+command *initialiseCommand(){
+    command *com = malloc(sizeof(command));
+    if (com == NULL){return 1;}
+    
+    com->nom = NULL;
+    com->args = NULL;
+    com->options = NULL;
+    com->ligne = NULL;
+    
+    return com;
+}
+
+int lengthPointer(char* pointer){
+    int compt = 0;
+    for (int i = 0; i < 100; i++){
+        if (pointer+i != '\0' && pointer+i != NULL){
+            compt+=1;
+        }
+        else if (pointer+i == NULL){
+            printf("Prolbème d'initilisation");
+            return -1;
+        }
+    }
+    return compt;
+    }
+
+
+command *fillCommand(command *com, char **argv){
+    com->nom = malloc(sizeof(char));  //à changer
+    
+    return com;
+}
+
+void clearCommands(command *com){
+    free(com->nom);
+    free(com->args);
+    free(com->ligne);
+    free(com->options);
+    free(com);
+}
