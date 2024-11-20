@@ -1,18 +1,22 @@
 /**
  * @file prompt.c
- * Ce fichier contient les fonctions nécessaires pour générer le prompt du shell.
+ * Ce fichier contient les fonctions nécessaires pour générer le prompt du
+ * shell.
  *
  * Fonctions principales:
  * - add_to_prompt: ajoute une chaîne de caractère au prompt.
- * - truncate_path: tronque le chemin passé en paramètre si sa longueur dépasse une limite spécifiée.
- * - display_prompt: génère le prompt du shell en incluant la couleur, le statut de la dernière commande et le chemin courant
+ * - truncate_path: tronque le chemin passé en paramètre si sa longueur dépasse
+ * une limite spécifiée.
+ * - display_prompt: génère le prompt du shell en incluant la couleur, le statut
+ * de la dernière commande et le chemin courant
  */
 
 #include "../headers/fsh.h"
 
 /*
-  FIXME: j'ai enlevé les caractères de contrôle '\001' et '\002' car ils ne sont pas nécessaires pour la coloration
-  peut-être rajouté plus tard si c'est obligatoire
+  FIXME: j'ai enlevé les caractères de contrôle '\001' et '\002' car ils ne sont
+  pas nécessaires pour la coloration peut-être rajouté plus tard si c'est
+  obligatoire
 */
 
 #define COLOR_GREEN "\033[32m"
@@ -50,7 +54,9 @@ char *truncate_path(char *path, int max_length)
   if (path_len > max_length)
   {
     memcpy(new_path, "...", 3);
-    char *src = path + path_len - max_length + 6; // FIXME: à régler, normalement c'est +3 pour le "..." mais on a ajouté 3 caractères "[0]" ou "[1]"
+    char *src = path + path_len - max_length +
+                6; // FIXME: à régler, normalement c'est +3 pour le "..." mais
+                   // on a ajouté 3 caractères "[0]" ou "[1]"
     size_t n = max_length - 3;
     memcpy(new_path + 3, src, n);
   }
@@ -70,7 +76,8 @@ char *display_prompt(int last_return_value)
     return NULL;
   }
 
-  int idx = 0; // curseur qui se déplace dans le prompt au fur et à mesure de l'ajout des éléments
+  int idx = 0; // curseur qui se déplace dans le prompt au fur et à mesure de
+               // l'ajout des éléments
 
   // début du prompt [0] ou [1]
   switch (last_return_value)

@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
 
 # fichiers sources
-SRCS = src/main.c src/prompt.c src/pwd.c src/cd.c src/exit.c src/ftype.c src/ls.c src/cat.c src/external_cmds.c 
+SRCS = src/main.c src/prompt.c src/pwd.c src/cd.c src/exit.c src/ftype.c src/ls.c src/cat.c src/external_cmds.c src/cmd_utils.c 
 
 # fichiers objets
 OBJDIR = objects

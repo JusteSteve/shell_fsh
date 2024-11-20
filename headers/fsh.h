@@ -42,8 +42,11 @@ char *truncate_path(char *path, int max_length);
  */
 char *display_prompt(int last_return_value);
 
-
-
-
+/**
+ * Analyse et exécute la ligne de commande passée en paramètre
+ * @param line : la ligne de commande
+ * @return : 0 en cas de succès et 1 en cas d'échec
+ */
+int execute_commande(char *line);
 
 #endif
