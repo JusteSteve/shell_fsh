@@ -59,7 +59,7 @@ int run_command(char *line)
       val = line + 5; // "exit " donc offset de 5 comme pour "cd " au final
     }
     cmd_exit(val);
-    return 0;
+    // return 0; // pas besoin de return car on sort de la fonction
   }
 
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
