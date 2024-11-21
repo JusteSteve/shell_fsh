@@ -54,6 +54,32 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
 
 - **[ Sylvain ]** :
   - **Tâche** : Mise en place des commandes externes.
+  - **Avancement:**
+    - Implémentation des commandes externes dans `external_cmds.c`, grâce à la fonction `fork`qui se charge de créer un processus enfant qui va exécuter la commande en utilisant la fonction `execvp`. Les paramètres de la fonction sont obtenus à partir de la fonction `split_line`qui découpe la ligne de commande en arguments et les stockes dans un tableau de chaînes de caractères.
+    - Ajout de la fonction `execute_commande`qui permet de centraliser l'exécution des commandes internes et externes.
+
+---
+
+**Remarques générales :**
+
+- **_Sylvain_**: Lorsqu'on exécute une ou plusieurs commandes inexistantes et qu'ensuite on exécute `exit`, le shell ne se ferme pas. Il faut exécuter la commande plusieurs fois pour qu'elle se ferme. Le problème est probablement dû à la refactorisation du code.
+
+---
+
+## Semaine du [ mer 20 nov 2024 ] au [ mer 27 nov 2024 ]
+
+### Objectifs et répartition de la Semaine 3
+
+- **[ Andréa ]** :
+
+  - **Tâche** : Finir les boucles `for` et les fonctions nécéssaires pour la struct command.
+
+- **[ Nic ]** :
+
+  - **Tâche** : Mise en place des redirections vers des fichiers.
+
+- **[ Sylvain ]** :
+  - **Tâche** : Mise en place des commandes structurées du type `cmd_1 ; cmd_2 ; ... ; cmd_n`.
 
 ---
 

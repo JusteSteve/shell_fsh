@@ -2,6 +2,7 @@
  * Fichier contenant l'implémentation de la commande exit
  * @file cat.c
  */
+/*
 #include "../headers/internal_cmds.h"
 
 int cmd_cat(char *path) {
@@ -29,3 +30,4 @@ int cmd_cat(char *path) {
 
     return 0;
 }
+*/

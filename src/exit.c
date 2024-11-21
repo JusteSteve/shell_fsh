@@ -5,6 +5,7 @@
 #include "../headers/internal_cmds.h"
 
 extern int prev_status;
+
 int cmd_exit(char *val)
 {
     int status;

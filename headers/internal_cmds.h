@@ -49,13 +49,13 @@ int cmd_ftype(const char *ref);
  * Affiche le contenu répertoire
  * @return 0 si tout s'est bien passé, 1 sinon
  */
-int cmd_ls(char *path);
+//int cmd_ls(char *path);
 
 /**
  * Affiche le contenu du fichier
  * @return 0 si tout s'est bien passé, 1 sinon
  */
-int cmd_cat(char *path);
+//int cmd_cat(char *path);
 
 // ***=== Fonctions auxiliaires ===***
 
