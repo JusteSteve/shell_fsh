@@ -19,7 +19,7 @@
 #include <string.h>
 
 #define PATH_MAX 4096
-int prev_status;
+extern int prev_status;
 
 /**
  * Affiche le chemin absolu du répertoire courant

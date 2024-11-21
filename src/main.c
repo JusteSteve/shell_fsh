@@ -10,13 +10,14 @@ int main()
 {
   char *prompt;
   char *line;
-  int last_return_value = 0;
+  //int last_return_value = 0;
+  prev_status = 0;
 
   printf("tapez 'exit' pour quitter\n");
   rl_outstream = stderr;
   while (1)
   {
-    prompt = display_prompt(last_return_value);
+    prompt = display_prompt(prev_status);
     line = readline(prompt);
     free(prompt);
 
@@ -25,8 +26,8 @@ int main()
       free(line);
       continue;
     }
-
-    last_return_value = execute_commande(line);
+    
+    prev_status = execute_commande(line);
     add_history(line);
     free(line);
   }
