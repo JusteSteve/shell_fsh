@@ -7,19 +7,27 @@
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
 
-int prev_status;
-
 int execute_commande(char *line)
 {
   // obtenir un tableau de mots à partir de la ligne de commande
   char **args = split_cmd(line);
   char *nom_cmd = args[0];
+  int return_value;
   if (is_internal_cmd(nom_cmd))
   {
-    printf("Commande interne\n"); // to remove just for debug
-    return exec_internal_cmds(line);
+    /*
+    FIXME: peut-être qu'il faudrait libérer args ici
+    car il n'est pas utilisé pour les commandes internes du moins pour l'instant
+    comme ça si c'est exit qui est appelé, args sera pas libéré
+    avant de terminer le programme
+    */
+    return_value = exec_internal_cmds(line);
   }
-  int return_value = exec_external_cmds(args);
+  else
+  {
+    return_value = exec_external_cmds(args);
+  }
+  prev_status = return_value;
   free_args(args);
   return return_value;
 }
@@ -45,12 +53,21 @@ int exec_internal_cmds(char *line)
     line[len - 1] = '\0'; // Supprime le '\n'
   }
 
-  
+  // Si l'utilisateur a tapé "exit", on arrête la boucle
+  if (strncmp(line, "exit", 4) == 0)
+  {
+    char *val = NULL;
+    if (strlen(line) > 5)
+    {
+      val = line + 5; // "exit " donc offset de 5 comme pour "cd " au final
+    }
+    cmd_exit(val);
+    // return 0; // Pas besoin de return car exit termine le programme (NIC SUPPRIME MOI SI TU ME VOIS)
+  }
 
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strncmp(line, "pwd", 3) == 0)
-  { 
-    printf ("Commande pwd\n"); // to remove just for debug
+  {
     prev_status = cmd_pwd(); // status de la commande -> prev_status qui va être utilisé dans exit.c
     return prev_status;
   }
@@ -65,22 +82,20 @@ int exec_internal_cmds(char *line)
     {
       path = line + 3; // on prend en compte cd + espace avant le /repertoire/titi/machin
     }
-    printf("Commande cd\n"); // to remove just for debug
     prev_status = cmd_cd(path); // status de la commande -> prev_status qui va être utilisé dans exit.c
     return prev_status;
   }
 
   // Si l'utilisateur a tapé "ftype", on cmd_ftype de ftype.c
   if (strncmp(line, "ftype", 5) == 0)
-  { 
-    printf("Commande ftype\n"); // to remove just for debug
+  {
     char *ref = NULL;
     if (strlen(line) > 6)
     {
       ref = line + 6; // on prend en compte "ftype " avant le fichier/répertoire
     }
     if (ref != NULL)
-    { 
+    {
       prev_status = cmd_ftype(ref);
       return prev_status;
     }

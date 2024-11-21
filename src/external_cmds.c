@@ -70,12 +70,19 @@ int exec_external_cmds(char **args)
     args[nb_args] = NULL;
     execvp(args[0], args);
     dprintf(2, "fsh: command not found: %s\n", args[0]);
-    return 1;
+    exit(1); // si execvp échoue, on sort avec un 1
   }
 
   default: // processus parent
-    wait(NULL);
-    return 0;
+  {
+    int status;
+    waitpid(child_pid, &status, 0); // Attendre la fin du processus enfant et récupérer son statut
+    if (WIFEXITED(status))
+    {
+      return WEXITSTATUS(status); // Retourner le statut de sortie du processus enfant
+    }
+    return 1; // Retourner une valeur d'erreur par défaut
+  }
   }
 }
 
