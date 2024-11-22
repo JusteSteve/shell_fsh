@@ -50,13 +50,13 @@ int cmd_ftype(const char *ref);
  * Affiche le contenu répertoire
  * @return 0 si tout s'est bien passé, 1 sinon
  */
-//int cmd_ls(char *path);
+int cmd_ls(char *path);
 
 /**
  * Affiche le contenu du fichier
  * @return 0 si tout s'est bien passé, 1 sinon
  */
-//int cmd_cat(char *path);
+int cmd_cat(char *path);
 
 // ***=== Fonctions auxiliaires ===***
 
@@ -65,6 +65,12 @@ int cmd_ftype(const char *ref);
  * @return 1 si c'est une commande interne 0 sinon
  */
 int is_internal_cmd(char *cmd);
+
+/**
+ * @param line : ligne de commande
+ * @return 1 si c'est une redirection 0 sinon
+ */
+int is_redirection(char *line);
 
 /**
  * Exécute la commande passée en paramètre

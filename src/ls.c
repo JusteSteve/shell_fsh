@@ -2,7 +2,6 @@
  * Fichier contenant l'implémentation de la commande exit
  * @file ls.c
  */
-/* 
 #include "../headers/internal_cmds.h"
 
 int cmd_ls(char *path) {
@@ -41,4 +40,3 @@ int cmd_ls(char *path) {
     closedir(dir);
     return 0;
 }
-*/

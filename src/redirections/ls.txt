@@ -1,0 +1,4 @@
+ls.txt
+pwd.txt
+redirection.c
+redir_stdout.c

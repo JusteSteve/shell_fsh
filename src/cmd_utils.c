@@ -6,6 +6,7 @@
 
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
+#include "../headers/redirections.h"
 
 int prev_status; // pour stocker le status précédent
 
@@ -15,8 +16,10 @@ int execute_commande(char *line)
   char **args = split_cmd(line);
   char *nom_cmd = args[0];
   int return_value;
-  if (is_internal_cmd(nom_cmd))
-  {
+  if (is_redirection(line)) {
+    return_value = redir(line);
+  }
+  else if (is_internal_cmd(nom_cmd)) {
     /*
     FIXME: peut-être qu'il faudrait libérer args ici
     car il n'est pas utilisé pour les commandes internes du moins pour l'instant
@@ -25,8 +28,7 @@ int execute_commande(char *line)
     */
     return_value = exec_internal_cmds(line);
   }
-  else
-  {
+  else {
     return_value = exec_external_cmds(args);
   }
   prev_status = return_value;
@@ -36,7 +38,19 @@ int execute_commande(char *line)
 
 int is_internal_cmd(char *cmd)
 {
-  return (!strcmp(cmd, "cd") || !strcmp(cmd, "pwd") || !strcmp(cmd, "ftype") || !strcmp(cmd, "exit"));
+  return (!strcmp(cmd, "cd")   || 
+          !strcmp(cmd, "pwd")  || 
+          !strcmp(cmd, "ftype")|| 
+          !strcmp(cmd, "exit"));
+}
+
+int is_redirection(char *line){
+    // Vérification des différents types de redirection
+    if (strstr(line, " > ") != NULL || strstr(line, " >> ") != NULL || 
+        strstr(line, " < ") != NULL || strstr(line, " << ") != NULL){
+        return 1;
+    }
+    return 0;
 }
 
 int exec_internal_cmds(char *line)
