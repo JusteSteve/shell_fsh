@@ -7,6 +7,8 @@
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
 
+int prev_status; // pour stocker le status précédent
+
 int execute_commande(char *line)
 {
   // obtenir un tableau de mots à partir de la ligne de commande

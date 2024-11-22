@@ -19,7 +19,8 @@
 #include <string.h>
 
 #define PATH_MAX 4096
-int prev_status; // pour stocker le status précédent
+/*L'ancienne version n'avait pas de int, mais faut éviter de déclarer des variales dans un .h*/
+extern int prev_status; // pour stocker le status précédent
 
 /**
  * Affiche le chemin absolu du répertoire courant
