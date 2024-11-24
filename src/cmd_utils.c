@@ -15,17 +15,19 @@ int execute_commande(char *line)
 {
   // obtenir un tableau de mots à partir de la ligne de commande
   char **args = split_cmd(line);
+  int return_value;
   if (strcmp("for", args[0]) == 0){
     comFor *command = fillCommandFor(args);
     parcoursFor(command);
+    clearCommandFor(command);
+    return 0;
   }
   else{
     command *command = fillCommand(args);
   
   //char *nom_cmd = args[0];
-  //int return_value;
-  if (is_internal_cmd(com->nom))
-  {
+    if (is_internal_cmd(command->nom))
+    {
     /*
     FIXME: peut-être qu'il faudrait libérer args ici
     car il n'est pas utilisé pour les commandes internes du moins pour l'instant
@@ -33,15 +35,18 @@ int execute_commande(char *line)
     avant de terminer le programme
     */
     return_value = exec_internal_cmds(line);
-  }
-  else
-  {
+    }
+    else
+    {
     return_value = exec_external_cmds(args);
-  }
-  }
+    }
+  
+
   prev_status = return_value;
   free_args(args);
+  clearCommands(command);
   return return_value;
+  }
 }
 
 int is_internal_cmd(char *cmd)
