@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
+#include <errno.h>
 
 #include "../headers/commands.h"
 #include "../headers/fsh.h"
@@ -20,7 +21,7 @@
 #define PATH_MAX 4096
 
 typedef struct comFor {  //structure pour les commandes structurées type for ... in .. {commandes}
-    char *nom;  // renseigne le nom de la commande
+    char *command;  // renseigne le nom de la commande
     char *dir;  //renseigne le répertoire courant
     char *path; //renseigne le path du fichier dont l'on désire l'exécution
     char *options;  //donne les options de boucle

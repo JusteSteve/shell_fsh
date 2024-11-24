@@ -26,8 +26,9 @@ int execute_commande(char *line)
     command *command = fillCommand(args);
   
   //char *nom_cmd = args[0];
-    if (is_internal_cmd(command->nom))
-    {
+  //int return_value;
+  if (is_internal_cmd(command->nom))
+  {
     /*
     FIXME: peut-être qu'il faudrait libérer args ici
     car il n'est pas utilisé pour les commandes internes du moins pour l'instant
@@ -36,7 +37,7 @@ int execute_commande(char *line)
     */
     return_value = exec_internal_cmds(line);
     }
-    else
+  else
     {
     return_value = exec_external_cmds(args);
     }

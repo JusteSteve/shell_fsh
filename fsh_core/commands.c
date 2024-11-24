@@ -15,19 +15,20 @@ command *initialiseCommand(){
     return com;
 }
 
-int lengthPointer(char* pointer){
+int lengthPointer(char* pointer) {
+    if (pointer == NULL) {
+        return -1; // Retourne une erreur si le pointeur est NULL
+    }
+
     int compt = 0;
-    for (int i = 0; i < 100; i++){
-        if (pointer+i != '\0' && pointer+i != NULL){
-            compt+=1;
+    for (int i = 0; i < 100; i++) {
+        if (*(pointer + i) == '\0') { // Arrête la boucle si on atteint la fin de la chaîne
+            break;
         }
-        else if (pointer+i == NULL){
-            printf("Problème d'initilisation");
-            return -1;
-        }
+        compt++;
     }
     return compt;
-    }
+}
 
 
 command *fillCommand(char **argv){
@@ -41,7 +42,7 @@ command *fillCommand(char **argv){
     if(com->nom == NULL){goto error;}
     com->args = malloc(sizeof(char) * PATH_MAX);
     if(com->args == NULL){goto error;}
-    com->options = malloc(sizeof(char) * _MAX_DIR); 
+    com->options = malloc(sizeof(char) * PATH_MAX); 
     if(com->options == NULL){goto error;}
     com->ligne = malloc(sizeof(char) * PATH_MAX);
     if(com->ligne == NULL){goto error;}
@@ -50,14 +51,14 @@ command *fillCommand(char **argv){
 
     com->nom = argv[0];
     while (argv[i] != NULL){
-        (com->ligne + i) = argv[i];
-        char str[] = argv[i];
-        if (strcmp(str[0], "-") == 0 && i > 0){
-            (com->options + i) = argv[i];
+        strcpy(com->ligne + i * PATH_MAX, argv[i]);
+        char *str = argv[i];
+        if (strcmp(&str[0], "-") == 0 && i > 0){
+            com->options[i] = *argv[i];
             nbOptions++;
         }
         else if (i > 0){
-            (com->args + nbArgs) = argv[i];
+            com->args[nbArgs] = *argv[i];
             nbArgs++;
         }
 
