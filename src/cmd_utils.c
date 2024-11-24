@@ -6,6 +6,8 @@
 
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
+#include "../headers/for.h"
+#include "../headers/commands.h"
 
 int prev_status; // pour stocker le status précédent
 
@@ -13,9 +15,16 @@ int execute_commande(char *line)
 {
   // obtenir un tableau de mots à partir de la ligne de commande
   char **args = split_cmd(line);
-  char *nom_cmd = args[0];
-  int return_value;
-  if (is_internal_cmd(nom_cmd))
+  if (strcmp("for", args[0]) == 0){
+    comFor *command = fillCommandFor(args);
+    parcoursFor(command);
+  }
+  else{
+    command *command = fillCommand(args);
+  
+  //char *nom_cmd = args[0];
+  //int return_value;
+  if (is_internal_cmd(com->nom))
   {
     /*
     FIXME: peut-être qu'il faudrait libérer args ici
@@ -28,6 +37,7 @@ int execute_commande(char *line)
   else
   {
     return_value = exec_external_cmds(args);
+  }
   }
   prev_status = return_value;
   free_args(args);

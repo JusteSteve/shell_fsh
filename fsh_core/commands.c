@@ -5,7 +5,7 @@
 
 command *initialiseCommand(){
     command *com = malloc(sizeof(command));
-    if (com == NULL){return 1;}
+    if (com == NULL){return NULL;}
     
     com->nom = NULL;
     com->args = NULL;
@@ -22,7 +22,7 @@ int lengthPointer(char* pointer){
             compt+=1;
         }
         else if (pointer+i == NULL){
-            printf("Prolbème d'initilisation");
+            printf("Problème d'initilisation");
             return -1;
         }
     }
@@ -30,16 +30,50 @@ int lengthPointer(char* pointer){
     }
 
 
-command *fillCommand(command *com, char **argv){
-    com->nom = malloc(sizeof(char));  //à changer
-    
+command *fillCommand(char **argv){
+    int i = 0;
+    int nbOptions = 0, nbArgs = 0;
+    command *com = initialiseCommand();
+
+    //malloc pour les champs
+
+    com->nom = malloc(sizeof(char) * strlen(argv[0])); 
+    if(com->nom == NULL){goto error;}
+    com->args = malloc(sizeof(char) * PATH_MAX);
+    if(com->args == NULL){goto error;}
+    com->options = malloc(sizeof(char) * _MAX_DIR); 
+    if(com->options == NULL){goto error;}
+    com->ligne = malloc(sizeof(char) * PATH_MAX);
+    if(com->ligne == NULL){goto error;}
+
+    //Remplissage des champs
+
+    com->nom = argv[0];
+    while (argv[i] != NULL){
+        (com->ligne + i) = argv[i];
+        char str[] = argv[i];
+        if (strcmp(str[0], "-") == 0 && i > 0){
+            (com->options + i) = argv[i];
+            nbOptions++;
+        }
+        else if (i > 0){
+            (com->args + nbArgs) = argv[i];
+            nbArgs++;
+        }
+
+    }
+
     return com;
+
+    error:
+    clearCommands(com);
+    return NULL;
 }
 
 void clearCommands(command *com){
-    free(com->nom);
-    free(com->args);
-    free(com->ligne);
-    free(com->options);
-    free(com);
+    if(com->nom != NULL){free(com->nom);}
+    if(com->ligne != NULL){free(com->ligne);}
+    if(com->args != NULL){free(com->args);}
+    if(com->options != NULL){free(com->options);}
+    if(com != NULL){free(com);}
 }
