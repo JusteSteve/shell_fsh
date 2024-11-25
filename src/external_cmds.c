@@ -53,8 +53,12 @@ error:
   exit(1);
 }
 
-int exec_external_cmds(char **args)
+int exec_external_cmds(command *cmd)
 {
+  if (cmd == NULL || cmd->ligne == NULL || is_line_empty(cmd->ligne)) {
+    fprintf(stderr, "[exec_external_cmds]> Invalid or empty command structure\n");
+    return 1;
+    }
   pid_t child_pid = fork();
 
   switch (child_pid)
@@ -65,11 +69,11 @@ int exec_external_cmds(char **args)
 
   case 0: // processus enfant
   {
-    int nb_args = get_nb_args(args);
+    /* int nb_args = get_nb_args(args);
     args = realloc(args, (nb_args + 1) * sizeof(char *));
-    args[nb_args] = NULL;
-    execvp(args[0], args);
-    dprintf(2, "fsh: command not found: %s\n", args[0]);
+    args[nb_args] = NULL; */
+    execlp(cmd->nom, cmd->args, NULL);
+    dprintf(2, "fsh: command not found: %s\n", cmd->nom);
     exit(1); // si execvp échoue, on sort avec un 1
   }
 
@@ -86,10 +90,51 @@ int exec_external_cmds(char **args)
   }
 }
 
+
+
+int exec_external_cmdsFor(comFor *cmd)
+{
+  if (cmd == NULL || cmd->ligne == NULL || is_line_empty(cmd->ligne)) {
+    fprintf(stderr, "[exec_external_cmds]> Invalid or empty command structure\n");
+    return 1;
+    }
+  pid_t child_pid = fork();
+
+  switch (child_pid)
+  {
+  case -1: // fork a échoué
+    perror("[exec_external_cmds]>fork");
+    exit(1);
+
+  case 0: // processus enfant
+  {
+    execlp(cmd->command, cmd->path, NULL);
+    dprintf(2, "fsh: command not found: %s\n", cmd->command);
+    exit(1); // si execvp échoue, on sort avec un 1
+  }
+
+  default: // processus parent
+  {
+    int status;
+    waitpid(child_pid, &status, 0); // Attendre la fin du processus enfant et récupérer son statut
+    if (WIFEXITED(status))
+    {
+      return WEXITSTATUS(status); // Retourner le statut de sortie du processus enfant
+    }
+    return 1; // Retourner une valeur d'erreur par défaut
+  }
+  }
+}
+
+
+
+
+
 // ===*** Fonctions auxiliaires ***===
 
 void free_args(char **args)
 {
+  if (args == NULL) return;
   for (int i = 0; args[i] != NULL; i++)
   {
     free(args[i]);

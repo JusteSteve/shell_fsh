@@ -3,7 +3,10 @@
  * @file for.c
  */
 #include "../headers/for.h"
+#include "../headers/commands.h"
+#include "../headers/fsh.h"
 #include "../headers/internal_cmds.h"
+#include "../headers/external_cmds.h"
 
 
 comFor *initialiseCommandFor(){
@@ -23,7 +26,7 @@ comFor *initialiseCommandFor(){
     return NULL;
 }
 
-int lengthPointerFor(char* pointer) {
+/* int lengthPointerFor(char* pointer) {
     if (pointer == NULL) {
         return 0; // Si le pointeur est NULL, retourne une longueur de 0
     }
@@ -37,10 +40,11 @@ int lengthPointerFor(char* pointer) {
         }
     }
     return compt; // Retourne la longueur de la chaîne
-}
+} */
 
 comFor *fillCommandFor(char **args){  //version ne prennant pas compte des options
     comFor *com = initialiseCommandFor();
+    if (com == NULL) {goto error;}
     int i = 0;  
     char str[100];
     strcpy(str, args[4]);
@@ -58,10 +62,10 @@ comFor *fillCommandFor(char **args){  //version ne prennant pas compte des optio
     com->ligne = malloc(sizeof(char) * MAX_CMDS);
     if (com->ligne == NULL){goto error;}
 
-    com->command = args[5];
-    com->dir = args[3];
+    com->command = strdup(args[5]);
+    com->dir = strdup(args[3]);
     while(args[i] != NULL && i < MAX_CMDS - 1){
-        strcpy(com->ligne + i * sizeof(char*), args[i]);
+        strcpy(com->ligne + i, args[i]);
         i++;
     }
     return com;
@@ -92,10 +96,8 @@ int parcoursFor(comFor* cm){
 
     while ((entry = readdir(parent))){
         errno = 0;
-        if (entry == NULL) {   //si readdir rencontre une erreur, errno est modif avec une valeur non nulle, et si fin de fichiers à lire, errno ne change pas de valeur
-            if (errno != 0) {goto error;}
-            else {goto error;} // car si on ne trouve pas le répertoire que l'on cherche dans son parent, c'est une erreur
-        }
+        if (entry == NULL && errno != 0) {goto error;}  //si readdir rencontre une erreur, errno est modif avec une valeur non nulle, et si fin de fichiers à lire, errno ne change pas de valeur
+        // car si on ne trouve pas le répertoire que l'on cherche dans son parent, c'est une erreur
         else if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {continue;}
         char entry_path [PATH_MAX]; //hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
         snprintf(entry_path, PATH_MAX, "../%s", cm->path);
@@ -104,7 +106,7 @@ int parcoursFor(comFor* cm){
             exec_internal_cmds(cm->ligne);  //remplacer le paramètre
         }
         else{
-            exec_external_cmds(&cm->ligne);  //cm->command, cm->command, entry_path, NULL
+            exec_external_cmdsFor(cm);  //cm->command, cm->command, entry_path, NULL
         }
     }
     return 0;

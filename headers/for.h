@@ -13,10 +13,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "../headers/commands.h"
-#include "../headers/fsh.h"
-#include "../headers/internal_cmds.h"
-#include "../headers/external_cmds.h"
 
 #define PATH_MAX 4096
 

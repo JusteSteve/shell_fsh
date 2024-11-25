@@ -15,15 +15,20 @@ int execute_commande(char *line)
 {
   // obtenir un tableau de mots à partir de la ligne de commande
   char **args = split_cmd(line);
+  printf("ok  par ici");
   int return_value;
   if (strcmp("for", args[0]) == 0){
     comFor *command = fillCommandFor(args);
-    parcoursFor(command);
+    if (command == NULL) {return 1;}
+    if (parcoursFor(command) != 0) {clearCommandFor(command); return 1;}
     clearCommandFor(command);
     return 0;
   }
   else{
+    printf("ok ici");
     command *command = fillCommand(args);
+    printf("ok");
+    if (command == NULL) {return 1;}
   
   //char *nom_cmd = args[0];
   //int return_value;
@@ -35,11 +40,11 @@ int execute_commande(char *line)
     comme ça si c'est exit qui est appelé, args sera pas libéré
     avant de terminer le programme
     */
-    return_value = exec_internal_cmds(line);
+    return_value = exec_internal_cmds(command->ligne);
     }
   else
     {
-    return_value = exec_external_cmds(args);
+    return_value = exec_external_cmds(command);
     }
   
 

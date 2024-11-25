@@ -12,10 +12,6 @@
 #include <dirent.h>
 #include <string.h>
 
-#include "../headers/fsh.h"
-#include "../headers/internal_cmds.h"
-#include "../headers/external_cmds.h"
-
 #define PATH_MAX 4096
 
 typedef struct command {  //tailles des tableaux à moduler au cas où

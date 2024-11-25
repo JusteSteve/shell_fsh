@@ -15,7 +15,7 @@ command *initialiseCommand(){
     return com;
 }
 
-int lengthPointer(char* pointer) {
+/* int lengthPointer(char* pointer) {
     if (pointer == NULL) {
         return -1; // Retourne une erreur si le pointeur est NULL
     }
@@ -28,17 +28,18 @@ int lengthPointer(char* pointer) {
         compt++;
     }
     return compt;
-}
+} */
 
 
 command *fillCommand(char **argv){
     int i = 0;
     int nbOptions = 0, nbArgs = 0;
     command *com = initialiseCommand();
+    if (com == NULL) {goto error;}
 
     //malloc pour les champs
 
-    com->nom = malloc(sizeof(char) * strlen(argv[0])); 
+    com->nom = malloc(sizeof(char) * strlen(argv[0] + 1)); 
     if(com->nom == NULL){goto error;}
     com->args = malloc(sizeof(char) * PATH_MAX);
     if(com->args == NULL){goto error;}
@@ -49,7 +50,7 @@ command *fillCommand(char **argv){
 
     //Remplissage des champs
 
-    com->nom = argv[0];
+    com->nom = strdup(argv[0]);
     while (argv[i] != NULL){
         strcpy(com->ligne + i * PATH_MAX, argv[i]);
         char *str = argv[i];

@@ -22,10 +22,12 @@ int main()
 
     if (line == NULL || is_line_empty(line))
     {
+      printf("bien ici");
       free(line);
       continue;
     }
     
+    printf("bien ici, pas mal");
     last_return_value = execute_commande(line);
     add_history(line);
     free(line);
