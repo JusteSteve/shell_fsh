@@ -13,46 +13,38 @@ int prev_status; // pour stocker le status précédent
 
 int execute_commande(char *line)
 {
-  // obtenir un tableau de mots à partir de la ligne de commande
-  char **args = split_cmd(line);
-  printf("ok  par ici");
   int return_value;
-  if (strcmp("for", args[0]) == 0){
-    comFor *command = fillCommandFor(args);
-    if (command == NULL) {return 1;}
-    if (parcoursFor(command) != 0) {clearCommandFor(command); return 1;}
+  // créer une structure de commande à partir de la ligne de commande
+  command *cmd = fillCommand(line);
+
+  if (strcmp("for", cmd->nom) == 0)
+  {
+    // créer une structure de commande for à partir de la cmd
+    comFor *command = fillCommandFor(cmd);
+    if (command == NULL)
+    {
+      return 1;
+    }
+    if (parcoursFor(command) != 0)
+    {
+      clearCommandFor(command);
+      return 1;
+    }
     clearCommandFor(command);
     return 0;
   }
-  else{
-    printf("ok ici");
-    command *command = fillCommand(args);
-    printf("ok");
-    if (command == NULL) {return 1;}
-  
-  //char *nom_cmd = args[0];
-  //int return_value;
-  if (is_internal_cmd(command->nom))
+  else if (is_internal_cmd(cmd->nom))
   {
-    /*
-    FIXME: peut-être qu'il faudrait libérer args ici
-    car il n'est pas utilisé pour les commandes internes du moins pour l'instant
-    comme ça si c'est exit qui est appelé, args sera pas libéré
-    avant de terminer le programme
-    */
-    return_value = exec_internal_cmds(command->ligne);
-    }
+    return_value = exec_internal_cmds(cmd->ligne);
+  }
   else
-    {
-    return_value = exec_external_cmds(command);
-    }
-  
+  {
+    return_value = exec_external_cmds(cmd);
+  }
 
   prev_status = return_value;
-  free_args(args);
-  clearCommands(command);
+  clearCommands(cmd);
   return return_value;
-  }
 }
 
 int is_internal_cmd(char *cmd)

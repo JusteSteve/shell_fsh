@@ -55,10 +55,12 @@ error:
 
 int exec_external_cmds(command *cmd)
 {
-  if (cmd == NULL || cmd->ligne == NULL || is_line_empty(cmd->ligne)) {
+  if (cmd == NULL)
+  {
     fprintf(stderr, "[exec_external_cmds]> Invalid or empty command structure\n");
     return 1;
-    }
+  }
+
   pid_t child_pid = fork();
 
   switch (child_pid)
@@ -69,10 +71,8 @@ int exec_external_cmds(command *cmd)
 
   case 0: // processus enfant
   {
-    /* int nb_args = get_nb_args(args);
-    args = realloc(args, (nb_args + 1) * sizeof(char *));
-    args[nb_args] = NULL; */
-    execlp(cmd->nom, cmd->args, NULL);
+    cmd->args[cmd->taille] = NULL; // on fini le tableau par NULL
+    execvp(cmd->nom, cmd->args);
     dprintf(2, "fsh: command not found: %s\n", cmd->nom);
     exit(1); // si execvp échoue, on sort avec un 1
   }
@@ -90,14 +90,14 @@ int exec_external_cmds(command *cmd)
   }
 }
 
-
-
+// FIXME: SUPPRIMER CAR ON UTILISE exec_external_cmds A LA PLACE
 int exec_external_cmdsFor(comFor *cmd)
 {
-  if (cmd == NULL || cmd->ligne == NULL || is_line_empty(cmd->ligne)) {
+  if (cmd == NULL || cmd->ligne == NULL || is_line_empty(cmd->ligne))
+  {
     fprintf(stderr, "[exec_external_cmds]> Invalid or empty command structure\n");
     return 1;
-    }
+  }
   pid_t child_pid = fork();
 
   switch (child_pid)
@@ -126,15 +126,12 @@ int exec_external_cmdsFor(comFor *cmd)
   }
 }
 
-
-
-
-
 // ===*** Fonctions auxiliaires ***===
 
 void free_args(char **args)
 {
-  if (args == NULL) return;
+  if (args == NULL)
+    return;
   for (int i = 0; args[i] != NULL; i++)
   {
     free(args[i]);

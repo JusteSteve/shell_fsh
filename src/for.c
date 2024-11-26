@@ -8,111 +8,272 @@
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
 
-
-comFor *initialiseCommandFor(){
+comFor *initialiseCommandFor()
+{
+    // Création d'un nouveau commandFor
     comFor *com = malloc(sizeof(comFor));
-    if (com == NULL){goto error;}
-    
+    if (com == NULL)
+    {
+        goto error;
+    }
+
     com->command = NULL;
-    com->options = NULL;
-    com->path = NULL;
     com->dir = NULL;
+    com->path = NULL;
+    com->options = NULL;
     com->ligne = NULL;
-    
+    com->extention = NULL;
+
     return com;
 
-    error:
+error:
     clearCommandFor(com);
     return NULL;
 }
 
-/* int lengthPointerFor(char* pointer) {
-    if (pointer == NULL) {
-        return 0; // Si le pointeur est NULL, retourne une longueur de 0
+comFor *fillCommandFor(command *cmd)
+{ // version ne prennant pas compte des options
+    comFor *com = initialiseCommandFor();
+    if (com == NULL)
+    {
+        goto error;
     }
+    int i = 0;
 
-    int compt = 0;
-    for (int i = 0; i < 100; i++) { // Parcourt les 100 premiers caractères (au maximum)
-        if (pointer[i] != '\0') { // Vérifie si le caractère à l'index `i` est non nul
-            compt += 1; // Incrémente le compteur
-        } else {
-            break; // Arrête la boucle si on atteint la fin de la chaîne
+    // parser les options de la commande PAS UTILISEE POUR L'INSTANT
+    for (i = 3; cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0; i++)
+    {
+        if (strcmp(cmd->args[i], "-A") == 0)
+        {
+            com->fic_caches = 1;
+        }
+        else if (strcmp(cmd->args[i], "-r") == 0)
+        {
+            com->recursive = 1;
+        }
+        else if (strcmp(cmd->args[i], "-e") == 0 && cmd->args[i + 1] != NULL)
+        {
+            com->extention = strdup(cmd->args[++i]);
+        }
+        else if (strcmp(cmd->args[i], "-t") == 0 && cmd->args[i + 1] != NULL)
+        {
+            com->type = cmd->args[++i][0];
+        }
+        else if (strcmp(cmd->args[i], "-p") == 0 && cmd->args[i + 1] != NULL)
+        {
+            com->max_parallel = atoi(cmd->args[++i]);
+        }
+        else
+        {
+            com->dir = strdup(cmd->args[i]);
+            // perror("Options");
+            // goto error;
         }
     }
-    return compt; // Retourne la longueur de la chaîne
-} */
 
-comFor *fillCommandFor(char **args){  //version ne prennant pas compte des options
-    comFor *com = initialiseCommandFor();
-    if (com == NULL) {goto error;}
-    int i = 0;  
-    char str[100];
-    strcpy(str, args[4]);
-    if (strcmp(str, "{") != 0) {  //savoir si l'utilisateur a imput "{CMD}" ou "{ CMD }" (version correcte)
+    if (cmd->args[i] == NULL || strcmp(cmd->args[i], "{") != 0)
+    {
+        // savoir si l'utilisateur a imput "{CMD}" ou "{ CMD }" (version correcte)
         perror("User input");
         goto error;
     }
 
-    //malloc des ressources
-
-    com->command = malloc(sizeof(char) * (strlen(args[5]) + 1));
-    if (com->command == NULL){goto error;}
-    com->dir = malloc(sizeof(char) * (strlen(args[3]) + 1));
-    if (com->dir == NULL){goto error;}
-    com->ligne = malloc(sizeof(char) * MAX_CMDS);
-    if (com->ligne == NULL){goto error;}
-
-    com->command = strdup(args[5]);
-    com->dir = strdup(args[3]);
-    while(args[i] != NULL && i < MAX_CMDS - 1){
-        strcpy(com->ligne + i, args[i]);
-        i++;
+    // lire ce qui est entre les accolades et le mettre dans com->ligne
+    i += 1; // pour passer le "{"
+    int ligne_taille = 0;
+    for (int j = i; cmd->args[j] != NULL && strcmp(cmd->args[j], "}") != 0; j++)
+    {
+        ligne_taille += strlen(cmd->args[j]) + 1; // +1 pour le caractere de fin de chaine
     }
+
+    com->ligne = malloc(ligne_taille + 1);
+    if (com->ligne == NULL)
+    {
+        perror("[fillCommandFor]>malloc");
+        goto error;
+    }
+
+    // reconstruire la ligne de commande qui est dans les accolades
+    com->ligne[0] = '\0'; // pour être sûr que la chaine soit vide
+    for (; cmd->args[i] != NULL && strcmp(cmd->args[i], "}") != 0; i++)
+    {
+        strcat(com->ligne, cmd->args[i]);
+        strcat(com->ligne, " ");
+    }
+
+    // supprimer le dernier espace
+    if (ligne_taille > 0)
+    {
+        com->ligne[ligne_taille - 1] = '\0';
+    }
+
     return com;
 
-    error:
+error:
     clearCommandFor(com);
     return NULL;
-} 
-
-
-void clearCommandFor(comFor *com){
-    if(com->command!= NULL){free(com->command);}
-    if(com->ligne != NULL){free(com->ligne);}
-    if(com->path != NULL){free(com->path);}
-    if(com->options != NULL){free(com->options);}
-    if(com->dir != NULL){free(com->dir);}
-    if(com != NULL){free(com);}
 }
 
-int parcoursFor(comFor* cm){
-    DIR* parent = NULL;
-    struct dirent* entry;
-    // struct stat st_entry; // Supprimé car inutilisé
-    // char *paths; // Supprimé car inutilisé
+int parcoursFor(comFor *cm)
+{
+    DIR *parent = NULL;
+    struct dirent *entry;
 
     parent = opendir(cm->dir);
-    if (parent == NULL) {goto error;}
+    if (parent == NULL)
+    {
+        goto error;
+    }
 
-    while ((entry = readdir(parent))){
+    while ((entry = readdir(parent)))
+    {
         errno = 0;
-        if (entry == NULL && errno != 0) {goto error;}  //si readdir rencontre une erreur, errno est modif avec une valeur non nulle, et si fin de fichiers à lire, errno ne change pas de valeur
+        if (entry == NULL && errno != 0)
+        {
+            goto error;
+        } // si readdir rencontre une erreur, errno est modif avec une valeur non nulle, et si fin de fichiers à lire, errno ne change pas de valeur
         // car si on ne trouve pas le répertoire que l'on cherche dans son parent, c'est une erreur
-        else if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {continue;}
-        char entry_path [PATH_MAX]; //hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
-        snprintf(entry_path, PATH_MAX, "../%s", cm->path);
-
-        if (is_internal_cmd(cm->command) == 0){
-            exec_internal_cmds(cm->ligne);  //remplacer le paramètre
+        else if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+        {
+            continue;
         }
-        else{
-            exec_external_cmdsFor(cm);  //cm->command, cm->command, entry_path, NULL
+        if (!cm->fic_caches && entry->d_name[0] == '.')
+        {
+            continue;
+        }
+        if (cm->extention && !strstr(entry->d_name, cm->extention))
+        {
+            continue;
+        }
+        if (cm->type && cm->type != entry->d_type)
+        {
+            continue;
+        }
+
+        char entry_path[PATH_MAX]; // hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
+        // snprintf(entry_path, PATH_MAX, "../%s", cm->path); // andrea sup moi après stpl
+        snprintf(entry_path, PATH_MAX, "%s/%s", cm->dir, entry->d_name);
+
+        // remplacer $F par le nom du fichier
+        char *cmd_avec_f = remplacer_variable(cm->ligne, "$F", entry_path);
+        execute_commande(cmd_avec_f);
+        free(cmd_avec_f);
+        // printf("cmd_avec_f : %s\n", cmd_avec_f);
+
+        /*
+        if (is_internal_cmd(cmd_avec_f))
+        {
+            //printf("dans le if\n");
+            exec_internal_cmds(cmd_avec_f); // remplacer le paramètre
+        }
+        else
+        {
+            //printf("dans le else\n");
+            command *cmd = fillCommand(cmd_avec_f);
+            exec_external_cmds(cmd); // cm->command, cm->command, entry_path, NULL
+        }
+        */
+
+        // FIXME: PAS UTILSE POUR L'INSTANT A VOIR APRES JALON 1
+        if (cm->recursive && entry->d_type == DT_DIR)
+        {
+            comFor *sous_cmd = initialiseCommandFor();
+            sous_cmd->command = strdup(cm->command);
+            sous_cmd->dir = strdup(entry_path);
+            sous_cmd->fic_caches = cm->fic_caches;
+            sous_cmd->recursive = cm->recursive;
+            sous_cmd->extention = cm->extention ? strdup(cm->extention) : NULL;
+            sous_cmd->type = cm->type;
+            sous_cmd->max_parallel = cm->max_parallel;
+            parcoursFor(sous_cmd);
+            clearCommandFor(sous_cmd);
         }
     }
+    closedir(parent);
     return 0;
 
-    error:
-    if (parent != NULL) {closedir(parent);}
+error:
+    if (parent != NULL)
+    {
+        closedir(parent);
+    }
     clearCommandFor(cm);
     return 1;
+}
+
+char *remplacer_variable(char *ligne, char *var, char *valeur)
+{
+    // printf("remplacer_variable\n");
+    char *resultat;
+    int i, count = 0;
+    int nouvelle_taille = strlen(valeur);
+    int ancienne_taille = strlen(var);
+
+    // Comptage du nombre de fois où la variable apparaît
+    for (i = 0; ligne[i] != '\0'; i++)
+    {
+        if (strstr(&ligne[i], var) == &ligne[i])
+        {
+            count++;
+            i += ancienne_taille - 1;
+        }
+    }
+
+    // Réserve de mémoire pour le résultat
+    resultat = malloc(i + count * (nouvelle_taille - ancienne_taille) + 1);
+    if (resultat == NULL)
+    {
+        perror("malloc");
+        exit(1);
+    }
+
+    i = 0;
+    while (*ligne)
+    {
+        if (strstr(ligne, var) == ligne)
+        {
+            strcpy(&resultat[i], valeur);
+            i += nouvelle_taille;
+            ligne += ancienne_taille;
+        }
+        else
+        {
+            resultat[i++] = *ligne++;
+        }
+    }
+    resultat[i] = '\0';
+    return resultat;
+}
+
+void clearCommandFor(comFor *com)
+{
+    if (com->command != NULL)
+    {
+        free(com->command);
+    }
+    if (com->ligne != NULL)
+    {
+        free(com->ligne);
+    }
+    if (com->path != NULL)
+    {
+        free(com->path);
+    }
+    if (com->options != NULL)
+    {
+        free(com->options);
+    }
+    if (com->dir != NULL)
+    {
+        free(com->dir);
+    }
+    if (com->extention != NULL)
+    {
+        free(com->extention);
+    }
+
+    if (com != NULL)
+    {
+        free(com);
+    }
 }
