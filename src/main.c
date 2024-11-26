@@ -12,7 +12,7 @@ int main()
   char *line;
   int last_return_value = 0;
 
-  printf("tapez 'exit' pour quitter\n");
+  printf("tapez 'exit' ou ctrl-d pour quitter\n");
   rl_outstream = stderr;
   while (1)
   {
@@ -20,15 +20,20 @@ int main()
     line = readline(prompt);
     free(prompt);
 
-    if (line == NULL || is_line_empty(line))
+    if (line == NULL) // gerer ctrl+d (EOF)
+    {
+      break;
+    }
+
+    if (is_line_empty(line))
     {
       free(line);
       continue;
     }
-    
+
     last_return_value = execute_commande(line);
     add_history(line);
     free(line);
   }
-  return 0;
+  return last_return_value;
 }

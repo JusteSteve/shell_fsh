@@ -66,7 +66,7 @@ int exec_external_cmds(char **args)
   case 0: // processus enfant
   {
     int nb_args = get_nb_args(args);
-    args = realloc(args, (nb_args + 1) * sizeof(char *));
+    args = realloc(args, (nb_args + 1) * sizeof(char *)); // bien vu @andrea pour le realloc
     args[nb_args] = NULL;
     execvp(args[0], args);
     dprintf(2, "fsh: command not found: %s\n", args[0]);

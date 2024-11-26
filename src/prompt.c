@@ -42,7 +42,15 @@ char *truncate_path(char *path, int max_length)
   {
     return NULL; // erreur: pointeur null
   }
-  char *new_path = calloc(max_length + 1, 1);
+
+  int path_len = strlen(path);
+  if (path_len <= max_length)
+  {
+    return strdup(path); // pas besoin de tronquer
+  }
+
+  // allouer la mémoire pour le nouveau chemin
+  char *new_path = calloc(max_length + 1, sizeof(char));
   if (new_path == NULL)
   {
     perror("[truncate_path]>calloc:");
@@ -50,13 +58,10 @@ char *truncate_path(char *path, int max_length)
   }
 
   // tronquer le chemin si nécessaire
-  int path_len = strlen(path);
   if (path_len > max_length)
   {
     memcpy(new_path, "...", 3);
-    char *src = path + path_len - max_length +
-                6; // FIXME: à régler, normalement c'est +3 pour le "..." mais
-                   // on a ajouté 3 caractères "[0]" ou "[1]"
+    char *src = path + path_len - (max_length - 3); 
     size_t n = max_length - 3;
     memcpy(new_path + 3, src, n);
   }
@@ -76,25 +81,22 @@ char *display_prompt(int last_return_value)
     return NULL;
   }
 
-  int idx = 0; // curseur qui se déplace dans le prompt au fur et à mesure de
-               // l'ajout des éléments
+  int idx = 0; // curseur qui se déplace dans le prompt au fur et à mesure de l'ajout des éléments
 
   // début du prompt [0] ou [1]
-  switch (last_return_value)
+  if (last_return_value == 0)
   {
-  case 0:
     idx += add_to_prompt(prompt + idx, COLOR_GREEN);
-    idx += add_to_prompt(prompt + idx, "[0]");
-    break;
-  case 1:
-    idx += add_to_prompt(prompt + idx, COLOR_RED);
-    idx += add_to_prompt(prompt + idx, "[1]");
-    break;
-  default:
-    idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
-    idx += add_to_prompt(prompt + idx, "[SIG]");
-    break;
   }
+  else if (last_return_value == 1)
+  {
+    idx += add_to_prompt(prompt + idx, COLOR_RED);
+  }
+  else
+  {
+    idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
+  }
+  idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[%d]", last_return_value);
 
   // récupérer le chemin du répertoire courant
   char *dir = getcwd(NULL, 0);
@@ -105,13 +107,15 @@ char *display_prompt(int last_return_value)
   }
 
   // tronquer le chemin si nécessaire
-  int visible_elements = 2; // $ et espace
+  int visible_elements = 5; // $, espace et [x]
   int path_max_len = 30 - visible_elements;
   char *new_path = truncate_path(dir, path_max_len);
   if (new_path == NULL)
   {
+    free(dir);
     goto error;
   }
+
   idx += add_to_prompt(prompt + idx, COLOR_DEFAULT);
   idx += add_to_prompt(prompt + idx, new_path); // ajouter le chemin tronqué
   free(new_path);
@@ -120,9 +124,10 @@ char *display_prompt(int last_return_value)
   idx += add_to_prompt(prompt + idx, COLOR_BLUE);
   idx += add_to_prompt(prompt + idx, "$ ");
 
-  // couleur du retour
+  // couleur par défaut pour la suite
   idx += add_to_prompt(prompt + idx, COLOR_DEFAULT);
 
+  free(dir);
   return prompt;
 
 error:
