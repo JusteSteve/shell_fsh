@@ -66,8 +66,6 @@ comFor *fillCommandFor(command *cmd)
         else
         {
             com->dir = strdup(cmd->args[i]);
-            // perror("Options");
-            // goto error;
         }
     }
 
@@ -151,28 +149,12 @@ int parcoursFor(comFor *cm)
         }
 
         char entry_path[PATH_MAX]; // hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
-        // snprintf(entry_path, PATH_MAX, "../%s", cm->path); // andrea sup moi après stpl
         snprintf(entry_path, PATH_MAX, "%s/%s", cm->dir, entry->d_name);
 
         // remplacer $F par le nom du fichier
         char *cmd_avec_f = remplacer_variable(cm->ligne, "$F", entry_path);
         execute_commande(cmd_avec_f);
         free(cmd_avec_f);
-        // printf("cmd_avec_f : %s\n", cmd_avec_f);
-
-        /*
-        if (is_internal_cmd(cmd_avec_f))
-        {
-            //printf("dans le if\n");
-            exec_internal_cmds(cmd_avec_f); // remplacer le paramètre
-        }
-        else
-        {
-            //printf("dans le else\n");
-            command *cmd = fillCommand(cmd_avec_f);
-            exec_external_cmds(cmd); // cm->command, cm->command, entry_path, NULL
-        }
-        */
 
         // FIXME: PAS UTILSE POUR L'INSTANT A VOIR APRES JALON 1
         if (cm->recursive && entry->d_type == DT_DIR)
@@ -203,7 +185,6 @@ error:
 
 char *remplacer_variable(char *ligne, char *var, char *valeur)
 {
-    // printf("remplacer_variable\n");
     char *resultat;
     int i, count = 0;
     int nouvelle_taille = strlen(valeur);
