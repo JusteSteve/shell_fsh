@@ -105,10 +105,8 @@ int exec_internal_cmds(char *line)
   if (strncmp(line, "ftype", 5) == 0)
   {
     char *ref = NULL;
-    if (strlen(line) > 6)
-    {
-      ref = line + 6; // on prend en compte "ftype " avant le fichier/répertoire
-    }
+    command *cmd = fillCommand(line);
+    ref = cmd->args[1];
     if (ref != NULL)
     {
       prev_status = cmd_ftype(ref);
