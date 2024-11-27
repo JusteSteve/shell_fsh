@@ -16,6 +16,5 @@ int cmd_exit(char *val){
         status = prev_status; // Sinon on prend le statut précédent
     }
     dprintf(STDOUT_FILENO, "Exiting fsh with code %d\n", status);
-    //dprintf(STDOUT_FILENO, "status: %d, prev_status: %d\n", status, prev_status);
     exit(status);
 }

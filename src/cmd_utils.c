@@ -77,7 +77,7 @@ int exec_internal_cmds(char *line)
       val = line + 5; // "exit " donc offset de 5 comme pour "cd " au final
     }
     cmd_exit(val);
-    // return 0; // Pas besoin de return car exit termine le programme (NIC SUPPRIME MOI SI TU ME VOIS)
+    // Pas besoin de return car exit termine le programme (NIC SUPPRIME MOI SI TU ME VOIS)
   }
 
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
