@@ -6,31 +6,44 @@
 
 #include "../headers/internal_cmds.h"
 #include "../headers/external_cmds.h"
+#include "../headers/for.h"
+#include "../headers/commands.h"
 
 int prev_status; // pour stocker le status précédent
 
 int execute_commande(char *line)
 {
-  // obtenir un tableau de mots à partir de la ligne de commande
-  char **args = split_cmd(line);
-  char *nom_cmd = args[0];
   int return_value;
-  if (is_internal_cmd(nom_cmd))
+  // créer une structure de commande à partir de la ligne de commande
+  command *cmd = fillCommand(line);
+
+  if (strcmp("for", cmd->nom) == 0)
   {
-    /*
-    FIXME: peut-être qu'il faudrait libérer args ici
-    car il n'est pas utilisé pour les commandes internes du moins pour l'instant
-    comme ça si c'est exit qui est appelé, args sera pas libéré
-    avant de terminer le programme
-    */
-    return_value = exec_internal_cmds(line);
+    // créer une structure de commande for à partir de la cmd
+    comFor *command = fillCommandFor(cmd);
+    if (command == NULL)
+    {
+      return 1;
+    }
+    if (parcoursFor(command) != 0)
+    {
+      clearCommandFor(command);
+      return 1;
+    }
+    clearCommandFor(command);
+    return 0;
+  }
+  else if (is_internal_cmd(cmd->nom))
+  {
+    return_value = exec_internal_cmds(cmd->ligne);
   }
   else
   {
-    return_value = exec_external_cmds(args);
+    return_value = exec_external_cmds(cmd);
   }
+
   prev_status = return_value;
-  free_args(args);
+  clearCommands(cmd);
   return return_value;
 }
 

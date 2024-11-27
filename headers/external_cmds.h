@@ -17,6 +17,9 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+#include "../headers/commands.h"
+#include "../headers/for.h"
+
 #define MAX_CMDS 100
 
 /**
@@ -37,7 +40,9 @@ void free_args(char **args);
  * @param args : tableau de chaines de caracteres
  * @return 0 si tout s'est bien passé, 1 sinon
  */
-int exec_external_cmds(char **args);
+int exec_external_cmds(command *cmd);
+
+int exec_external_cmdsFor(comFor *cmd);
 
 /**
  * @param args : tableau de chaines de caracteres

@@ -53,8 +53,14 @@ error:
   exit(1);
 }
 
-int exec_external_cmds(char **args)
+int exec_external_cmds(command *cmd)
 {
+  if (cmd == NULL)
+  {
+    fprintf(stderr, "[exec_external_cmds]> Invalid or empty command structure\n");
+    return 1;
+  }
+
   pid_t child_pid = fork();
 
   switch (child_pid)
@@ -65,11 +71,9 @@ int exec_external_cmds(char **args)
 
   case 0: // processus enfant
   {
-    int nb_args = get_nb_args(args);
-    args = realloc(args, (nb_args + 1) * sizeof(char *)); // bien vu @andrea pour le realloc
-    args[nb_args] = NULL;
-    execvp(args[0], args);
-    dprintf(2, "fsh: command not found: %s\n", args[0]);
+    cmd->args[cmd->taille] = NULL; // on fini le tableau par NULL
+    execvp(cmd->nom, cmd->args);
+    dprintf(2, "fsh: command not found: %s\n", cmd->nom);
     exit(1); // si execvp échoue, on sort avec un 1
   }
 
@@ -90,6 +94,8 @@ int exec_external_cmds(char **args)
 
 void free_args(char **args)
 {
+  if (args == NULL)
+    return;
   for (int i = 0; args[i] != NULL; i++)
   {
     free(args[i]);
