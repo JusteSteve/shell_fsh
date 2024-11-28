@@ -41,7 +41,7 @@ comFor *fillCommandFor(command *cmd)
     int i = 0;
 
     // tracage
-    dprintf(STDOUT_FILENO, "fillCommandFor, cmd->args[0] : %s\n", cmd->args[0]);
+    //dprintf(STDOUT_FILENO, "fillCommandFor, cmd->args[0] : %s\n", cmd->args[0]);
 
     // parser les options de la commande PAS UTILISEE POUR L'INSTANT
     for (i = 3; cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0; i++)
@@ -110,7 +110,7 @@ comFor *fillCommandFor(command *cmd)
     }
 
     // tracage
-    dprintf(STDOUT_FILENO, "fillCommandFor, com->ligne : %s\n", com->ligne);
+    //dprintf(STDOUT_FILENO, "fillCommandFor, com->ligne : %s\n", com->ligne);
     return com;
 
 error:
@@ -124,7 +124,7 @@ int parcoursFor(comFor *cm)
     struct dirent *entry;
 
     // tracage
-    dprintf(STDOUT_FILENO, "parcoursFor, cm->dir : %s\n", cm->dir);
+    //dprintf(STDOUT_FILENO, "parcoursFor, cm->dir : %s\n", cm->dir);
 
     parent = opendir(cm->dir);
     if (parent == NULL)
@@ -133,12 +133,12 @@ int parcoursFor(comFor *cm)
     }
 
     // tracage "before while ParcoursFor"
-    dprintf(STDOUT_FILENO, "before while ParcoursFor\n");
+    //dprintf(STDOUT_FILENO, "before while ParcoursFor\n");
 
     while ((entry = readdir(parent)))
     {
         // tracage 
-        dprintf(STDOUT_FILENO, "entry->d_name : %s\n", entry->d_name);
+        //dprintf(STDOUT_FILENO, "entry->d_name : %s\n", entry->d_name);
         errno = 0;
         if (entry == NULL && errno != 0)
         {
@@ -148,23 +148,23 @@ int parcoursFor(comFor *cm)
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
         {   
             // tracage 1er if
-            dprintf(STDOUT_FILENO, "1er if\n");
+            //dprintf(STDOUT_FILENO, "1er if\n");
             continue;
         }
         if (!cm->fic_caches && entry->d_name[0] == '.')
         {   
             // tracage 2eme if
-            dprintf(STDOUT_FILENO, "2eme if\n");
+            //dprintf(STDOUT_FILENO, "2eme if\n");
             continue;
         }
         if (cm->extention && !strstr(entry->d_name, cm->extention))
         {   
             // tracage 3eme if
-            dprintf(STDOUT_FILENO, "3eme if\n");
+            //dprintf(STDOUT_FILENO, "3eme if\n");
             continue;
         }
         /*
-        if (cm->type && cm->type != entry->d_type)
+        if (cm->type && cm->t   ype != entry->d_type)
         {
             // tracage 4eme if
             dprintf(STDOUT_FILENO, "4eme if\n");
@@ -179,7 +179,7 @@ int parcoursFor(comFor *cm)
         snprintf(entry_path, PATH_MAX, "%s/%s", cm->dir, entry->d_name);
 
         // tracage 
-        dprintf(STDOUT_FILENO, "rentrée dans remplacer_variable\n");
+        //dprintf(STDOUT_FILENO, "rentrée dans remplacer_variable\n");
 
         // remplacer $F par le nom du fichier
         char *cmd_avec_f = remplacer_variable(cm->ligne, "$F", entry_path);
@@ -221,7 +221,7 @@ char *remplacer_variable(char *ligne, char *var, char *valeur)
     int ancienne_taille = strlen(var);
 
     // tracage  affiche variable et valeur
-    dprintf(STDOUT_FILENO, "remplacer_variable, var : %s, valeur : %s\n", var, valeur);
+    //dprintf(STDOUT_FILENO, "remplacer_variable, var : %s, valeur : %s\n", var, valeur);
 
     // Comptage du nombre de fois où la variable apparaît
     for (i = 0; ligne[i] != '\0'; i++)
