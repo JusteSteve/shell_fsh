@@ -18,7 +18,9 @@ int execute_commande(char *line)
   command *cmd = fillCommand(line);
 
   if (strcmp("for", cmd->nom) == 0)
-  {
+  { 
+    // tracage 
+    //dprintf(STDOUT_FILENO, "for command detected\n");
     // créer une structure de commande for à partir de la cmd
     comFor *command = fillCommandFor(cmd);
     if (command == NULL)

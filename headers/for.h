@@ -1,6 +1,13 @@
 #ifndef FOR_H
 #define FOR_H
 
+#ifdef DEBUG
+#define DEBUG_LOG(fmt, args...) dprintf(STDOUT_FILENO, fmt, ##args)
+#else
+#define DEBUG_LOG(fmt, args...)
+#endif
+
+
 // ***=== Inclusions ===***
 // #include <linux/limits.h> // on va le define nous même car sur macos ça marche pas
 #include <stdio.h>
@@ -12,6 +19,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include "debug.h"
 
 #include "commands.h"
 
