@@ -27,7 +27,11 @@ $(OBJDIR)/%.o: %.c
 #	$(CC) $(CFLAGS) -c $< -o $@
 
 # `make clean` supprime tous les fichiers compilés
+test :
+	
+	./test.sh
+
 clean:
 	rm -rf objects fsh .sy5-2024-2025-projet-fsh-autotests.nosync
 
-.PHONY: all clean
+.PHONY: all clean test	

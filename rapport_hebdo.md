@@ -50,7 +50,7 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
 
 - **[ Nic ]** :
 
-  - **Tâche** : Redirection vers des fichiers.
+  - **Tâche** : Redirection vers des fichiers. (Au final non)
 
 - **[ Sylvain ]** :
   - **Tâche** : Mise en place des commandes externes.
@@ -84,3 +84,6 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
 ---
 
 **Remarques générales :**
+La structure for a été commencée par Andrèa, corrigée puis adaptée par Steve, les tests et les
+corrections finales ont été faites par Steve et Nic (très tard). 
+Décallage des tâches prévues aux semaines suivantes pour respecter le temps imparti du jalon 1.
