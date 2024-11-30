@@ -3,7 +3,7 @@
  * @file pwd.c
  */
 
-#include "../headers/internal_cmds.h"
+#include "../../../headers/internal_cmds.h"
 
 int cmd_pwd() {
     char *cwd_buffer = malloc(PATH_MAX);

@@ -4,10 +4,8 @@
  * pour exécuter des commandes.
  */
 
-#include "../headers/internal_cmds.h"
-#include "../headers/external_cmds.h"
-#include "../headers/for.h"
-#include "../headers/commands.h"
+#include "../../headers/internal_cmds.h"
+#include "../../headers/cmd-utils.h"
 
 int prev_status; // pour stocker le status précédent
 
@@ -18,9 +16,7 @@ int execute_commande(char *line)
   command *cmd = fillCommand(line);
 
   if (strcmp("for", cmd->nom) == 0)
-  { 
-    // tracage 
-    //dprintf(STDOUT_FILENO, "for command detected\n");
+  {
     // créer une structure de commande for à partir de la cmd
     comFor *command = fillCommandFor(cmd);
     if (command == NULL)
@@ -47,11 +43,6 @@ int execute_commande(char *line)
   prev_status = return_value;
   clearCommands(cmd);
   return return_value;
-}
-
-int is_internal_cmd(char *cmd)
-{
-  return (!strcmp(cmd, "cd") || !strcmp(cmd, "pwd") || !strcmp(cmd, "ftype") || !strcmp(cmd, "exit"));
 }
 
 int exec_internal_cmds(char *line)
@@ -125,4 +116,23 @@ int exec_internal_cmds(char *line)
   }
 
   return 1; // Par défaut, on continue la boucle
+}
+
+// ***=== Fonctions auxiliaires ===***
+
+int is_internal_cmd(char *cmd)
+{
+  return (!strcmp(cmd, "cd") || !strcmp(cmd, "pwd") || !strcmp(cmd, "ftype") || !strcmp(cmd, "exit"));
+}
+
+int is_line_empty(char *line)
+{
+  for (int i = 0; line[i] != '\0'; i++)
+  {
+    if (line[i] != ' ' && line[i] != '\t')
+    {
+      return 0;
+    }
+  }
+  return 1;
 }

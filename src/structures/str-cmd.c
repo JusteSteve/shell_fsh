@@ -1,7 +1,8 @@
-// fichier contenant la structure des commandes, leur initialisation et son remplissage
-
-#include "../headers/commands.h"
-#include "../headers/external_cmds.h"
+/**
+ * @file str-cmd.c
+ * @brief Fichier contenant l'implémentation des fonctions pour les commandes simples.
+ */
+#include "../../headers/cmd-utils.h"
 
 command *initialiseCommand()
 {
@@ -11,7 +12,6 @@ command *initialiseCommand()
     {
         return NULL;
     }
-
     // initialisation des champs
     com->nom = NULL;
     com->args = NULL;
@@ -28,7 +28,7 @@ command *fillCommand(char *line)
     {
         goto error;
     }
-
+    
     // mettre la ligne de commande dans un tableau
     char **tableau_args = split_cmd(line);
     if (tableau_args == NULL)
@@ -69,4 +69,25 @@ void clearCommands(command *com)
     {
         free(com);
     }
+}
+
+void free_args(char **args)
+{
+  if (args == NULL)
+    return;
+  for (int i = 0; args[i] != NULL; i++)
+  {
+    free(args[i]);
+  }
+  free(args);
+}
+
+int get_nb_args(char **args)
+{
+  int i = 0;
+  while (args[i] != NULL)
+  {
+    i++;
+  }
+  return i;
 }

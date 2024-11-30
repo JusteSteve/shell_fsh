@@ -2,7 +2,7 @@
  * Fichier contenant l'implémentation de la commande exit
  * @file exit.c
  */
-#include "../headers/internal_cmds.h"
+#include "../../../headers/internal_cmds.h"
 
 extern int prev_status;
 

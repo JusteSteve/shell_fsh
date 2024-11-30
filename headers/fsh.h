@@ -20,6 +20,12 @@
 // ***=== prompt.c ===***
 #define PROMPT_MAX_LENGTH 54
 
+#define COLOR_GREEN "\033[32m"
+#define COLOR_YELLOW "\033[33m"
+#define COLOR_BLUE "\033[34m"
+#define COLOR_RED "\033[91m"
+#define COLOR_DEFAULT "\033[00m"
+
 /**
  * Ajoute la chaîne src à la chaîne dst
  * @param dst pointeur vers la chaîne de destination
@@ -41,12 +47,5 @@ char *truncate_path(char *path, int max_length);
  * @return la chaîne de caractères représentant le prompt
  */
 char *display_prompt(int last_return_value);
-
-/**
- * Analyse et exécute la ligne de commande passée en paramètre
- * @param line : la ligne de commande
- * @return : 0 en cas de succès et 1 en cas d'échec
- */
-int execute_commande(char *line);
 
 #endif

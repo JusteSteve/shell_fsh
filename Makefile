@@ -3,7 +3,17 @@ CC = gcc
 CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
 
 # fichiers sources
-SRCS = src/main.c src/prompt.c src/pwd.c src/cd.c src/exit.c src/ftype.c src/external_cmds.c src/cmd_utils.c src/for.c fsh_core/commands.c
+SRCS = src/main.c \
+	src/autres/prompt.c \
+	src/commandes/internes/pwd.c \
+	src/commandes/internes/cd.c \
+	src/commandes/internes/exit.c \
+	src/commandes/internes/ftype.c \
+	src/commandes/external_cmds.c \
+	src/commandes/cmd_utils.c \
+	src/structures/str-cmd-for.c \
+	src/structures/str-cmd.c
+
 
 # fichiers objets
 OBJDIR = objects
@@ -20,17 +30,10 @@ $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
 	gcc $(CFLAGS) -c $< -o $@
 
-# Compilation des fichiers .c en fichiers .o
-
-#objects/%.o: src/%.c
-#	@mkdir -p objects  # Crée le dossier objects si nécessaire
-#	$(CC) $(CFLAGS) -c $< -o $@
-
-# `make clean` supprime tous les fichiers compilés
 test :
-	
 	./test.sh
 
+# `make clean` supprime tous les fichiers compilés
 clean:
 	rm -rf objects fsh .sy5-2024-2025-projet-fsh-autotests.nosync
 

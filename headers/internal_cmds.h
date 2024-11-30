@@ -19,7 +19,7 @@
 #include <string.h>
 
 #define PATH_MAX 4096
-/*L'ancienne version n'avait pas de int, mais faut éviter de déclarer des variales dans un .h*/
+
 extern int prev_status; // pour stocker le status précédent
 
 /**
@@ -45,32 +45,5 @@ int cmd_exit(char *val);
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int cmd_ftype(const char *ref);
-
-/**
- * Affiche le contenu répertoire
- * @return 0 si tout s'est bien passé, 1 sinon
- */
-//int cmd_ls(char *path);
-
-/**
- * Affiche le contenu du fichier
- * @return 0 si tout s'est bien passé, 1 sinon
- */
-//int cmd_cat(char *path);
-
-// ***=== Fonctions auxiliaires ===***
-
-/**
- * @param cmd : nom de commade
- * @return 1 si c'est une commande interne 0 sinon
- */
-int is_internal_cmd(char *cmd);
-
-/**
- * Exécute la commande passée en paramètre
- * @param line la commande à exécuter
- * @return le code de retour de la commande 0 ou 1
- */
-int exec_internal_cmds(char *line);
 
 #endif
