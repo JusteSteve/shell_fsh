@@ -45,4 +45,14 @@ int exec_internal_cmds(char *line);
  */
 int exec_external_cmds(command *cmd);
 
+// ***=== Fonctions utilitaires pour les commandes structurées du type cmd1 ; ... ; cmdN ===***
+
+/**
+ * divise une ligne de commande structurée en commandes simples
+ * avec le point-virgule comme séparateur.
+ * @param line : ligne de commande structurée
+ * @return tableau de pointeur de command contenant les commandes simples
+ */
+command **split_structured_cmd(char *line);
+
 #endif

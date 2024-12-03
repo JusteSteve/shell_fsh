@@ -91,3 +91,14 @@ int get_nb_args(char **args)
   }
   return i;
 }
+
+void free_cmds_tab(command **cmds_tab)
+{
+  if (cmds_tab == NULL)
+    return;
+  for (int i = 0; cmds_tab[i] != NULL; i++)
+  {
+    clearCommands(cmds_tab[i]);
+  }
+  free(cmds_tab);
+}

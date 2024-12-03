@@ -92,4 +92,49 @@ error:
   exit(1);
 }
 
+command **split_structured_cmd(char *line)
+{
 
+  // allouer mémoire pour stocker les commandes
+  command **commandes = malloc(MAX_CMDS * sizeof(command *));
+  if (commandes == NULL)
+  {
+    perror("[split_structured_cmd]>malloc");
+    exit(1);
+  }
+
+  char *line_copy = strdup(line);
+  if (line_copy == NULL)
+  {
+    perror("[split_structured_cmd]>strdup");
+    goto error;
+  }
+
+  int i = 0;
+  char *cmd = strtok(line_copy, ";");
+  while (cmd != NULL && i < MAX_CMDS - 1)
+  {
+    // stocker la commande i dans le tableau de commandes
+    commandes[i] = fillCommand(cmd);
+    if (commandes[i] == NULL)
+    {
+      fprintf(stderr, "[split_structured_cmd]> Invalid command structure\n");
+      free(line_copy);
+      for (int j = 0; j < i; j++)
+      {
+        clearCommands(commandes[j]);
+      }
+      goto error;
+    }
+    i++;
+    // passer à la prochaine commande
+    cmd = strtok(NULL, ";");
+  }
+  commandes[i] = NULL; // on fini le tableau par NULL
+  free(line_copy);
+  return commandes;
+
+error:
+  free(commandes);
+  exit(1);
+}

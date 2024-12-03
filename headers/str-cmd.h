@@ -75,6 +75,12 @@ void free_args(char **args);
  */
 void clearCommands(command *cmd);
 
+/**
+ * @brief Libère la mémoire allouée pour les champs de la structure command
+ * @param cmds_tab : pointeur sur la structure command
+ */
+void free_cmds_tab(command **cmds_tab);
+
 // ***=== Structure pour les commandes structurées de type for ===***
 
 /**

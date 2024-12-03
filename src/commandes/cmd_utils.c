@@ -12,6 +12,39 @@ int prev_status; // pour stocker le status précédent
 int execute_commande(char *line)
 {
   int return_value;
+
+  // vérifier si la contient un ;
+  if (strchr(line, ';') != NULL)
+  {
+    printf("Commande structurée\n");
+    // diviser la ligne en commandes simples
+    command **cmds_tab = split_structured_cmd(line);
+    if (cmds_tab == NULL)
+    {
+      return 1;
+    }
+    printf("Nombre de commandes: %d\n", get_nb_args((char **)cmds_tab));
+    // exécuter chaque commande
+    int cmd_index = 0;
+    while (cmds_tab[cmd_index] != NULL)
+    {
+      char *ligne_de_commande = cmds_tab[cmd_index]->ligne;
+      printf("Commande simple: %s\n", ligne_de_commande);
+      return_value = execute_commande(ligne_de_commande);
+      prev_status = return_value;
+      if (return_value == 1) 
+      {
+        return 1;
+      }
+      
+      clearCommands(cmds_tab[cmd_index]);
+      cmd_index++;
+    }
+    free(cmds_tab);
+    //free_cmds_tab(cmds_tab);
+    return return_value;
+  }
+
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
 
