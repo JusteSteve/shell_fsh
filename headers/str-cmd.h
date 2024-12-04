@@ -53,9 +53,10 @@ command *fillCommand(char *line);
  * divise une ligne de commande en arguments
  * avec les espaces comme séparateurs.
  * @param cmd : ligne de commande à exécuter
+ * @param flag : 1 si c'est une ligne de commande structurée, 0 sinon
  * @return tableau de pointeur de char contenant les arguments de la commande
  */
-char **split_cmd(char *line);
+char **split_cmd(char *line, int flag);
 
 /**
  * @param args : tableau de chaines de caracteres

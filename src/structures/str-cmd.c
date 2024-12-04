@@ -30,7 +30,7 @@ command *fillCommand(char *line)
     }
     
     // mettre la ligne de commande dans un tableau
-    char **tableau_args = split_cmd(line);
+    char **tableau_args = split_cmd(line, 0);
     if (tableau_args == NULL)
     {
         perror("[fillCommand]>Erreur de split_cmd");

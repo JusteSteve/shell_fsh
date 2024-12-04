@@ -40,19 +40,26 @@ int exec_internal_cmds(char *line);
 // ***=== Fonctions utilitaires pour les commandes externes ===***
 
 /**
+ * Exécute la commande externe passée en paramètre
  * @param args : tableau de chaines de caracteres
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_external_cmds(command *cmd);
 
-// ***=== Fonctions utilitaires pour les commandes structurées du type cmd1 ; ... ; cmdN ===***
+// ***=== Fonctions utilitaires pour les commandes structurées ===***
 
 /**
- * divise une ligne de commande structurée en commandes simples
- * avec le point-virgule comme séparateur.
- * @param line : ligne de commande structurée
- * @return tableau de pointeur de command contenant les commandes simples
+ * @brief Exécute la commande for passée en paramètre
+ * @param cmd : pointeur sur la structure command
+ * @return 0 si tout s'est bien passé, 1 sinon
  */
-command **split_structured_cmd(char *line);
+int exec_for_cmds(command *cmd);
+
+/**
+ * @brief Exécute la commande structurée passée en paramètre
+ * @param line : ligne de commande
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_structured_cmds(char *line);
 
 #endif

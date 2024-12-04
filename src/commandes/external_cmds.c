@@ -44,9 +44,9 @@ int exec_external_cmds(command *cmd)
 
 // ===*** Fonctions auxiliaires ***===
 
-char **split_cmd(char *line)
+char **split_cmd(char *line, int flag)
 {
-  // allouer la mémoire pour stocker les arguments
+  // allouer la mémoire pour stocker les arguments ou les commandes
   char **args = malloc(MAX_CMDS * sizeof(char *));
   if (args == NULL)
   {
@@ -62,13 +62,13 @@ char **split_cmd(char *line)
     goto error;
   }
 
-  // séparer la ligne en arguments
   int i = 0;
-  char *words = strtok(line_copy, " ");
-  while (words != NULL && i < MAX_CMDS - 1)
+  // séparer la ligne en arguments ou en commandes
+  char *tokens = (flag) ? strtok(line_copy, ";") : strtok(line_copy, " ");
+  while (tokens != NULL && i < MAX_CMDS - 1)
   {
-    // stocker l'argument i dans le tableau
-    args[i] = strdup(words);
+    // stocker l'argument (ou la commande) i dans le tableau
+    args[i] = strdup(tokens);
     if (args[i] == NULL)
     {
       perror("[split_cmd]>strdup");
@@ -81,7 +81,7 @@ char **split_cmd(char *line)
     }
     i++;
     // passer au prochain argument
-    words = strtok(NULL, " ");
+    tokens = (flag) ? strtok(NULL, ";") : strtok(NULL, " ");
   }
   args[i] = NULL; // on fini le tableau par NULL
   free(line_copy);
@@ -92,49 +92,4 @@ error:
   exit(1);
 }
 
-command **split_structured_cmd(char *line)
-{
 
-  // allouer mémoire pour stocker les commandes
-  command **commandes = malloc(MAX_CMDS * sizeof(command *));
-  if (commandes == NULL)
-  {
-    perror("[split_structured_cmd]>malloc");
-    exit(1);
-  }
-
-  char *line_copy = strdup(line);
-  if (line_copy == NULL)
-  {
-    perror("[split_structured_cmd]>strdup");
-    goto error;
-  }
-
-  int i = 0;
-  char *cmd = strtok(line_copy, ";");
-  while (cmd != NULL && i < MAX_CMDS - 1)
-  {
-    // stocker la commande i dans le tableau de commandes
-    commandes[i] = fillCommand(cmd);
-    if (commandes[i] == NULL)
-    {
-      fprintf(stderr, "[split_structured_cmd]> Invalid command structure\n");
-      free(line_copy);
-      for (int j = 0; j < i; j++)
-      {
-        clearCommands(commandes[j]);
-      }
-      goto error;
-    }
-    i++;
-    // passer à la prochaine commande
-    cmd = strtok(NULL, ";");
-  }
-  commandes[i] = NULL; // on fini le tableau par NULL
-  free(line_copy);
-  return commandes;
-
-error:
-  free(commandes);
-  exit(1);
-}
