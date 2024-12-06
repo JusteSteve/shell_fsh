@@ -30,6 +30,8 @@ error:
 
 comFor *fillCommandFor(command *cmd)
 { // version ne prennant pas compte des options
+    //printf(">fillCommandFor\n");
+    //printf(">>cmd->ligne: %s\n", cmd->ligne);
     comFor *com = initialiseCommandFor();
     if (com == NULL)
     {
@@ -102,7 +104,7 @@ comFor *fillCommandFor(command *cmd)
     {
         com->ligne[ligne_taille - 1] = '\0';
     }
-
+    //printf(">>ligne: %s\n", com->ligne);
     return com;
 
 error:

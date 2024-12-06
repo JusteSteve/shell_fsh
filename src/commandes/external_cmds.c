@@ -59,7 +59,8 @@ char **split_cmd(char *line, int flag)
   if (line_copy == NULL)
   {
     perror("[split_cmd]>strdup");
-    goto error;
+    free(args);
+    exit(1);
   }
 
   int i = 0;
@@ -67,19 +68,28 @@ char **split_cmd(char *line, int flag)
   char *tokens = (flag) ? strtok(line_copy, ";") : strtok(line_copy, " ");
   while (tokens != NULL && i < MAX_CMDS - 1)
   {
-    // stocker l'argument (ou la commande) i dans le tableau
-    args[i] = strdup(tokens);
-    if (args[i] == NULL)
+    // si c'est une commande for, on doit stocker la commande et les arguments dans une seule case
+    if (flag && strncmp(tokens, " for", 4) == 0)
     {
-      perror("[split_cmd]>strdup");
-      free(line_copy);
-      for (int j = 0; j < i; i++)
-      {
-        free(args[i]);
-      }
-      goto error;
+      args[i++] = build_for_cmd(tokens);
     }
-    i++;
+    else
+    {
+      //  stocker l'argument (ou la commande) i dans le tableau
+      args[i] = strdup(tokens);
+      if (args[i] == NULL)
+      {
+        perror("[split_cmd]>strdup");
+        free(line_copy);
+        for (int j = 0; j < i; i++)
+        {
+          free(args[i]);
+        }
+        goto error;
+      }
+      i++;
+    }
+
     // passer au prochain argument
     tokens = (flag) ? strtok(NULL, ";") : strtok(NULL, " ");
   }
@@ -88,8 +98,34 @@ char **split_cmd(char *line, int flag)
   return args;
 
 error:
+
   free(args);
   exit(1);
 }
 
+char *build_for_cmd(char *tokens)
+{
+  size_t len = strlen(tokens) + 1;
+  char *tmp = malloc(len); 
+  if (tmp == NULL)
+  {
+    perror("[build_for_cmd]>malloc");
+    exit(1);
+  }
+  strcpy(tmp, tokens);
 
+  while(strstr(tokens, "}") == NULL)
+  {
+    tokens = strtok(NULL, ";");
+    len += strlen(tokens) + 2; // +2 pour ; et le \0
+    tmp = realloc(tmp, len);
+    if (tmp == NULL)
+    {
+      perror("[build_for_cmd]>realloc");
+      exit(1);
+    }
+    strcat(tmp, ";");
+    strcat(tmp, tokens);
+  }
+  return tmp;
+}

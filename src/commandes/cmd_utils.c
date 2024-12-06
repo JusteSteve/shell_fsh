@@ -11,37 +11,46 @@ int prev_status; // pour stocker le status précédent
 
 int execute_commande(char *line)
 {
+  // printf(">execute_commande\n");
+  // printf(">>line: %s\n", line);
   int return_value;
-  // vérifier si la contient un ;
-  if (strchr(line, ';') != NULL)
-  {
-    // exécuter la commande structurée
-    return_value = exec_structured_cmds(line);
-    prev_status = return_value;
-    return return_value;
-  }
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
   if (cmd == NULL)
   {
     return 1;
   }
-  // vérifier si la commande est interne
-  if (is_internal_cmd(cmd->nom))
-  {
-    return_value = exec_internal_cmds(line);
-  }
   // vérifier si la commande est un for
-  else if (strcmp("for", cmd->nom) == 0)
+  if (strcmp(cmd->nom, "for") == 0)
   {
+    command *cmd = fillCommand(line);
+    if (cmd == NULL)
+    {
+      return 1;
+    }
     return_value = exec_for_cmds(cmd);
   }
-  else
+  // vérifier si la contient un ;
+  else if (strchr(line, ';') != NULL)
   {
-    return_value = exec_external_cmds(cmd);
+    // exécuter la commande structurée
+    return_value = exec_structured_cmds(line);
+    prev_status = return_value;
+    return return_value;
   }
-  prev_status = return_value;
+  else
+    // vérifier si la commande est interne
+    if (is_internal_cmd(cmd->nom))
+    {
+      return_value = exec_internal_cmds(line);
+    }
+    else
+    {
+      return_value = exec_external_cmds(cmd);
+    }
   clearCommands(cmd);
+
+  prev_status = return_value;
   return return_value;
 }
 
@@ -104,6 +113,7 @@ int exec_internal_cmds(char *line)
 
 int exec_structured_cmds(char *line)
 {
+  // printf(">exec_structured_cmds\n");
   int return_value;
   // diviser la ligne en tableau de commandes simples
   char **cmds_tab = split_cmd(line, 1);
@@ -115,6 +125,7 @@ int exec_structured_cmds(char *line)
   // exécuter toutes les commandes
   while (cmds_tab[cmd_i] != NULL)
   {
+    printf(">exec_structured_cmds :%s\n", cmds_tab[cmd_i]);
     return_value = execute_commande(cmds_tab[cmd_i]);
 
     prev_status = return_value;
@@ -131,20 +142,34 @@ int exec_structured_cmds(char *line)
 
 int exec_for_cmds(command *cmd)
 {
-  // créer une structure de commande for à partir de la cmd
+  // printf(">exec_for_cmds\n");
+  //  printf(">>cmd->ligne: %s\n", cmd->ligne);
+  int return_value;
+  //   créer une structure de commande for à partir de la cmd
   comFor *command = fillCommandFor(cmd);
   if (command == NULL)
   {
     return 1;
   }
   // exécuter la commande for
-  if (parcoursFor(command) != 0)
+  return_value = parcoursFor(command);
+  /*
+  if (strstr(cmd->ligne, ";"))
   {
-    clearCommandFor(command);
-    return 1;
+    // se débarasser de tout ce qui est avant le ;
+    char *new_line = strdup(cmd->ligne);
+    char *new_line2 = strdup(cmd->ligne);
+    char *token = strtok(new_line, ";");
+    token = strtok(NULL, ";");
+    new_line2 = strstr(new_line2, token);
+    printf(">>new_line2: %s\n", new_line2);
+    return_value = execute_commande(new_line2);
+    // free(new_line);
+    // free(new_line2);
   }
+  */
   clearCommandFor(command);
-  return 0;
+  return return_value;
 }
 
 // ***=== Fonctions auxiliaires ===***

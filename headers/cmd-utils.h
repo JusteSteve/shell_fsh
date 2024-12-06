@@ -62,4 +62,12 @@ int exec_for_cmds(command *cmd);
  */
 int exec_structured_cmds(char *line);
 
+/**
+ * @brief reconstruit la commande for ... { ... } dans une seule case
+ * si elle est dans une commande structurée
+ * @param tokens : chaine de caractères
+ * @return commande for ... { ... }
+ */
+char *build_for_cmd(char *tokens);
+
 #endif
