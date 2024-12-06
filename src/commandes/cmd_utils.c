@@ -11,8 +11,6 @@ int prev_status; // pour stocker le status précédent
 
 int execute_commande(char *line)
 {
-  // printf(">execute_commande\n");
-  // printf(">>line: %s\n", line);
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
@@ -113,7 +111,6 @@ int exec_internal_cmds(char *line)
 
 int exec_structured_cmds(char *line)
 {
-  // printf(">exec_structured_cmds\n");
   int return_value;
   // diviser la ligne en tableau de commandes simples
   char **cmds_tab = split_cmd(line, 1);
@@ -125,9 +122,7 @@ int exec_structured_cmds(char *line)
   // exécuter toutes les commandes
   while (cmds_tab[cmd_i] != NULL)
   {
-    printf(">exec_structured_cmds :%s\n", cmds_tab[cmd_i]);
     return_value = execute_commande(cmds_tab[cmd_i]);
-
     prev_status = return_value;
     if (return_value == 1)
     {
@@ -142,8 +137,6 @@ int exec_structured_cmds(char *line)
 
 int exec_for_cmds(command *cmd)
 {
-  // printf(">exec_for_cmds\n");
-  //  printf(">>cmd->ligne: %s\n", cmd->ligne);
   int return_value;
   //   créer une structure de commande for à partir de la cmd
   comFor *command = fillCommandFor(cmd);
@@ -153,21 +146,24 @@ int exec_for_cmds(command *cmd)
   }
   // exécuter la commande for
   return_value = parcoursFor(command);
-  /*
-  if (strstr(cmd->ligne, ";"))
+
+  // vérifier si on est dans le cas for ... { ... } ; cmd
+  char *tmp = strchr(cmd->ligne, '}');
+  char *point_virgule = strchr(tmp, ';');
+  printf(">>point_virgule: %s\n", point_virgule);
+  if (point_virgule != NULL)
   {
     // se débarasser de tout ce qui est avant le ;
-    char *new_line = strdup(cmd->ligne);
-    char *new_line2 = strdup(cmd->ligne);
-    char *token = strtok(new_line, ";");
-    token = strtok(NULL, ";");
-    new_line2 = strstr(new_line2, token);
-    printf(">>new_line2: %s\n", new_line2);
-    return_value = execute_commande(new_line2);
-    // free(new_line);
-    // free(new_line2);
+    char *new_line = strdup(point_virgule + 1);
+    if (new_line == NULL)
+    {
+      perror("[exec_for_cmds]>strdup");
+      clearCommandFor(command);
+      return 1;
+    }
+    return_value = execute_commande(new_line);
+    free(new_line);
   }
-  */
   clearCommandFor(command);
   return return_value;
 }

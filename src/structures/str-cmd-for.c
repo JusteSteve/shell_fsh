@@ -15,6 +15,7 @@ comFor *initialiseCommandFor()
     }
 
     com->command = NULL;
+    com->var = NULL;
     com->dir = NULL;
     com->path = NULL;
     com->options = NULL;
@@ -30,14 +31,22 @@ error:
 
 comFor *fillCommandFor(command *cmd)
 { // version ne prennant pas compte des options
-    //printf(">fillCommandFor\n");
-    //printf(">>cmd->ligne: %s\n", cmd->ligne);
     comFor *com = initialiseCommandFor();
     if (com == NULL)
     {
         goto error;
     }
     int i = 0;
+    // récupérer la variable et rajouter un $ derrière
+    com->var = malloc(strlen(cmd->args[1]) + 2);
+    if (com->var == NULL)
+    {
+        perror("[fillCommandFor]>strdup");
+        goto error;
+    }
+    com->var[0] = '$';
+    strcpy(com->var + 1, cmd->args[1]);
+
 
     // TODO: Gérer les options
     //! parser les options de la commande PAS UTILISEE POUR L'INSTANT
@@ -104,7 +113,6 @@ comFor *fillCommandFor(command *cmd)
     {
         com->ligne[ligne_taille - 1] = '\0';
     }
-    //printf(">>ligne: %s\n", com->ligne);
     return com;
 
 error:
@@ -155,7 +163,7 @@ int parcoursFor(comFor *cm)
         snprintf(entry_path, PATH_MAX, "%s/%s", cm->dir, entry->d_name);
 
         // remplacer $F par le nom du fichier
-        char *cmd_avec_f = remplacer_variable(cm->ligne, "$F", entry_path);
+        char *cmd_avec_f = remplacer_variable(cm->ligne, cm->var, entry_path);
 
         /* Andréa, c'est ici que le champ command->ligne (ce qui est entre les accolades) est exécuté.
         Dans execute_commande c'est converti en command puis exécuté

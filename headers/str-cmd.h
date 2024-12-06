@@ -91,6 +91,7 @@ typedef struct comFor
 {
     char *ligne;   // toute la ligne de commande
     char *command; // renseigne le nom de la commande
+    char *var;     // renseigne la variable de boucle
     char *dir;     // renseigne le répertoire courant
     char *path;    // renseigne le chemin du fichier dont l'on désire l'exécution
     char *options; // donne les options de boucle

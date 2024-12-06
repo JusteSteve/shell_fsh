@@ -89,7 +89,6 @@ char **split_cmd(char *line, int flag)
       }
       i++;
     }
-
     // passer au prochain argument
     tokens = (flag) ? strtok(NULL, ";") : strtok(NULL, " ");
   }
@@ -106,15 +105,15 @@ error:
 char *build_for_cmd(char *tokens)
 {
   size_t len = strlen(tokens) + 1;
-  char *tmp = malloc(len); 
+  char *tmp = malloc(len);
   if (tmp == NULL)
   {
     perror("[build_for_cmd]>malloc");
     exit(1);
   }
   strcpy(tmp, tokens);
-
-  while(strstr(tokens, "}") == NULL)
+  // reconstruire la commande for ... { ... }
+  while (strstr(tokens, "}") == NULL)
   {
     tokens = strtok(NULL, ";");
     len += strlen(tokens) + 2; // +2 pour ; et le \0
