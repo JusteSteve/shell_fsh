@@ -30,7 +30,7 @@ command *fillCommand(char *line)
     }
     
     // mettre la ligne de commande dans un tableau
-    char **tableau_args = split_cmd(line);
+    char **tableau_args = split_cmd(line, 0);
     if (tableau_args == NULL)
     {
         perror("[fillCommand]>Erreur de split_cmd");
@@ -90,4 +90,15 @@ int get_nb_args(char **args)
     i++;
   }
   return i;
+}
+
+void free_cmds_tab(command **cmds_tab)
+{
+  if (cmds_tab == NULL)
+    return;
+  for (int i = 0; cmds_tab[i] != NULL; i++)
+  {
+    clearCommands(cmds_tab[i]);
+  }
+  free(cmds_tab);
 }

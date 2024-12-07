@@ -53,9 +53,10 @@ command *fillCommand(char *line);
  * divise une ligne de commande en arguments
  * avec les espaces comme séparateurs.
  * @param cmd : ligne de commande à exécuter
+ * @param flag : 1 si c'est une ligne de commande structurée, 0 sinon
  * @return tableau de pointeur de char contenant les arguments de la commande
  */
-char **split_cmd(char *line);
+char **split_cmd(char *line, int flag);
 
 /**
  * @param args : tableau de chaines de caracteres
@@ -75,6 +76,12 @@ void free_args(char **args);
  */
 void clearCommands(command *cmd);
 
+/**
+ * @brief Libère la mémoire allouée pour les champs de la structure command
+ * @param cmds_tab : pointeur sur la structure command
+ */
+void free_cmds_tab(command **cmds_tab);
+
 // ***=== Structure pour les commandes structurées de type for ===***
 
 /**
@@ -84,6 +91,7 @@ typedef struct comFor
 {
     char *ligne;   // toute la ligne de commande
     char *command; // renseigne le nom de la commande
+    char *var;     // renseigne la variable de boucle
     char *dir;     // renseigne le répertoire courant
     char *path;    // renseigne le chemin du fichier dont l'on désire l'exécution
     char *options; // donne les options de boucle
