@@ -150,7 +150,6 @@ int exec_for_cmds(command *cmd)
   // vérifier si on est dans le cas for ... { ... } ; cmd
   char *tmp = strchr(cmd->ligne, '}');
   char *point_virgule = strchr(tmp, ';');
-  printf(">>point_virgule: %s\n", point_virgule);
   if (point_virgule != NULL)
   {
     // se débarasser de tout ce qui est avant le ;

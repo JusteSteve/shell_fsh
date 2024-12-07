@@ -85,5 +85,41 @@ Chaque membre est invité à remplir l'état d'avancement de ses tâches en fin 
 
 **Remarques générales :**
 La structure for a été commencée par Andrèa, corrigée puis adaptée par Steve, les tests et les
-corrections finales ont été faites par Steve et Nic (très tard). 
+corrections finales ont été faites par Steve et Nic (très tard).
 Décallage des tâches prévues aux semaines suivantes pour respecter le temps imparti du jalon 1.
+
+---
+
+## Semaine du [ mer 27 nov 2024 ] au [ mer 04 déc 2024 ]
+
+### Objectifs et répartition de la Semaine 4
+
+- **[ Andréa ]** :
+
+  - **Tâche** : Finir les boucles `for` avec les options .
+
+- **[ Nic ]** :
+
+  - **Tâche** : Mise en place des redirections vers des fichiers.
+
+- **[ Sylvain ]** :
+  - **Tâche** : Finir l'implémentation des commandes structurées du type `cmd_1 ; cmd_2 ; ... ; cmd_n`.
+  - **Avancement:**
+    - Modification de la fonction `execute_commande` pour gérer les commandes structurées et de la fonction `split_cmds` pour séparer la ligne de commande en fonction des ; lorsque une commande structurée est détectée.
+    - Ajout de la fonction `exec_strutured_cmds` qui exécute toutes les commandes structurées d'une ligne de commande, puis renvoie la valeur de retour de la dernière commande.
+
+---
+
+**Remarques générales :**
+Problème avec les boucles for imbriquées, seul le premier tour de la boucle extérieur est exécuté.
+
+---
+
+## Semaine du [ mer 04 déc 2024 ] au [ mer 11 déc 2024 ]
+
+### Objectifs et répartition de la Semaine 5
+
+- **[ Andréa ]** :
+- **[ Nic ]** :
+- **[ Sylvain ]** :
+  - **Tâche** : Implémenter les commandes structurées pipelines `cmd_1 | cmd_2 | ... | cmd_n`.
