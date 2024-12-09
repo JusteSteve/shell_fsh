@@ -29,7 +29,7 @@ int main()
       continue;
     }
     
-    last_return_value = execute_commande(line);
+    last_return_value = execute_commande(interm(line));  //interm va couper la ligne et la transformer en structure commandInfos, pour la renvoyer à execute_commande
     add_history(line);
     free(line);
   }

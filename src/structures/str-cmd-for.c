@@ -159,9 +159,9 @@ int parcoursFor(comFor *cm)
         Dans execute_commande c'est converti en command puis exécuté
         avec exec_internal_cmds ou exec_external_cmds.
         Donc la fonction exec_external_cmdsFor n'était pas nécessaire.
-        TU PEUX ME SUPPRIMER QUAND TU ME LIRA
+        TU PEUX ME SUPPRIMER QUAND TU ME LIRA, plus tard j'efface au cas où
         */
-        execute_commande(cmd_avec_f);
+        execute_commande(interm(cmd_avec_f));
         free(cmd_avec_f);
 
         // FIXME: PAS UTILSE POUR L'INSTANT A VOIR APRES JALON 1

@@ -8,13 +8,31 @@
 
 // ***=== Inclusions ===***
 #include "str-cmd.h"
+#include <sys/types.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/wait.h>
+
+
+
+typedef struct commandsInfo {  // structure regroupant tous les infos d'une ligne: toutes les commandes classiques, toutes les commandes pour chaque for et leur nombre
+	char ** commands;
+	char ** commandsFor;
+	size_t* com;
+	size_t* comfor;
+} commandsInfo;
+
+commandsInfo *interm(char* line);
+int execut_commande(commandsInfo * com);
+char *trim(char *str);
+char *creating_for_command(char *corps, char *core);
 
 /**
  * Analyse et exécute la ligne de commande passée en paramètre
  * @param line : la ligne de commande
  * @return : 0 en cas de succès et 1 en cas d'échec
  */
-int execute_commande(char *line);
+int execute_commande(commandsInfo * com);
 
 /**
  * @param line : ligne de commande
@@ -55,11 +73,10 @@ int exec_external_cmds(command *cmd);
  */
 int exec_for_cmds(command *cmd);
 
-/**
- * @brief Exécute la commande structurée passée en paramètre
- * @param line : ligne de commande
- * @return 0 si tout s'est bien passé, 1 sinon
- */
-int exec_structured_cmds(char *line);
+/*
+  @brief Exécute la commande structurée passée en paramètre
+  @param line : ligne de commande
+  @return 0 si tout s'est bien passé, 1 sinon
+int exec_structured_cmds(char *line); */
 
 #endif
