@@ -36,6 +36,11 @@ int execute_commande(char *line)
     prev_status = return_value;
     return return_value;
   }
+  else if (strchr(line, '|') != NULL)
+  {
+    // exécuter la commande pipeline
+    return_value = exec_pipeline_cmds(line);
+  }
   else
     // vérifier si la commande est interne
     if (is_internal_cmd(cmd->nom))
