@@ -40,7 +40,8 @@ char *display_prompt(int last_return_value)
   }
 
   // tronquer le chemin si nécessaire
-  int visible_elements = 5; // $, espace et [x]
+  int return_value_len = snprintf(NULL, 0, "%d", last_return_value);
+  int visible_elements = 4 + return_value_len; // $, espace et []
   int path_max_len = 30 - visible_elements;
   char *new_path = truncate_path(dir, path_max_len);
   if (new_path == NULL)

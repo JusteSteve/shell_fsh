@@ -62,6 +62,12 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "exit", on arrête la boucle
   if (strncmp(cmd->nom, "exit", 4) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 2)
+    {
+      fprintf(stderr, "exit: too many arguments\n");
+      goto error;
+    }
     char *val = NULL;
     if (cmd->args[1] != NULL)
     {
@@ -73,18 +79,32 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strncmp(cmd->nom, "pwd", 3) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 1)
+    {
+      fprintf(stderr, "pwd: %s : invalid argument\n", cmd->args[1]);
+      goto error;
+    }
     prev_status = cmd_pwd(); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    clearCommands(cmd);
     return prev_status;
   }
   // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
   if (strncmp(cmd->nom, "cd", 2) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 2)
+    {
+      fprintf(stderr, "cd: too many arguments\n");
+      goto error;
+    }
     char *path = NULL;
     if (cmd->args[1] != NULL)
     {
       path = cmd->args[1];
     }
     prev_status = cmd_cd(path); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    clearCommands(cmd);
     return prev_status;
   }
   // Si l'utilisateur a tapé "ftype", on cmd_ftype de ftype.c
@@ -95,18 +115,23 @@ int exec_internal_cmds(char *line)
     if (ref != NULL)
     {
       prev_status = cmd_ftype(ref);
+      clearCommands(cmd);
       return prev_status;
     }
     else
     { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
       fprintf(stderr, "ftype: missing reference argument\n");
-      return 1;
+      goto error;
       // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
       // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
       // donc ça va retourner !prev_status, à voir pour l'instant donc.
     }
   }
-  return 1; // Par défaut, on continue la boucle
+  clearCommands(cmd);
+  return 1; // si la commande n'est pas reconnue
+error:
+  clearCommands(cmd);
+  return 1;
 }
 
 int exec_structured_cmds(char *line)

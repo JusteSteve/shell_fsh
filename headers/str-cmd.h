@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
@@ -34,7 +35,7 @@ typedef struct command
     int taille;  // nombre d'éléments dans le tableau args
 } command;
 
-// Prototypes des fonctions associées
+// ***=== Prototypes des fonctions associées ===***
 
 /**
  * @brief Initialise la structure command
