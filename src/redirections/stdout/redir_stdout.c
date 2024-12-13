@@ -3,9 +3,10 @@
  * Contient l'implémentation de CMD > FIC
  */
 #include "../../../headers/redir.h"
+#include "../../../headers/str-cmd.h"
 
 int redir_stdout(char *line) {
-    char *output_file = NULL;
+    command *cmd = NULL;
     char *redir_pos;
     int fd = -1;
     int fd_stdout = -1;
@@ -25,7 +26,7 @@ int redir_stdout(char *line) {
     }
 
     // Extraire le nom du fichier après " > "
-    output_file = strtok(redir_pos + 3, " ");
+    char *output_file = strtok(redir_pos + 3, " ");
     if (output_file == NULL) {
         dprintf(STDERR_FILENO, "Error: no output file specified\n");
         goto error;
@@ -56,36 +57,33 @@ int redir_stdout(char *line) {
     // Retirer la partie de redirection de la ligne de commande
     *redir_pos = '\0'; 
 
-    // Préparer les arguments pour execvp
-    char *args[128];
-    int i = 0;
-    // faut couper (et décaller) la ligne constituée d'arguments en ligne individuelle d'argument
-    char *arg = strtok(line, " ");
-    while (arg != NULL && i < 127) {
-        args[i++] = arg;
-        arg = strtok(NULL, " ");
+    // Remplir la structure command
+    cmd = fillCommand(line);
+    if (cmd == NULL) {
+        // impossible normalement
+        dprintf(STDERR_FILENO, "Error: failed to parse command\n");
+        goto error;
     }
-    args[i] = NULL; // Terminaison de la liste des arguments
 
-    // fourchette :p pour exécuter la commande
+    // Créer un processus enfant pour exécuter la commande
     pid_t pid = fork();
     if (pid == -1) { // ça devrait pas arriver mais juste au cas où aussi
-        dprintf(STDERR_FILENO, "Error: fourchette failed: %s\n", strerror(errno));
+        dprintf(STDERR_FILENO, "Error: fork failed: %s\n", strerror(errno));
         goto error;
     }
 
     if (pid == 0) {
-        // cf. cours pour execvp ou bien vidéo de CodeVault (le goat)
-        execvp(args[0], args);
+        // execvp : j'utilisais un tab d'args ici au lieu d'avoir utilisé ce qui était déjà fait
+        execvp(cmd->nom, cmd->args);
         // Si execvp échoue :
-        dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
-        _exit(1); // Sortie immédiate car c'est le gosse
+        dprintf(STDERR_FILENO, "Error : execvp failed %s\n", strerror(errno));
+        _exit(1); // Sortie immédiate en cas d'échec car c'est le gosse
     }
 
     // Processus parent : attendre la fin du processus enfant
     int status;
     if (waitpid(pid, &status, 0) == -1) {
-        dprintf(STDERR_FILENO, "Error: waitpid failed: %s\n", strerror(errno));
+        dprintf(STDERR_FILENO, "Error : child's a failure (asian mood) %s\n", strerror(errno));
         goto error;
     }
 
@@ -96,6 +94,7 @@ int redir_stdout(char *line) {
     }
 
     close(fd_stdout); 
+    clearCommands(cmd); // Libérer la mémoire associée à la commande
     return WEXITSTATUS(status); // Retourne le code de sortie de la commande
 
 error:
@@ -105,6 +104,9 @@ error:
     if (fd_stdout != -1) {
         dup2(fd_stdout, STDOUT_FILENO);
         close(fd_stdout);
+    }
+    if (cmd != NULL) {
+        clearCommands(cmd); // Libérer la mémoire en cas d'erreur
     }
     return 1;
 }

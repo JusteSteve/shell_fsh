@@ -1,3 +1,2 @@
 ls.txt
 redir_stdout.c
-test.txt
