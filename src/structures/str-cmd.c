@@ -2,7 +2,7 @@
  * @file str-cmd.c
  * @brief Fichier contenant l'implémentation des fonctions pour les commandes simples.
  */
-#include "../../headers/cmd-utils.h"
+#include "../../headers/str-cmd.h"
 
 command *initialiseCommand()
 {
