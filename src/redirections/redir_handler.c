@@ -7,9 +7,9 @@
 
 int is_redirection(char *line){
     // Vérification des différents types de redirection (faudrait que j'améliore le système de détection)
-    if (strstr(line, " > ") != NULL || strstr(line, " >> ") != NULL || 
+    if (strstr(line, " > ") != NULL || strstr(line, " >| ") != NULL || 
         strstr(line, " < ") != NULL || strstr(line, " << ") != NULL ||
-        strstr(line, " >| ") != NULL) {
+        strstr(line, " 2> ") != NULL) {
         return 1;
     }
     return 0;
@@ -38,6 +38,10 @@ int redir_handler (char *line) {
     else if (strstr(line, " >> ") != NULL) {
         printf("redir_stdout_append\n");
         return redir_stdout_append(line);
+    }
+    else if (strstr(line, " 2> ") != NULL) {
+        printf("redir_stderr\n");
+        return redir_stderr(line);
     }
     else {
         return 1;
