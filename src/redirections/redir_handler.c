@@ -6,9 +6,10 @@
 #include "../../headers/redir.h"
 
 int is_redirection(char *line){
-    // Vérification des différents types de redirection
+    // Vérification des différents types de redirection (faudrait que j'améliore le système de détection)
     if (strstr(line, " > ") != NULL || strstr(line, " >> ") != NULL || 
-        strstr(line, " < ") != NULL || strstr(line, " << ") != NULL){
+        strstr(line, " < ") != NULL || strstr(line, " << ") != NULL ||
+        strstr(line, " >| ") != NULL) {
         return 1;
     }
     return 0;
@@ -22,11 +23,17 @@ int redir_handler (char *line) {
     return 0;
     */
     // vérifie quel type de redirection est demandé
-    if (strstr(line, " < ") != NULL || strstr(line, " < ") != NULL) {
+    if (strstr(line, " < ") != NULL) {
+        printf("redir_stdin\n");
         return redir_stdin(line);
     }
-    else if (strstr(line, " > ") != NULL || strstr(line, " >> ") != NULL) {
+    else if (strstr(line, " > ") != NULL) {
+        printf("redir_stdout\n");
         return redir_stdout(line);
+    }
+    else if (strstr(line, " >| ") != NULL) {
+        printf("redir_stdout_trunc\n");
+        return redir_stdout_trunc(line);
     }
     else {
         return 1;

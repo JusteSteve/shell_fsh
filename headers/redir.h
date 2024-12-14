@@ -22,12 +22,6 @@ int handle_input_redirection(char *line);
  * 
  * 
 */
-int redir_stdout(char *line);
-
-/**
- * 
- * 
-*/
 int redir_stdin(char *line);
 
 /**
@@ -41,5 +35,17 @@ int is_redirection(char *line);
  * 
 */
 int redir_handler(char *line);
+
+/**
+ * 
+ * 
+*/
+int redir_stdout(char *line);
+
+/**
+ * 
+ * 
+*/
+int redir_stdout_trunc(char *line);
 
 #endif

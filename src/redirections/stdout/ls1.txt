@@ -1,4 +1,5 @@
 echo.txt
+ls1.txt
 ls.txt
 pwd.txt
 redir_stdout.c
