@@ -35,6 +35,10 @@ int redir_handler (char *line) {
         printf("redir_stdout_trunc\n");
         return redir_stdout_trunc(line);
     }
+    else if (strstr(line, " >> ") != NULL) {
+        printf("redir_stdout_append\n");
+        return redir_stdout_append(line);
+    }
     else {
         return 1;
     }

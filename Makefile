@@ -14,6 +14,7 @@ SRCS = src/main.c \
 	src/redirections/stdin/redir_stdin.c \
 	src/redirections/stdout/redir_stdout.c \
 	src/redirections/stdout/redir_stdout_trunc.c \
+	src/redirections/stdout/redir_stdout_append.c \
 	src/redirections/redir_handler.c \
 	src/structures/str-cmd-for.c \
 	src/structures/str-cmd.c 

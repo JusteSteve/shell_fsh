@@ -48,4 +48,10 @@ int redir_stdout(char *line);
 */
 int redir_stdout_trunc(char *line);
 
+/**
+ * 
+ * 
+*/
+int redir_stdout_append(char *line);
+
 #endif

@@ -1,5 +1,0 @@
-echo.txt
-ls.txt
-pwd.txt
-redir_stdout.c
-redir_stdout_trunc.c
