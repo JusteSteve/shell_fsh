@@ -60,9 +60,15 @@ int redir_stdout_append(char *line);
 int redir_stderr(char *line);
 
 /**
- * Agit comme CMD >| FIC
+ * Agit comme CMD 2>| FIC
  * @return 0 si tout s'est bien passé, 1 sinon
 */
 int redir_stderr_trunc(char *line);
+
+/**
+ * Agit comme CMD 2>> FIC
+ * @return 0 si tout s'est bien passé, 1 sinon
+*/
+int redir_stderr_append(char *line);
 
 #endif

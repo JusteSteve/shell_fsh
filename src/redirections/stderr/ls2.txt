@@ -1,4 +1,0 @@
-ls2.txt
-ls.txt
-redir_stderr.c
-redir_stderr_trunc.c
