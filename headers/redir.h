@@ -19,7 +19,7 @@
 
 /**
  * Détecte la présence d'une redirection dans la ligne de commande
- * @return 1 si une redirection est détectée, 0 sinon et le code continue
+ * @return le type de redirection détectée, -1 si aucune n'a été trouvée
 */
 int is_redirection(char *line);
 
