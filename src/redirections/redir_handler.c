@@ -5,8 +5,8 @@
 
 #include "../../headers/redir.h"
 
+/*
 int is_redirection(char *line){
-    // Vérification des différents types de redirection (faudrait que j'améliore le système de détection)
     if (strstr(line, " > ") != NULL || strstr(line, " >| ") != NULL || 
         strstr(line, " < ") != NULL || strstr(line, " >> ") != NULL ||
         strstr(line, " 2> ")!= NULL || strstr(line, " 2>| ")!= NULL ||
@@ -15,44 +15,61 @@ int is_redirection(char *line){
     }
     return 0;
 }
+*/
 
-int redir_handler (char *line) {
-    /*  plus besoin, redondance, je sais pas encore parfaitement comment ça va être géré
-    if (is_redirection(line)) {
-        return redir(line);
-    }
-    return 0;
-    */
-    // vérifie quel type de redirection est demandé
+int is_redirection(char *line) {
     if (strstr(line, " < ") != NULL) {
-        printf("redir_stdin\n");
-        return redir_stdin(line);
+        return REDIR_STDIN;
     }
     else if (strstr(line, " > ") != NULL) {
-        printf("redir_stdout\n");
-        return redir_stdout(line);
+        return REDIR_STDOUT;
     }
     else if (strstr(line, " >| ") != NULL) {
-        printf("redir_stdout_trunc\n");
-        return redir_stdout_trunc(line);
+        return REDIR_STDOUT_TRUNC;
     }
     else if (strstr(line, " >> ") != NULL) {
-        printf("redir_stdout_append\n");
-        return redir_stdout_append(line);
+        return REDIR_STDOUT_APPEND;
     }
     else if (strstr(line, " 2> ") != NULL) {
-        printf("redir_stderr\n");
-        return redir_stderr(line);
+        return REDIR_STDERR;
     }
     else if (strstr(line, " 2>| ") != NULL) {
-        printf("redir_stderr_trunc\n");
-        return redir_stderr_trunc(line);
+        return REDIR_STDERR_TRUNC;
     }
     else if (strstr(line, " 2>> ") != NULL) {
-        printf("redir_stderr_append\n");
-        return redir_stderr_append(line);
+        return REDIR_STDERR_APPEND;
     }
     else {
-        return 1;
+        return -1;
+    }
+}
+
+int redir_handler (char *line, int type) {
+    switch (type) {
+        case REDIR_STDIN:
+            printf ("redir stdin\n");
+            return redir_stdin(line);
+        case REDIR_STDOUT:
+            printf ("redir stdout\n");
+            return redir_stdout(line);
+        case REDIR_STDOUT_TRUNC:
+            printf ("redir stdout trunc\n");
+            return redir_stdout_trunc(line);
+        case REDIR_STDOUT_APPEND:
+            printf ("redir stdout append\n");
+            return redir_stdout_append(line);
+        case REDIR_STDERR:
+            printf ("redir stderr\n");
+            return redir_stderr(line);
+        case REDIR_STDERR_TRUNC:
+            printf ("redir stderr trunc\n");
+            return redir_stderr_trunc(line);
+        case REDIR_STDERR_APPEND:
+            printf ("redir stderr append\n");
+            return redir_stderr_append(line);
+        default:
+            // ne devrait pas être appelé mais ça devrait pas arriver normalement
+            dprintf (STDERR_FILENO, "Error: invalid redirection type\n");
+            return 1;
     }
 }

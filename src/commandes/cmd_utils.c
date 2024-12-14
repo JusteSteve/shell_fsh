@@ -37,9 +37,10 @@ int execute_commande(char *line)
     prev_status = return_value;
     return return_value;
   }
-  else if (is_redirection(line))
-  {
-    return_value = redir_handler(line);
+  else if (is_redirection(line)!=-1)
+  { 
+    int type = is_redirection(line);
+    return_value = redir_handler(line, type);
   }
   else if (is_internal_cmd(cmd->nom))
     // vérifier si la commande est interne
