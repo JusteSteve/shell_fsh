@@ -8,8 +8,8 @@
 int redir_stdin(char *line) {
     char *input_file = NULL;
     char *redir_pos;
-    int fd_pipe;
-    int fd_stdin;
+    int fd_pipe = -1; /*error à la compilation sinon Wsometimes-uninitialized*/
+    int fd_stdin = -1;
 
     // Recherche de la redirection " < "
     redir_pos = strstr(line, " < ");
