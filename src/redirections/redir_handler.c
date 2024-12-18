@@ -47,25 +47,25 @@ int is_redirection(char *line) {
 int redir_handler (char *line, int type) {
     switch (type) {
         case REDIR_STDIN:
-            printf ("redir stdin\n");
+            //printf ("redir stdin\n");
             return redir_stdin(line);
         case REDIR_STDOUT:
-            printf ("redir stdout\n");
+            //printf ("redir stdout\n");
             return redir_stdout(line);
         case REDIR_STDOUT_TRUNC:
-            printf ("redir stdout trunc\n");
+            //printf ("redir stdout trunc\n");
             return redir_stdout_trunc(line);
         case REDIR_STDOUT_APPEND:
-            printf ("redir stdout append\n");
+            //printf ("redir stdout append\n");
             return redir_stdout_append(line);
         case REDIR_STDERR:
-            printf ("redir stderr\n");
+            //printf ("redir stderr\n");
             return redir_stderr(line);
         case REDIR_STDERR_TRUNC:
-            printf ("redir stderr trunc\n");
+            //printf ("redir stderr trunc\n");
             return redir_stderr_trunc(line);
         case REDIR_STDERR_APPEND:
-            printf ("redir stderr append\n");
+            //printf ("redir stderr append\n");
             return redir_stderr_append(line);
         default:
             // ne devrait pas être appelé mais ça devrait pas arriver normalement

@@ -84,4 +84,10 @@ enum redir_type {
     REDIR_STDERR_APPEND
 };
 
+/**
+ * @brief alternative à isspace de la librairie ctype.h
+ * @return 1 si c est un espace, saut de ligne, ..., 0 sinon
+*/
+int is_space(char c);
+
 #endif
