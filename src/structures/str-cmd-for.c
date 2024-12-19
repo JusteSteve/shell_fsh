@@ -151,8 +151,9 @@ int parcoursFor(comFor *cmd_for)
     DIR *parent = opendir(cmd_for->dir);
     if (parent == NULL)
     {
-        perror("[parcoursFor]>opendir");
-        goto error;
+        fprintf(stderr, "command_for_run: %s\n", cmd_for->dir);
+        perror("command_for_run");
+        return 1;
     }
     struct dirent *entry;
     int last_return_value = 0;
@@ -182,6 +183,7 @@ int parcoursFor(comFor *cmd_for)
             continue;
         }
 
+        //! FIXME: option -r ne marche pas
         // si c'est un répertoire et que l'option -r est activée, on parcours le répertoire
         if (cmd_for->recursive && entry->d_type == DT_DIR)
         {
