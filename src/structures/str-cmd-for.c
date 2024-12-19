@@ -35,36 +35,61 @@ comFor *fillCommandFor(command *cmd)
     {
         goto error;
     }
-    int i = 0;
+    int i = 0; //j = 0;
 
     // TODO: Gérer les options
-    //! parser les options de la commande PAS UTILISEE POUR L'INSTANT
-    for (i = 3; cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0; i++)
+    //! parser les options de la commande PAS UTILISE POUR L'INSTANT
+    while (cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0)
     {
-        if (strcmp(cmd->args[i], "-A") == 0)
+        //DIR * direc = opendir(cmd->args[3]);
+        if (strcmp(cmd->args[i], "in") == 0)
+        {
+            //if ( direc == NULL && errno == ENOENT){goto error;}  
+            com->dir = strdup(cmd->args[3]);
+            //closedir(direc);
+            i++;
+            
+        }
+        else if (strcmp(cmd->args[i], "-A") == 0)
         {
             com->fic_caches = 1;
+            if (cmd->args[i] != NULL || cmd->args[i][0] != '-' || cmd->args[i][0] != '{') {  //vérifie que l'option soit sans arguments
+                goto error;
+            }
+            i++;
         }
         else if (strcmp(cmd->args[i], "-r") == 0)
         {
             com->recursive = 1;
+            if (cmd->args[i] != NULL && cmd->args[i][0] != '-' && cmd->args[i][0] != '{') {  //vérifie là aussi
+                goto error;
+            }
+            i++;
         }
         else if (strcmp(cmd->args[i], "-e") == 0 && cmd->args[i + 1] != NULL)
         {
-            com->extention = strdup(cmd->args[++i]);
+            i++;
+            while (cmd->args[i][0] != '-' && cmd->args[i][0] != '{'){
+                com->extention = strdup(cmd->args[i]);
+                i++; //j++;
+            }
+            i++;
         }
         else if (strcmp(cmd->args[i], "-t") == 0 && cmd->args[i + 1] != NULL)
         {
-            com->type = cmd->args[++i][0];
+            i++;
+            while (cmd->args[i][0] != '-' && cmd->args[i][0] != '{'){
+                i++;
+                com->type = cmd->args[i][0];
+            }
+            i++;
         }
         else if (strcmp(cmd->args[i], "-p") == 0 && cmd->args[i + 1] != NULL)
         {
             com->max_parallel = atoi(cmd->args[++i]);
+            i++;
         }
-        else
-        {
-            com->dir = strdup(cmd->args[i]);
-        }
+        
     }
 
     if (cmd->args[i] == NULL || strcmp(cmd->args[i], "{") != 0)
@@ -107,6 +132,7 @@ comFor *fillCommandFor(command *cmd)
 
 error:
     clearCommandFor(com);
+    //if (direc != NULL) {closedir(direc);}
     return NULL;
 }
 

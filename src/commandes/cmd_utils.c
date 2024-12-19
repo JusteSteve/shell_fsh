@@ -202,6 +202,7 @@ int execute_commande(commandsInfo * com)  // voilà le gros du gros. Pas pauffin
 		else if (strncmp(cleaned, "for", 3) == 0 /*&& (isspace(cleaned[3]) || cleaned[3] == '\0')*/){
 			//printf("Good job!\n"); // DEBUG
 			command *cmdfor = fillCommand(creating_for_command(strTrunc,commandesFor[cptComFor])); //recréer la commande for pour la transmettre après à exec_for_cmds
+      printf("Bouh!");
 			cptComFor++;
 			return_value = exec_for_cmds(cmdfor);
       

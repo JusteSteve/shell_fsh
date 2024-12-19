@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 
 

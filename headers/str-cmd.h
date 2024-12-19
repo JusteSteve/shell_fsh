@@ -95,7 +95,7 @@ typedef struct comFor
     char *path;    // renseigne le chemin du fichier dont l'on désire l'exécution
     char *options; // donne les options de boucle
 
-    // C POUR LES OPTIONS PLUSTARDS
+    // C POUR LES OPTIONS PLUS TARD
     int fic_caches;   // fichiers cachés -A
     int recursive;    // récursivité -r
     char *extention;  // extension -e
