@@ -15,6 +15,7 @@ int execute_commande(char *line)
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
+
   if (cmd == NULL)
   {
     return 1;
@@ -22,20 +23,22 @@ int execute_commande(char *line)
   // vérifier si la commande est un for
   if (strcmp(cmd->nom, "for") == 0)
   {
-    command *cmd = fillCommand(line);
-    if (cmd == NULL)
+    return_value = exec_for_cmds(cmd);
+  }
+  else if (strcmp(cmd->nom, "if") == 0)
+  {
+    cmd_if *cmd_if = remplir_cmd_if(cmd);
+    if (cmd_if == NULL)
     {
+      clearCommands(cmd);
       return 1;
     }
-    return_value = exec_for_cmds(cmd);
+    return_value = exec_cmd_if(cmd_if);
   }
   // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
-    // exécuter la commande structurée
     return_value = exec_structured_cmds(line);
-    prev_status = return_value;
-    return return_value;
   }
   else if (is_redirection(line)!=-1)
   { 
@@ -154,11 +157,6 @@ int exec_structured_cmds(char *line)
   {
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
-    if (return_value == 1)
-    {
-      return 1;
-    }
-    sleep(1);
     cmd_i++;
   }
   free_args(cmds_tab);
@@ -176,6 +174,11 @@ int exec_for_cmds(command *cmd)
   }
   // exécuter la commande for
   return_value = parcoursFor(command);
+  if (return_value != 0)
+  {
+    clearCommandFor(command);
+    return return_value;
+  }
 
   // vérifier si on est dans le cas for ... { ... } ; cmd
   char *tmp = strchr(cmd->ligne, '}');
