@@ -23,6 +23,8 @@ error:
 
 cmd_if *remplir_cmd_if(command *cmd)
 {
+    //dprintf(2, "cmd->ligne: %s\n",  cmd->ligne);
+
     cmd_if *cmd_if = initialiser_cmd_if();
     if (cmd_if == NULL)
     {
@@ -38,23 +40,37 @@ cmd_if *remplir_cmd_if(command *cmd)
     int debut, fin;
 
     // ** extraire la commande test **
-    if (strcmp(cmd->args[i], "[") != 0)
+    if (strcmp(cmd->args[i], "test") == 0)
     {
-        fprintf(stderr, "Erreur de syntaxe: [ attendu après %s\n", cmd->args[i]);
-        goto error;
-    }
-    debut = ++i; // on passe le [
-    while (strcmp(cmd->args[i], "]") != 0)
-    {
-        if (cmd->args[i] == NULL)
+        cmd_if->nom = strdup("test");
+        if (cmd_if->nom == NULL)
         {
-            fprintf(stderr, "Erreur de syntaxe: ] attendu\n");
             goto error;
         }
+        debut = ++i; // on passe le test
+        while (strcmp(cmd->args[i], "{") != 0)
+        {
+            i++;
+        }
+        fin = i - 1; // on ne prend pas le {
+    }
+    else if (strcmp(cmd->args[i], "[") == 0)
+    {
+
+        debut = ++i; // on passe le [
+        while (strcmp(cmd->args[i], "]") != 0)
+        {
+            if (cmd->args[i] == NULL)
+            {
+                fprintf(stderr, "Erreur de syntaxe: ] attendu\n");
+                goto error;
+            }
+            i++;
+        }
+
+        fin = i - 1; // on ne prend pas le ]
         i++;
     }
-
-    fin = i - 1; // on ne prend pas le ]
 
     int test_taille = 0;
     for (int j = debut; j <= fin; j++)
@@ -73,13 +89,15 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->test, cmd->args[j]);
         strcat(cmd_if->test, " ");
     }
+    //dprintf(2, "test1: %s\n", cmd_if->test);
 
     // ** extraire la commande if **
-    i++;
     debut = ++i; // on passe le {
     int nb_accolades = 1;
     while (nb_accolades != 0 && cmd->args[i] != NULL)
     {
+        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
+
         if (strcmp(cmd->args[i], "{") == 0)
         {
             nb_accolades++;
@@ -110,8 +128,12 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->cmd_if, cmd->args[j]);
         strcat(cmd_if->cmd_if, " ");
     }
+    //dprintf(2, ">ligne if: %s\n", cmd_if->cmd_if);
+
     if (cmd->args[i] == NULL)
     {
+        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
+
         return cmd_if;
     }
 
@@ -130,6 +152,7 @@ cmd_if *remplir_cmd_if(command *cmd)
     nb_accolades = 1;
     while (nb_accolades > 0 && cmd->args[i] != NULL)
     {
+        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
 
         if (strcmp(cmd->args[i], "{") == 0)
         {
@@ -159,6 +182,7 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->cmd_else, cmd->args[j]);
         strcat(cmd_if->cmd_else, " ");
     }
+    //dprintf(2, ">ligne else: %s\n", cmd_if->cmd_if);
 
     return cmd_if;
 
@@ -172,20 +196,26 @@ int exec_cmd_if(cmd_if *cmd_if)
     int return_value;
     // exécuter la commande test
     return_value = exec_test(cmd_if->test);
+    //dprintf(2, "return value: %d\n", return_value);
+
 
     // exécuter la commande if
     if (return_value == 0)
     {
+
+        //dprintf(2, "avant if: %s\n", cmd_if->cmd_if);
         return_value = execute_commande(cmd_if->cmd_if);
+        //return_value = tmp_value == 1 ? 0 : tmp_value ; 
     }
     // exécuter la commande else
-    else if (cmd_if->cmd_else != NULL)
+    else if (cmd_if->cmd_else != NULL && return_value == 1)
     {
 
+        //dprintf(2, "avant else: %s\n", cmd_if->cmd_else);
         return_value = execute_commande(cmd_if->cmd_else);
     }
     free_cmd_if(cmd_if);
-    return return_value;
+    return (return_value == 1 ? 0 : return_value);
 }
 
 int exec_test(char *test)

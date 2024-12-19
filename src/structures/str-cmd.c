@@ -6,10 +6,8 @@
 
 command *initialiseCommand()
 {
-  //printf("initialiseCommand\n");
   // allocation de la mémoire pour la structure
   command *com = malloc(sizeof(command));
-  //printf("après malloc\n");
   if (com == NULL)
   {
     return NULL;
@@ -19,8 +17,6 @@ command *initialiseCommand()
   com->args = NULL;
   com->ligne = NULL;
   com->taille = 0;
-  //printf("initialiseCommand fin\n");
-
   return com;
 }
 
@@ -73,6 +69,10 @@ error:
 
 void clearCommands(command *com)
 {
+  if (com == NULL)
+  {
+    return;
+  }
   if (com->nom != NULL)
   {
     free(com->nom);
@@ -85,12 +85,7 @@ void clearCommands(command *com)
   {
     free_args(com->args);
   }
-  com->taille = 0;
-
-  if (com != NULL)
-  {
-    free(com);
-  }
+  free(com);
 }
 
 void free_args(char **args)

@@ -23,7 +23,7 @@
 // ***=== Structure pour les commandes simples ===***
 
 #define PATH_MAX 4096 // taille maximale d'un chemin
-#define MAX_CMDS 100  // nombre maximal d'arguments dans une commande
+#define MAX_CMDS 1024  // nombre maximal d'arguments dans une commande
 
 /**
  * @brief Structure de données pour les commandes simples

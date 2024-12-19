@@ -14,6 +14,7 @@ int execute_commande(char *line)
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
+
   if (cmd == NULL)
   {
     return 1;
@@ -21,20 +22,19 @@ int execute_commande(char *line)
   // vérifier si la commande est un for
   if (strcmp(cmd->nom, "for") == 0)
   {
+    /*
     command *cmd = fillCommand(line);
     if (cmd == NULL)
     {
       return 1;
     }
+    */
     return_value = exec_for_cmds(cmd);
-  }
-  // vérifier si la contient un ;
-  else if (strchr(line, ';') != NULL)
-  {
-    return_value = exec_structured_cmds(line);
   }
   else if (strcmp(cmd->nom, "if") == 0)
   {
+   //dprintf(2, "exec_cmd> line: %s\n",line);
+
     cmd_if *cmd_if = remplir_cmd_if(cmd);
     if (cmd_if == NULL)
     {
@@ -44,6 +44,12 @@ int execute_commande(char *line)
     return_value = exec_cmd_if(cmd_if);
 
   }
+  // vérifier si la contient un ;
+  else if (strchr(line, ';') != NULL)
+  {
+    return_value = exec_structured_cmds(line);
+  }
+  
   else
     // vérifier si la commande est interne
     if (is_internal_cmd(cmd->nom))

@@ -195,7 +195,7 @@ int parcoursFor(comFor *cmd_for)
                 goto error;
             }
             new_cmd_for->var = strdup(cmd_for->var);
-            new_cmd_for->dir = new_dir;
+            new_cmd_for->dir = strdup(new_dir);
             new_cmd_for->ligne = strdup(cmd_for->ligne);
             new_cmd_for->extention = cmd_for->extention;
             new_cmd_for->type = cmd_for->type;
@@ -234,6 +234,7 @@ int parcoursFor(comFor *cmd_for)
         {
             char *nom_sans_ext = supprimer_extention(fichier);
             snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, nom_sans_ext);
+            free(nom_sans_ext);
         }
 
         // remplacer $F par le nom du fichier
@@ -359,33 +360,37 @@ int is_type(char type, struct stat *stat)
 
 void clearCommandFor(comFor *com)
 {
-    if (com->command != NULL)
-    {
-        free(com->command);
-    }
-    if (com->ligne != NULL)
-    {
-        free(com->ligne);
-    }
-    if (com->path != NULL)
-    {
-        free(com->path);
-    }
-    if (com->options != NULL)
-    {
-        free(com->options);
-    }
-    if (com->dir != NULL)
-    {
-        free(com->dir);
-    }
-    if (com->extention != NULL)
-    {
-        free(com->extention);
-    }
-
-    if (com != NULL)
-    {
-        free(com);
-    }
+  if (com == NULL)
+  {
+    return;
+  }
+  if (com->command != NULL)
+  {
+    free(com->command);
+  }
+  if (com->ligne != NULL)
+  {
+    free(com->ligne);
+  }
+  if (com->path != NULL)
+  {
+    free(com->path);
+  }
+  if (com->options != NULL)
+  {
+    free(com->options);
+  }
+  if (com->dir != NULL)
+  {
+    free(com->dir);
+  }
+  if (com->extention != NULL)
+  {
+    free(com->extention);
+  }
+  if (com->var != NULL)
+  {
+    free(com->var);
+  }
+  free(com);
 }
