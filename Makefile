@@ -11,6 +11,14 @@ SRCS = src/main.c \
 	src/commandes/internes/ftype.c \
 	src/commandes/external_cmds.c \
 	src/commandes/cmd_utils.c \
+	src/redirections/stdin/redir_stdin.c \
+	src/redirections/stdout/redir_stdout.c \
+	src/redirections/stdout/redir_stdout_trunc.c \
+	src/redirections/stdout/redir_stdout_append.c \
+	src/redirections/stderr/redir_stderr.c \
+	src/redirections/stderr/redir_stderr_trunc.c \
+	src/redirections/stderr/redir_stderr_append.c \
+	src/redirections/redir_handler.c \
 	src/structures/str-cmd-for.c \
 	src/structures/str-cmd.c \
 	src/structures/str-cmd-if.c \

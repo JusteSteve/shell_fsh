@@ -6,6 +6,7 @@
 
 #include "../../headers/internal_cmds.h"
 #include "../../headers/cmd-utils.h"
+#include "../../headers/redir.h"
 
 int prev_status; // pour stocker le status précédent
 
@@ -39,16 +40,20 @@ int execute_commande(char *line)
   {
     return_value = exec_structured_cmds(line);
   }
-  else
+  else if (is_redirection(line)!=-1)
+  { 
+    int type = is_redirection(line);
+    return_value = redir_handler(line, type);
+  }
+  else if (is_internal_cmd(cmd->nom))
     // vérifier si la commande est interne
-    if (is_internal_cmd(cmd->nom))
-    {
-      return_value = exec_internal_cmds(line);
-    }
-    else
-    {
-      return_value = exec_external_cmds(cmd);
-    }
+  {
+    return_value = exec_internal_cmds(line);
+  }
+  else
+  {
+    return_value = exec_external_cmds(cmd);
+  }
   clearCommands(cmd);
 
   prev_status = return_value;
@@ -213,3 +218,6 @@ int is_line_empty(char *line)
   }
   return 1;
 }
+
+
+
