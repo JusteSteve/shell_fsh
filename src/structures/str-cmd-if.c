@@ -23,8 +23,6 @@ error:
 
 cmd_if *remplir_cmd_if(command *cmd)
 {
-    //dprintf(2, "cmd->ligne: %s\n",  cmd->ligne);
-
     cmd_if *cmd_if = initialiser_cmd_if();
     if (cmd_if == NULL)
     {
@@ -56,7 +54,6 @@ cmd_if *remplir_cmd_if(command *cmd)
     }
     else if (strcmp(cmd->args[i], "[") == 0)
     {
-
         debut = ++i; // on passe le [
         while (strcmp(cmd->args[i], "]") != 0)
         {
@@ -67,7 +64,6 @@ cmd_if *remplir_cmd_if(command *cmd)
             }
             i++;
         }
-
         fin = i - 1; // on ne prend pas le ]
         i++;
     }
@@ -89,15 +85,12 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->test, cmd->args[j]);
         strcat(cmd_if->test, " ");
     }
-    //dprintf(2, "test1: %s\n", cmd_if->test);
 
     // ** extraire la commande if **
     debut = ++i; // on passe le {
     int nb_accolades = 1;
     while (nb_accolades != 0 && cmd->args[i] != NULL)
     {
-        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
-
         if (strcmp(cmd->args[i], "{") == 0)
         {
             nb_accolades++;
@@ -128,12 +121,9 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->cmd_if, cmd->args[j]);
         strcat(cmd_if->cmd_if, " ");
     }
-    //dprintf(2, ">ligne if: %s\n", cmd_if->cmd_if);
 
     if (cmd->args[i] == NULL)
     {
-        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
-
         return cmd_if;
     }
 
@@ -152,8 +142,6 @@ cmd_if *remplir_cmd_if(command *cmd)
     nb_accolades = 1;
     while (nb_accolades > 0 && cmd->args[i] != NULL)
     {
-        //dprintf(2, "args[%d]: %s\n", i, cmd->args[i]);
-
         if (strcmp(cmd->args[i], "{") == 0)
         {
             nb_accolades++;
@@ -182,8 +170,6 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->cmd_else, cmd->args[j]);
         strcat(cmd_if->cmd_else, " ");
     }
-    //dprintf(2, ">ligne else: %s\n", cmd_if->cmd_if);
-
     return cmd_if;
 
 error:
@@ -196,22 +182,14 @@ int exec_cmd_if(cmd_if *cmd_if)
     int return_value;
     // exécuter la commande test
     return_value = exec_test(cmd_if->test);
-    //dprintf(2, "return value: %d\n", return_value);
-
-
     // exécuter la commande if
     if (return_value == 0)
     {
-
-        //dprintf(2, "avant if: %s\n", cmd_if->cmd_if);
         return_value = execute_commande(cmd_if->cmd_if);
-        //return_value = tmp_value == 1 ? 0 : tmp_value ; 
     }
     // exécuter la commande else
     else if (cmd_if->cmd_else != NULL && return_value == 1)
     {
-
-        //dprintf(2, "avant else: %s\n", cmd_if->cmd_else);
         return_value = execute_commande(cmd_if->cmd_else);
     }
     free_cmd_if(cmd_if);
@@ -269,6 +247,5 @@ void free_cmd_if(cmd_if *cmd_if)
     {
         free(cmd_if->cmd_else);
     }
-    //free(cmd_if->ligne);
     free(cmd_if);
 }

@@ -23,7 +23,7 @@
 // ***=== Structure pour les commandes simples ===***
 
 #define PATH_MAX 4096 // taille maximale d'un chemin
-#define MAX_CMDS 1024  // nombre maximal d'arguments dans une commande
+#define MAX_CMDS 1024 // nombre maximal d'arguments dans une commande
 
 /**
  * @brief Structure de données pour les commandes simples
@@ -164,7 +164,7 @@ char *supprimer_extention(char *file);
  * @param sb : structure stat du fichier
  * @return 1 si le fichier est du type, 0 sinon
  */
-int is_type(char file,struct stat *sb);
+int is_type(char file, struct stat *sb);
 
 // ***=== Structure pour les commandes structurées de type if ===***
 
@@ -173,11 +173,11 @@ int is_type(char file,struct stat *sb);
  */
 typedef struct cmd_if
 {
-    char *nom; 
-    char *ligne; // toute la ligne de commande
-    char *test;  // renseigne le test à effectuer
-    char *cmd_if;  // renseigne la commande à exécuter si le test est vrai
-    char *cmd_else;  // renseigne la commande à exécuter si le test est faux
+    char *nom;
+    char *ligne;    // toute la ligne de commande
+    char *test;     // renseigne le test à effectuer
+    char *cmd_if;   // renseigne la commande à exécuter si le test est vrai
+    char *cmd_else; // renseigne la commande à exécuter si le test est faux
 } cmd_if;
 
 // ***=== Prototypes des fonctions associées ===***
@@ -214,6 +214,5 @@ int exec_cmd_if(cmd_if *cmd_if);
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_test(char *cmd);
-
 
 #endif

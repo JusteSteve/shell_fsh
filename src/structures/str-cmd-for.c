@@ -48,7 +48,7 @@ comFor *fillCommandFor(command *cmd)
     com->var[0] = '$';
     strcpy(com->var + 1, cmd->args[1]);
 
-    // TODO: Gérer les options
+    // parser les options
     for (i = 3; cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0; i++)
     {
         if (strcmp(cmd->args[i], "-A") == 0)
@@ -135,7 +135,6 @@ comFor *fillCommandFor(command *cmd)
                 break;
             }
         }
-
         strcat(com->ligne, cmd->args[i]);
         strcat(com->ligne, " ");
     }
@@ -183,7 +182,6 @@ int parcoursFor(comFor *cmd_for)
             continue;
         }
 
-        //! FIXME: option -r ne marche pas
         // si c'est un répertoire et que l'option -r est activée, on parcours le répertoire
         if (cmd_for->recursive && entry->d_type == DT_DIR)
         {
@@ -360,37 +358,37 @@ int is_type(char type, struct stat *stat)
 
 void clearCommandFor(comFor *com)
 {
-  if (com == NULL)
-  {
-    return;
-  }
-  if (com->command != NULL)
-  {
-    free(com->command);
-  }
-  if (com->ligne != NULL)
-  {
-    free(com->ligne);
-  }
-  if (com->path != NULL)
-  {
-    free(com->path);
-  }
-  if (com->options != NULL)
-  {
-    free(com->options);
-  }
-  if (com->dir != NULL)
-  {
-    free(com->dir);
-  }
-  if (com->extention != NULL)
-  {
-    free(com->extention);
-  }
-  if (com->var != NULL)
-  {
-    free(com->var);
-  }
-  free(com);
+    if (com == NULL)
+    {
+        return;
+    }
+    if (com->command != NULL)
+    {
+        free(com->command);
+    }
+    if (com->ligne != NULL)
+    {
+        free(com->ligne);
+    }
+    if (com->path != NULL)
+    {
+        free(com->path);
+    }
+    if (com->options != NULL)
+    {
+        free(com->options);
+    }
+    if (com->dir != NULL)
+    {
+        free(com->dir);
+    }
+    if (com->extention != NULL)
+    {
+        free(com->extention);
+    }
+    if (com->var != NULL)
+    {
+        free(com->var);
+    }
+    free(com);
 }

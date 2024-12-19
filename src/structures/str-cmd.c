@@ -12,7 +12,6 @@ command *initialiseCommand()
   {
     return NULL;
   }
-  // initialisation des champs
   com->nom = NULL;
   com->args = NULL;
   com->ligne = NULL;
@@ -22,14 +21,11 @@ command *initialiseCommand()
 
 command *fillCommand(char *line)
 {
-  //printf("fillCommand\n");
   command *commande = initialiseCommand();
   if (commande == NULL)
   {
     goto error;
   }
-  // printf("fillcommand apres initialisation\n");
-
   // mettre la ligne de commande dans un tableau
   char **tableau_args = split_cmd(line, 0);
   if (tableau_args == NULL)
@@ -45,6 +41,7 @@ command *fillCommand(char *line)
     perror("[fillCommand]>strdup");
     goto error;
   }
+
   commande->taille = get_nb_args(tableau_args);
   commande->args = realloc(tableau_args, (commande->taille + 1) * sizeof(char *));
   if (commande->args == NULL)
@@ -52,14 +49,13 @@ command *fillCommand(char *line)
     perror("[fillCommand]>realloc");
     goto error;
   }
+
   commande->ligne = strdup(line);
   if (commande->ligne == NULL)
   {
     perror("[fillCommand]>strdup");
     goto error;
   }
-  // printf("fillcommand ligne: %s\n", commande->ligne);
-  //printf("fillCommand fin\n");
 
   return commande;
 error:
