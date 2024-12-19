@@ -48,7 +48,7 @@ comFor *fillCommandFor(command *cmd)
     com->var[0] = '$';
     strcpy(com->var + 1, cmd->args[1]);
 
-    // TODO: Gérer les options
+    // parser les options
     for (i = 3; cmd->args[i] != NULL && strcmp(cmd->args[i], "{") != 0; i++)
     {
         if (strcmp(cmd->args[i], "-A") == 0)
@@ -135,7 +135,6 @@ comFor *fillCommandFor(command *cmd)
                 break;
             }
         }
-
         strcat(com->ligne, cmd->args[i]);
         strcat(com->ligne, " ");
     }
@@ -183,7 +182,6 @@ int parcoursFor(comFor *cmd_for)
             continue;
         }
 
-        //! FIXME: option -r ne marche pas
         // si c'est un répertoire et que l'option -r est activée, on parcours le répertoire
         if (cmd_for->recursive && entry->d_type == DT_DIR)
         {
@@ -195,7 +193,7 @@ int parcoursFor(comFor *cmd_for)
                 goto error;
             }
             new_cmd_for->var = strdup(cmd_for->var);
-            new_cmd_for->dir = new_dir;
+            new_cmd_for->dir = strdup(new_dir);
             new_cmd_for->ligne = strdup(cmd_for->ligne);
             new_cmd_for->extention = cmd_for->extention;
             new_cmd_for->type = cmd_for->type;
@@ -234,6 +232,7 @@ int parcoursFor(comFor *cmd_for)
         {
             char *nom_sans_ext = supprimer_extention(fichier);
             snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, nom_sans_ext);
+            free(nom_sans_ext);
         }
 
         // remplacer $F par le nom du fichier
@@ -359,6 +358,10 @@ int is_type(char type, struct stat *stat)
 
 void clearCommandFor(comFor *com)
 {
+    if (com == NULL)
+    {
+        return;
+    }
     if (com->command != NULL)
     {
         free(com->command);
@@ -383,9 +386,9 @@ void clearCommandFor(comFor *com)
     {
         free(com->extention);
     }
-
-    if (com != NULL)
+    if (com->var != NULL)
     {
-        free(com);
+        free(com->var);
     }
+    free(com);
 }
