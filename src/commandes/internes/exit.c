@@ -2,7 +2,7 @@
  * Fichier contenant l'implémentation de la commande exit
  * @file exit.c
  */
-#include "../headers/internal_cmds.h"
+#include "../../../headers/internal_cmds.h"
 
 extern int prev_status;
 
@@ -15,6 +15,6 @@ int cmd_exit(char *val){
     else{
         status = prev_status; // Sinon on prend le statut précédent
     }
-    dprintf(STDOUT_FILENO, "Exiting fsh with code %d\n", status);
+    //dprintf(STDOUT_FILENO, "Exiting fsh with code %d\n", status);
     exit(status);
 }

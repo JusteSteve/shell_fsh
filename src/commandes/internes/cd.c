@@ -2,7 +2,7 @@
  * Fichier contenant l'implémentation de la commande cd
  * @file cd.c
  */
-#include "../headers/internal_cmds.h"
+#include "../../../headers/internal_cmds.h"
 
 static char previous_dir[PATH_MAX] = ""; // Pour stocker le répertoire précédent
 

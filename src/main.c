@@ -1,9 +1,8 @@
-#include "../headers/fsh.h"
-#include "../headers/external_cmds.h"
-
 /**
  * Fichier main du projet fsh
  */
+#include "../headers/fsh.h"
+#include "../headers/cmd-utils.h"
 
 int main()
 {
