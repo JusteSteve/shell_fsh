@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 // ***=== Structure pour les commandes simples ===***
 
@@ -101,7 +102,7 @@ typedef struct comFor
     int fic_caches;   // fichiers cachés -A
     int recursive;    // récursivité -r
     char *extention;  // extension -e
-    int type;         // type de fichier à traiter -t (f : fichiers ordinaires, d : répertoire, l : lien symbolique, p : tubes)
+    char type;        // type de fichier à traiter -t (f : fichiers ordinaires, d : répertoire, l : lien symbolique, p : tubes)
     int max_parallel; // nombre maximal de tours de boucle en parallèle -p
 } comFor;
 
@@ -141,5 +142,28 @@ int parcoursFor(comFor *cmd_for);
  * @return chaîne de caractères avec la variable remplacée
  */
 char *remplacer_variable(char *str, char *var, char *valeur);
+
+/**
+ * @brief Vérifie si un fichier a une certaine extension
+ * @param file : nom du fichier
+ * @param extention : extension à vérifier
+ * @return true si le fichier a l'extension, false sinon
+ */
+bool has_extention(char *file, char *extention);
+
+/**
+ * @brief Supprime l'extension d'un fichier
+ * @param file : nom du fichier
+ * @return nom du fichier sans extension
+ */
+char *supprimer_extention(char *file);
+
+/**
+ * @brief Vérifie si un fichier est de type type
+ * @param file : nom du fichier
+ * @param sb : structure stat du fichier
+ * @return 1 si le fichier est du type, 0 sinon
+ */
+int is_type(char *file,struct stat *sb);
 
 #endif
