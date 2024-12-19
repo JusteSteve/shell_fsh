@@ -1,6 +1,6 @@
 # Makefile
 CC = gcc
-CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
+CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include -fsanitize=address,undefined -fno-omit-frame-pointer
 
 # fichiers sources
 SRCS = src/main.c \
@@ -12,7 +12,8 @@ SRCS = src/main.c \
 	src/commandes/external_cmds.c \
 	src/commandes/cmd_utils.c \
 	src/structures/str-cmd-for.c \
-	src/structures/str-cmd.c
+	src/structures/str-cmd.c \
+	src/structures/str-cmd-if.c \
 
 
 # fichiers objets
@@ -24,7 +25,7 @@ all: fsh
 
 # Crée l'exécutable fsh
 fsh: $(OBJETS)
-	gcc $(CFLAGS) $(OBJETS) -o $@ -lreadline
+	gcc -fsanitize=address $(CFLAGS) $(OBJETS) -o $@ -lreadline
 
 $(OBJDIR)/%.o: %.c 
 	@mkdir -p $(@D)

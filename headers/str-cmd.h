@@ -164,6 +164,56 @@ char *supprimer_extention(char *file);
  * @param sb : structure stat du fichier
  * @return 1 si le fichier est du type, 0 sinon
  */
-int is_type(char *file,struct stat *sb);
+int is_type(char file,struct stat *sb);
+
+// ***=== Structure pour les commandes structurées de type if ===***
+
+/**
+ * @brief Structure de données pour les commandes structurées type if TEST { CMD1 } else { CMD2 }
+ */
+typedef struct cmd_if
+{
+    char *nom; 
+    char *ligne; // toute la ligne de commande
+    char *test;  // renseigne le test à effectuer
+    char *cmd_if;  // renseigne la commande à exécuter si le test est vrai
+    char *cmd_else;  // renseigne la commande à exécuter si le test est faux
+} cmd_if;
+
+// ***=== Prototypes des fonctions associées ===***
+
+/**
+ * @brief Initialise la structure cmd_if
+ * @return pointeur sur la structure cmd_if
+ */
+cmd_if *initialiser_cmd_if();
+
+/**
+ * @brief Remplit les champs de la structure cmd_if selon les informations
+ * @param cmd : pointeur sur la structure command
+ * @return pointeur sur la structure cmd_if
+ */
+cmd_if *remplir_cmd_if(command *cmd);
+
+/**
+ * @brief Libère la mémoire allouée pour les champs de la structure cmd_if
+ * @param com : pointeur sur la structure cmd_if
+ */
+void free_cmd_if(cmd_if *cmd_if);
+
+/**
+ * @brief Exécute la commande structurée de type if
+ * @param cmd_if : pointeur sur la structure cmd_if
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_cmd_if(cmd_if *cmd_if);
+
+/**
+ * @brief Exécute la commande test
+ * @param test : ligne de commande test
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_test(char *cmd);
+
 
 #endif

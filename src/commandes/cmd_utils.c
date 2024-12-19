@@ -33,6 +33,17 @@ int execute_commande(char *line)
   {
     return_value = exec_structured_cmds(line);
   }
+  else if (strcmp(cmd->nom, "if") == 0)
+  {
+    cmd_if *cmd_if = remplir_cmd_if(cmd);
+    if (cmd_if == NULL)
+    {
+      clearCommands(cmd);
+      return 1;
+    }
+    return_value = exec_cmd_if(cmd_if);
+
+  }
   else
     // vérifier si la commande est interne
     if (is_internal_cmd(cmd->nom))
