@@ -8,7 +8,6 @@
 #define STR_CMD_H
 
 // ***=== Inclusions ===***
-#include "internal_cmds.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -197,6 +196,12 @@ cmd_if *initialiser_cmd_if();
 cmd_if *remplir_cmd_if(command *cmd);
 
 /**
+ * @brief Libère la mémoire allouée pour les champs de la structure cmd_if
+ * @param com : pointeur sur la structure cmd_if
+ */
+void free_cmd_if(cmd_if *cmd_if);
+
+/**
  * @brief Exécute la commande structurée de type if
  * @param cmd_if : pointeur sur la structure cmd_if
  * @return 0 si tout s'est bien passé, 1 sinon
@@ -209,12 +214,5 @@ int exec_cmd_if(cmd_if *cmd_if);
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_test(char *cmd);
-
-/**
- * @brief Libère la mémoire allouée pour les champs de la structure cmd_if
- * @param com : pointeur sur la structure cmd_if
- */
-void free_cmd_if(cmd_if *cmd_if);
-
 
 #endif

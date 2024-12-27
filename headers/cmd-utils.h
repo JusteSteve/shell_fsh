@@ -9,7 +9,6 @@
 // ***=== Inclusions ===***
 #include "str-cmd.h"
 
-
 /**
  * Analyse et exécute la ligne de commande passée en paramètre
  * @param line : la ligne de commande
@@ -57,37 +56,18 @@ int exec_external_cmds(command *cmd);
 int exec_for_cmds(command *cmd);
 
 /**
- * @brief reconstruit la commande for ... { ... } dans une seule case
- * si elle est dans une commande structurée
- * @param tokens : chaine de caractères
- * @return commande for ... { ... }
- */
-char *build_for_cmd(char *tokens);
-
-/**
  * @brief Exécute la commande structurée passée en paramètre
  * @param line : ligne de commande
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_structured_cmds(char *line);
 
-
 /**
- * @brief Extrait la taille de la commande entre les accolades
- * @param cmd : pointeur sur la structure command
- * @param nb_accolades : nombre d'accolades
- * @param i : indice
- * @return la taille de la commande entre les accolades
+ * @brief reconstruit la commande for ... { ... } dans une seule case
+ * si elle est dans une commande structurée
+ * @param tokens : chaine de caractères
+ * @return commande for ... { ... }
  */
-int extraire_taille(command *cmd, int nb_accolades, int i);
-
-/**
- * @brief reconstruit la commande entre les accolades
- * @param cmd : pointeur sur la structure command
- * @param debut : indice de début
- * @param fin : indice de fin
- * @return la commande entre les accolades
- */
-char *reconstruire_commande(command *cmd, int debut, int fin);
+char *build_for_cmd(char *tokens);
 
 #endif

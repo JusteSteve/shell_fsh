@@ -8,7 +8,14 @@
 
 // ***=== Inclusions ===***
 #include "internal_cmds.h"
-#include "str-cmd.h"
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 
 /**
  * Détecte la présence d'une redirection dans la ligne de commande
