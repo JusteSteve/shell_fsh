@@ -8,17 +8,7 @@
 #define INTERNAL_CMDS_H
 
 // ***=== Inclusions ===***
-// #include <linux/limits.h> // on va le define nous même car sur macos ça marche pas
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-
-#define PATH_MAX 4096
+#include "str-cmd.h"
 
 extern int prev_status; // pour stocker le status précédent
 

@@ -35,7 +35,8 @@ cmd_if *remplir_cmd_if(command *cmd)
     }
 
     int i = 1;
-    int debut, fin;
+    int debut = 0;
+    int fin = 0;
 
     // ** extraire la commande test **
     if (strcmp(cmd->args[i], "test") == 0)
@@ -67,60 +68,14 @@ cmd_if *remplir_cmd_if(command *cmd)
         fin = i - 1; // on ne prend pas le ]
         i++;
     }
-
-    int test_taille = 0;
-    for (int j = debut; j <= fin; j++)
-    {
-        test_taille += strlen(cmd->args[j]) + 1; // +1 pour l'espace
-    }
-    cmd_if->test = malloc(test_taille + 1); // +1 for the null terminator
-    if (cmd_if->test == NULL)
-    {
-        goto error;
-    }
-
-    cmd_if->test[0] = '\0';
-    for (int j = debut; j <= fin; j++)
-    {
-        strcat(cmd_if->test, cmd->args[j]);
-        strcat(cmd_if->test, " ");
-    }
+    cmd_if->test = reconstruire_commande(cmd, debut, fin);
 
     // ** extraire la commande if **
     debut = ++i; // on passe le {
     int nb_accolades = 1;
-    while (nb_accolades != 0 && cmd->args[i] != NULL)
-    {
-        if (strcmp(cmd->args[i], "{") == 0)
-        {
-            nb_accolades++;
-        }
-        if (strcmp(cmd->args[i], "}") == 0)
-        {
-            nb_accolades--;
-        }
-        i++;
-    }
-
+    i = extraire_taille(cmd, nb_accolades, i);
     fin = i - 1; // on ne prend pas le }
-
-    int cmd_if_taille = 0;
-    for (int j = debut; j <= fin; j++)
-    {
-        cmd_if_taille += strlen(cmd->args[j]) + 1; // +1 pour l'espace
-    }
-    cmd_if->cmd_if = malloc(cmd_if_taille + 1); // +1 pour le \0
-    if (cmd_if->cmd_if == NULL)
-    {
-        goto error;
-    }
-
-    cmd_if->cmd_if[0] = '\0';
-    for (int j = debut; j < fin; j++)
-    {
-        strcat(cmd_if->cmd_if, cmd->args[j]);
-        strcat(cmd_if->cmd_if, " ");
-    }
+    cmd_if->cmd_if = reconstruire_commande(cmd, debut, fin);
 
     if (cmd->args[i] == NULL)
     {
@@ -140,36 +95,9 @@ cmd_if *remplir_cmd_if(command *cmd)
     }
     debut = ++i; // on passe le {
     nb_accolades = 1;
-    while (nb_accolades > 0 && cmd->args[i] != NULL)
-    {
-        if (strcmp(cmd->args[i], "{") == 0)
-        {
-            nb_accolades++;
-        }
-        if (strcmp(cmd->args[i], "}") == 0)
-        {
-            nb_accolades--;
-        }
-        i++;
-    }
+    i = extraire_taille(cmd, nb_accolades, i);
     fin = i - 1; // on ne prend pas le }
-
-    int else_taille = 0;
-    for (int j = debut; j <= fin; j++)
-    {
-        else_taille += strlen(cmd->args[j]) + 1; // +1 pour l'espace
-    }
-    cmd_if->cmd_else = malloc(else_taille + 1); // +1 pour le \0
-    if (cmd_if->cmd_else == NULL)
-    {
-        goto error;
-    }
-    cmd_if->cmd_else[0] = '\0';
-    for (int j = debut; j < fin; j++)
-    {
-        strcat(cmd_if->cmd_else, cmd->args[j]);
-        strcat(cmd_if->cmd_else, " ");
-    }
+    cmd_if->cmd_else = reconstruire_commande(cmd, debut, fin);
     return cmd_if;
 
 error:
@@ -231,6 +159,46 @@ int exec_test(char *test)
         return WEXITSTATUS(status);
     }
     }
+}
+
+// ***=== Fonctions auxiliaires ===***
+
+char *reconstruire_commande(command *cmd, int debut, int fin)
+{
+    int taille = 0;
+    for (int i = debut; i <= fin; i++)
+    {
+        taille += strlen(cmd->args[i]) + 1; // +1 pour l'espace
+    }
+    char *cmd_reconstruite = malloc(taille + 1); // +1 pour le \0
+    if (cmd_reconstruite == NULL)
+    {
+        perror("[reconstruire_commande]>malloc");
+        return NULL;
+    }
+    for (int j = debut; j < fin; j++)
+    {
+        strcat(cmd_reconstruite, cmd->args[j]);
+        strcat(cmd_reconstruite, " ");
+    }
+    return cmd_reconstruite;
+}
+
+int extraire_taille(command *cmd, int nb_acc, int i)
+{
+    while (nb_acc != 0 && cmd->args[i] != NULL)
+    {
+        if (strcmp(cmd->args[i], "{") == 0)
+        {
+            nb_acc++;
+        }
+        if (strcmp(cmd->args[i], "}") == 0)
+        {
+            nb_acc--;
+        }
+        i++;
+    }
+    return i;
 }
 
 void free_cmd_if(cmd_if *cmd_if)
