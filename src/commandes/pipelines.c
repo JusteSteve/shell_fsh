@@ -6,15 +6,12 @@ int exec_pipeline_cmds(char *line)
     char **cmds = split_pipeline_cmd(line);
     if (cmds == NULL)
     {
+        perror("[exec_pipeline_cmds]>split_cmd");
         return 1;
     }
 
     // compter le nombre de commandes
-    int nb_cmds = 0;
-    while (cmds[nb_cmds] != NULL)
-    {
-        nb_cmds++;
-    }
+    int nb_cmds = get_nb_args(cmds);
 
     // créer un tableau de descripteurs de fichiers pour les pipes il est de taille 2 * (nb_cmds - 1)
     int pipe_fds[2 * (nb_cmds - 1)];
@@ -28,14 +25,11 @@ int exec_pipeline_cmds(char *line)
         }
     }
 
-    
-    int pid;
-    int status;
-    // exécuter les commandes
+    //  exécuter les commandes
     for (int i = 0; i < nb_cmds; i++)
     {
         // créer un processus fils pour chaque commande
-        pid = fork();
+        pid_t pid = fork();
         switch (pid)
         {
 
@@ -64,14 +58,12 @@ int exec_pipeline_cmds(char *line)
             {
                 close(pipe_fds[j]);
             }
+
             // exécuter la commande
-            int ret_val = execute_commande(cmds[i]);
-            if (ret_val == 1)
-            {
-                return 1;
+            if(execute_commande(cmds[i]) == 1){
+                exit(1);
             }
-            // sortir de la boucle for 
-            exit(ret_val);
+            exit(0);
 
         case -1:
             perror("[exec_pipeline_cmds]>fork");
@@ -91,11 +83,12 @@ int exec_pipeline_cmds(char *line)
     // attendre la fin de tous les processus fils
     for (int i = 0; i < 2 * (nb_cmds - 1); i++)
     {
-        wait(&status);
+        wait(NULL);
     }
 
     free(cmds);
-    return WEXITSTATUS(status);
+    return 0;
+
 error:
     free(cmds);
     return 1;

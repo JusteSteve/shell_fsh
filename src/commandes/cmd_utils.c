@@ -133,7 +133,6 @@ int exec_structured_cmds(char *line)
     {
       return 1;
     }
-    sleep(1);
     cmd_i++;
   }
   free_args(cmds_tab);
