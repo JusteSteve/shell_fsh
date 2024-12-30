@@ -6,6 +6,7 @@
 
 #include "../../headers/internal_cmds.h"
 #include "../../headers/cmd-utils.h"
+#include "../../headers/redir.h"
 
 int prev_status; // pour stocker le status précédent
 
@@ -14,6 +15,7 @@ int execute_commande(char *line)
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
+
   if (cmd == NULL)
   {
     return 1;
@@ -21,20 +23,32 @@ int execute_commande(char *line)
   // vérifier si la commande est un for
   if (strcmp(cmd->nom, "for") == 0)
   {
-    command *cmd = fillCommand(line);
-    if (cmd == NULL)
+    return_value = exec_for_cmds(cmd);
+  }
+  else if (strcmp(cmd->nom, "if") == 0)
+  {
+    cmd_if *cmd_if = remplir_cmd_if(cmd);
+    if (cmd_if == NULL)
     {
+      clearCommands(cmd);
       return 1;
     }
-    return_value = exec_for_cmds(cmd);
+    return_value = exec_cmd_if(cmd_if);
   }
   // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
-    // exécuter la commande structurée
     return_value = exec_structured_cmds(line);
-    prev_status = return_value;
-    return return_value;
+  }
+  else if (is_redirection(line)!=-1)
+  { 
+    int type = is_redirection(line);
+    return_value = redir_handler(line, type);
+  }
+  else if (is_internal_cmd(cmd->nom))
+    // vérifier si la commande est interne
+  {
+    return_value = exec_internal_cmds(line);
   }
   else if (strchr(line, '|') != NULL)
   {
@@ -42,15 +56,9 @@ int execute_commande(char *line)
     return_value = exec_pipeline_cmds(line);
   }
   else
-    // vérifier si la commande est interne
-    if (is_internal_cmd(cmd->nom))
-    {
-      return_value = exec_internal_cmds(line);
-    }
-    else
-    {
-      return_value = exec_external_cmds(cmd);
-    }
+  {
+    return_value = exec_external_cmds(cmd);
+  }
   clearCommands(cmd);
 
   prev_status = return_value;
@@ -67,6 +75,12 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "exit", on arrête la boucle
   if (strncmp(cmd->nom, "exit", 4) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 2)
+    {
+      fprintf(stderr, "exit: too many arguments\n");
+      goto error;
+    }
     char *val = NULL;
     if (cmd->args[1] != NULL)
     {
@@ -78,18 +92,32 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strncmp(cmd->nom, "pwd", 3) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 1)
+    {
+      fprintf(stderr, "pwd: %s : invalid argument\n", cmd->args[1]);
+      goto error;
+    }
     prev_status = cmd_pwd(); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    clearCommands(cmd);
     return prev_status;
   }
   // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
   if (strncmp(cmd->nom, "cd", 2) == 0)
   {
+    // si il ya trop d'arguments, on affiche un message d'erreur
+    if (cmd->taille > 2)
+    {
+      fprintf(stderr, "cd: too many arguments\n");
+      goto error;
+    }
     char *path = NULL;
     if (cmd->args[1] != NULL)
     {
       path = cmd->args[1];
     }
     prev_status = cmd_cd(path); // status de la commande -> prev_status qui va être utilisé dans exit.c
+    clearCommands(cmd);
     return prev_status;
   }
   // Si l'utilisateur a tapé "ftype", on cmd_ftype de ftype.c
@@ -100,18 +128,23 @@ int exec_internal_cmds(char *line)
     if (ref != NULL)
     {
       prev_status = cmd_ftype(ref);
+      clearCommands(cmd);
       return prev_status;
     }
     else
     { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
       fprintf(stderr, "ftype: missing reference argument\n");
-      return 1;
+      goto error;
       // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
       // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
       // donc ça va retourner !prev_status, à voir pour l'instant donc.
     }
   }
-  return 1; // Par défaut, on continue la boucle
+  clearCommands(cmd);
+  return 1; // si la commande n'est pas reconnue
+error:
+  clearCommands(cmd);
+  return 1;
 }
 
 int exec_structured_cmds(char *line)
@@ -150,6 +183,11 @@ int exec_for_cmds(command *cmd)
   }
   // exécuter la commande for
   return_value = parcoursFor(command);
+  if (return_value != 0)
+  {
+    clearCommandFor(command);
+    return return_value;
+  }
 
   // vérifier si on est dans le cas for ... { ... } ; cmd
   char *tmp = strchr(cmd->ligne, '}');
@@ -189,3 +227,6 @@ int is_line_empty(char *line)
   }
   return 1;
 }
+
+
+

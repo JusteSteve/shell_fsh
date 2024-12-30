@@ -18,11 +18,12 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 // ***=== Structure pour les commandes simples ===***
 
 #define PATH_MAX 4096 // taille maximale d'un chemin
-#define MAX_CMDS 100  // nombre maximal d'arguments dans une commande
+#define MAX_CMDS 1024 // nombre maximal d'arguments dans une commande
 
 /**
  * @brief Structure de données pour les commandes simples
@@ -35,7 +36,7 @@ typedef struct command
     int taille;  // nombre d'éléments dans le tableau args
 } command;
 
-// Prototypes des fonctions associées
+// ***=== Prototypes des fonctions associées ===***
 
 /**
  * @brief Initialise la structure command
@@ -102,7 +103,7 @@ typedef struct comFor
     int fic_caches;   // fichiers cachés -A
     int recursive;    // récursivité -r
     char *extention;  // extension -e
-    int type;         // type de fichier à traiter -t (f : fichiers ordinaires, d : répertoire, l : lien symbolique, p : tubes)
+    char type;        // type de fichier à traiter -t (f : fichiers ordinaires, d : répertoire, l : lien symbolique, p : tubes)
     int max_parallel; // nombre maximal de tours de boucle en parallèle -p
 } comFor;
 
@@ -142,5 +143,77 @@ int parcoursFor(comFor *cmd_for);
  * @return chaîne de caractères avec la variable remplacée
  */
 char *remplacer_variable(char *str, char *var, char *valeur);
+
+/**
+ * @brief Vérifie si un fichier a une certaine extension
+ * @param file : nom du fichier
+ * @param extention : extension à vérifier
+ * @return true si le fichier a l'extension, false sinon
+ */
+bool has_extention(char *file, char *extention);
+
+/**
+ * @brief Supprime l'extension d'un fichier
+ * @param file : nom du fichier
+ * @return nom du fichier sans extension
+ */
+char *supprimer_extention(char *file);
+
+/**
+ * @brief Vérifie si un fichier est de type type
+ * @param file : nom du fichier
+ * @param sb : structure stat du fichier
+ * @return 1 si le fichier est du type, 0 sinon
+ */
+int is_type(char file, struct stat *sb);
+
+// ***=== Structure pour les commandes structurées de type if ===***
+
+/**
+ * @brief Structure de données pour les commandes structurées type if TEST { CMD1 } else { CMD2 }
+ */
+typedef struct cmd_if
+{
+    char *nom;
+    char *ligne;    // toute la ligne de commande
+    char *test;     // renseigne le test à effectuer
+    char *cmd_if;   // renseigne la commande à exécuter si le test est vrai
+    char *cmd_else; // renseigne la commande à exécuter si le test est faux
+} cmd_if;
+
+// ***=== Prototypes des fonctions associées ===***
+
+/**
+ * @brief Initialise la structure cmd_if
+ * @return pointeur sur la structure cmd_if
+ */
+cmd_if *initialiser_cmd_if();
+
+/**
+ * @brief Remplit les champs de la structure cmd_if selon les informations
+ * @param cmd : pointeur sur la structure command
+ * @return pointeur sur la structure cmd_if
+ */
+cmd_if *remplir_cmd_if(command *cmd);
+
+/**
+ * @brief Libère la mémoire allouée pour les champs de la structure cmd_if
+ * @param com : pointeur sur la structure cmd_if
+ */
+void free_cmd_if(cmd_if *cmd_if);
+
+/**
+ * @brief Exécute la commande structurée de type if
+ * @param cmd_if : pointeur sur la structure cmd_if
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_cmd_if(cmd_if *cmd_if);
+
+/**
+ * @brief Exécute la commande test
+ * @param test : ligne de commande test
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_test(char *cmd);
 
 #endif

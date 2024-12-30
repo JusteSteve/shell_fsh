@@ -2,23 +2,21 @@
  * @file str-cmd.c
  * @brief Fichier contenant l'implémentation des fonctions pour les commandes simples.
  */
-#include "../../headers/cmd-utils.h"
+#include "../../headers/str-cmd.h"
 
 command *initialiseCommand()
 {
-    // allocation de la mémoire pour la structure
-    command *com = malloc(sizeof(command));
-    if (com == NULL)
-    {
-        return NULL;
-    }
-    // initialisation des champs
-    com->nom = NULL;
-    com->args = NULL;
-    com->ligne = NULL;
-    com->taille = 0;
-
-    return com;
+  // allocation de la mémoire pour la structure
+  command *com = malloc(sizeof(command));
+  if (com == NULL)
+  {
+    return NULL;
+  }
+  com->nom = NULL;
+  com->args = NULL;
+  com->ligne = NULL;
+  com->taille = 0;
+  return com;
 }
 
 command *fillCommand(char *line)
@@ -37,38 +35,54 @@ command *fillCommand(char *line)
         goto error;
     }
 
-    // remplir les champs de la commande
-    commande->nom = strdup(tableau_args[0]);
-    commande->taille = get_nb_args(tableau_args);
-    commande->args = realloc(tableau_args, (commande->taille + 1) * sizeof(char *));
-    commande->ligne = strdup(line);
+  // remplir les champs de la commande
+  commande->nom = strdup(tableau_args[0]);
+  if (commande->nom == NULL)
+  {
+    perror("[fillCommand]>strdup");
+    goto error;
+  }
 
-    return commande;
+  commande->taille = get_nb_args(tableau_args);
+  commande->args = realloc(tableau_args, (commande->taille + 1) * sizeof(char *));
+  if (commande->args == NULL)
+  {
+    perror("[fillCommand]>realloc");
+    goto error;
+  }
+
+  commande->ligne = strdup(line);
+  if (commande->ligne == NULL)
+  {
+    perror("[fillCommand]>strdup");
+    goto error;
+  }
+
+  return commande;
 error:
-    clearCommands(commande);
-    return NULL;
+  clearCommands(commande);
+  return NULL;
 }
 
 void clearCommands(command *com)
 {
-    if (com->nom != NULL)
-    {
-        free(com->nom);
-    }
-    if (com->ligne != NULL)
-    {
-        free(com->ligne);
-    }
-    if (com->args != NULL)
-    {
-        free_args(com->args);
-    }
-    com->taille = 0;
-
-    if (com != NULL)
-    {
-        free(com);
-    }
+  if (com == NULL)
+  {
+    return;
+  }
+  if (com->nom != NULL)
+  {
+    free(com->nom);
+  }
+  if (com->ligne != NULL)
+  {
+    free(com->ligne);
+  }
+  if (com->args != NULL)
+  {
+    free_args(com->args);
+  }
+  free(com);
 }
 
 void free_args(char **args)
