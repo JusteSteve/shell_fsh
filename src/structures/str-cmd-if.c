@@ -35,8 +35,8 @@ cmd_if *remplir_cmd_if(command *cmd)
     }
 
     int i = 1;
-    int debut, fin;
-
+    int debut = 0;
+    int fin = 0;
     // ** extraire la commande test **
     if (strcmp(cmd->args[i], "test") == 0)
     {
