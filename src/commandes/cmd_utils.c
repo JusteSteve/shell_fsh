@@ -50,6 +50,11 @@ int execute_commande(char *line)
   {
     return_value = exec_internal_cmds(line);
   }
+  else if (strchr(line, '|') != NULL)
+  {
+    // exécuter la commande pipeline
+    return_value = exec_pipeline_cmds(line);
+  }
   else
   {
     return_value = exec_external_cmds(cmd);
@@ -146,7 +151,7 @@ int exec_structured_cmds(char *line)
 {
   int return_value;
   // diviser la ligne en tableau de commandes simples
-  char **cmds_tab = split_cmd(line, 1);
+  char **cmds_tab = split_cmd(line, ";", 1);
   if (cmds_tab == NULL)
   {
     return 1;
@@ -157,6 +162,10 @@ int exec_structured_cmds(char *line)
   {
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
+    if (return_value == 1)
+    {
+      return 1;
+    }
     cmd_i++;
   }
   free_args(cmds_tab);
