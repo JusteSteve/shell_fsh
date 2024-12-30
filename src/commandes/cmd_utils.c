@@ -118,7 +118,7 @@ int exec_structured_cmds(char *line)
 {
   int return_value;
   // diviser la ligne en tableau de commandes simples
-  char **cmds_tab = split_cmd(line, 1);
+  char **cmds_tab = split_cmd(line, ";", 1);
   if (cmds_tab == NULL)
   {
     return 1;

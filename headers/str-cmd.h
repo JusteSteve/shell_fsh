@@ -50,13 +50,14 @@ command *initialiseCommand();
 command *fillCommand(char *line);
 
 /**
- * divise une ligne de commande en arguments
- * avec les espaces comme séparateurs.
+ * divise une ligne de commande en arguments ou en sous-commandes
+ * avec le séparateur donné en argument.
  * @param cmd : ligne de commande à exécuter
- * @param flag : 1 si c'est une ligne de commande structurée, 0 sinon
+ * @param separateur : séparateur de commande
+ * @param flag : 0 si le séparateur est un espace, 1 sinon
  * @return tableau de pointeur de char contenant les arguments de la commande
  */
-char **split_cmd(char *line, int flag);
+char **split_cmd(char *line, char *separateur, int flag);
 
 /**
  * @param args : tableau de chaines de caracteres

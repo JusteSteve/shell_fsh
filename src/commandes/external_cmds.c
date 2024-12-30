@@ -44,7 +44,7 @@ int exec_external_cmds(command *cmd)
 
 // ===*** Fonctions auxiliaires ***===
 
-char **split_cmd(char *line, int flag)
+char **split_cmd(char *line, char *separateur, int flag)
 {
   // allouer la mémoire pour stocker les arguments ou les commandes
   char **args = malloc(MAX_CMDS * sizeof(char *));
@@ -65,13 +65,13 @@ char **split_cmd(char *line, int flag)
 
   int i = 0;
   // séparer la ligne en arguments ou en commandes
-  char *tokens = (flag) ? strtok(line_copy, ";") : strtok(line_copy, " ");
+  char *tokens = strtok(line_copy, separateur);
   while (tokens != NULL && i < MAX_CMDS - 1)
   {
     // si c'est une commande for, on doit stocker la commande et les arguments dans une seule case
     if (flag && strncmp(tokens, " for", 4) == 0)
     {
-      args[i++] = build_for_cmd(tokens);
+      args[i++] = build_for_cmd(tokens, separateur);
     }
     else
     {
@@ -89,20 +89,19 @@ char **split_cmd(char *line, int flag)
       }
       i++;
     }
-    // passer au prochain argument
-    tokens = (flag) ? strtok(NULL, ";") : strtok(NULL, " ");
+    // passer au prochain
+    tokens = strtok(NULL, separateur);
   }
   args[i] = NULL; // on fini le tableau par NULL
   free(line_copy);
   return args;
 
 error:
-
   free(args);
   exit(1);
 }
 
-char *build_for_cmd(char *tokens)
+char *build_for_cmd(char *tokens, char *separateur)
 {
   size_t len = strlen(tokens) + 1;
   char *tmp = malloc(len);
@@ -115,7 +114,7 @@ char *build_for_cmd(char *tokens)
   // reconstruire la commande for ... { ... }
   while (strstr(tokens, "}") == NULL)
   {
-    tokens = strtok(NULL, ";");
+    tokens = strtok(NULL, separateur);
     len += strlen(tokens) + 2; // +2 pour ; et le \0
     tmp = realloc(tmp, len);
     if (tmp == NULL)
@@ -123,7 +122,7 @@ char *build_for_cmd(char *tokens)
       perror("[build_for_cmd]>realloc");
       exit(1);
     }
-    strcat(tmp, ";");
+    strcat(tmp, separateur);
     strcat(tmp, tokens);
   }
   return tmp;

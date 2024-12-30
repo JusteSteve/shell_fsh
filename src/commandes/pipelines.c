@@ -3,7 +3,7 @@
 int exec_pipeline_cmds(char *line)
 {
     // séparer les commandes de la ligne
-    char **cmds = split_pipeline_cmd(line);
+    char **cmds = split_cmd(line, "|", 1);
     if (cmds == NULL)
     {
         perror("[exec_pipeline_cmds]>split_cmd");
@@ -60,7 +60,8 @@ int exec_pipeline_cmds(char *line)
             }
 
             // exécuter la commande
-            if(execute_commande(cmds[i]) == 1){
+            if (execute_commande(cmds[i]) == 1)
+            {
                 exit(1);
             }
             exit(0);
@@ -92,88 +93,4 @@ int exec_pipeline_cmds(char *line)
 error:
     free(cmds);
     return 1;
-}
-
-// ***=== Fonctions auxiliaires ===***
-
-char **split_pipeline_cmd(char *line)
-{
-    // allouer la mémoire pour stocker les commandes
-    char **cmds = malloc(MAX_CMDS * sizeof(char *));
-    if (cmds == NULL)
-    {
-        perror("[split_pipeline_cmd]>malloc");
-        exit(1);
-    }
-
-    // faire une copie de la ligne pour travailler avec
-    char *line_copy = strdup(line);
-    if (line_copy == NULL)
-    {
-        perror("[split_pipeline_cmd]>strdup");
-        free(cmds);
-        exit(1);
-    }
-
-    int i = 0;
-    char *token = strtok(line_copy, "|");
-    while (token != NULL && i < MAX_CMDS - 1)
-    {
-        // si c'est une commande for, on doit stocker la commande et les arguments dans une seule case
-        if (strncmp(token, " for", 4) == 0)
-        {
-            cmds[i++] = build_for_pipe_cmd(token);
-        }
-        else
-        {
-            // stocker la commande i dans le tableau
-            cmds[i] = strdup(token);
-            if (cmds[i] == NULL)
-            {
-                perror("[split_pipeline_cmd]>strdup");
-                free(line_copy);
-                for (int j = 0; j < i; j++)
-                {
-                    free(cmds[j]);
-                }
-                goto error;
-            }
-            i++;
-        }
-        // passer à la commande suivante
-        token = strtok(NULL, "|");
-    }
-    cmds[i] = NULL; // on finit le tableau par NULL
-    free(line_copy);
-    return cmds;
-error:
-    free(cmds);
-    exit(1);
-}
-
-char *build_for_pipe_cmd(char *tokens)
-{
-    size_t len = strlen(tokens) + 1;
-    char *tmp = malloc(len);
-    if (tmp == NULL)
-    {
-        perror("[build_for_cmd]>malloc");
-        exit(1);
-    }
-    strcpy(tmp, tokens);
-    // reconstruire la commande for ... { ... }
-    while (strstr(tokens, "}") == NULL)
-    {
-        tokens = strtok(NULL, "|");
-        len += strlen(tokens) + 2; // +2 pour ; et le \0
-        tmp = realloc(tmp, len);
-        if (tmp == NULL)
-        {
-            perror("[build_for_cmd]>realloc");
-            exit(1);
-        }
-        strcat(tmp, "|");
-        strcat(tmp, tokens);
-    }
-    return tmp;
 }
