@@ -4,7 +4,6 @@
  * pour exécuter des commandes.
  */
 
-#include "../../headers/internal_cmds.h"
 #include "../../headers/cmd-utils.h"
 #include "../../headers/redir.h"
 
@@ -15,12 +14,11 @@ int execute_commande(char *line)
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
-
   if (cmd == NULL)
   {
     return 1;
   }
-  // vérifier si la commande est un for
+  
   if (strcmp(cmd->nom, "for") == 0)
   {
     return_value = exec_for_cmds(cmd);
@@ -35,7 +33,6 @@ int execute_commande(char *line)
     }
     return_value = exec_cmd_if(cmd_if);
   }
-  // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
     return_value = exec_structured_cmds(line);
@@ -45,15 +42,13 @@ int execute_commande(char *line)
     int type = is_redirection(line);
     return_value = redir_handler(line, type);
   }
-  else if (is_internal_cmd(cmd->nom))
-    // vérifier si la commande est interne
-  {
-    return_value = exec_internal_cmds(line);
-  }
   else if (strchr(line, '|') != NULL)
   {
-    // exécuter la commande pipeline
     return_value = exec_pipeline_cmds(line);
+  }
+  else if (is_internal_cmd(cmd->nom))
+  {
+    return_value = exec_internal_cmds(line);
   }
   else
   {
@@ -162,10 +157,6 @@ int exec_structured_cmds(char *line)
   {
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
-    if (return_value == 1)
-    {
-      return 1;
-    }
     cmd_i++;
   }
   free_args(cmds_tab);

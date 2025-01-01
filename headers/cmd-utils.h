@@ -82,13 +82,6 @@ char *build_for_cmd(char *tokens, char *separateur);
  */
 int exec_pipeline_cmds(char *line);
 
-/**
- * @brief sépare les commandes d'un pipeline
- * @param line : ligne de commande
- * @return tableau de pointeurs de char contenant les commandes du pipeline
- */
-char **split_pipeline_cmd(char *line);
 
-char *build_for_pipe_cmd(char *tokens);
 
 #endif

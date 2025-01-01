@@ -7,18 +7,27 @@
 #define FSH_H
 
 // ***=== Inclusions ===***
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
 #include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <errno.h>
 
 // ===***=== Prototypes ===***===
 
 // ***=== prompt.c ===***
 #define PROMPT_MAX_LENGTH 54
+#define PATH_MAX 4096
+#define MAX_CMDS 1024 // nombre maximal d'arguments dans une commande
+
 
 #define COLOR_GREEN "\033[32m"
 #define COLOR_YELLOW "\033[33m"
