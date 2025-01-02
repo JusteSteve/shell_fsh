@@ -18,7 +18,6 @@ int execute_commande(char *line)
   {
     return 1;
   }
-  
   if (strcmp(cmd->nom, "for") == 0)
   {
     return_value = exec_for_cmds(cmd);
@@ -33,18 +32,17 @@ int execute_commande(char *line)
     }
     return_value = exec_cmd_if(cmd_if);
   }
+  else if (strchr(line, '|') != NULL)
+  {
+    return_value = exec_pipeline_cmds(line);
+  }
   else if (strchr(line, ';') != NULL)
   {
     return_value = exec_structured_cmds(line);
   }
-  else if (is_redirection(line)!=-1)
-  { 
-    int type = is_redirection(line);
-    return_value = redir_handler(line, type);
-  }
-  else if (strchr(line, '|') != NULL)
+  else if (contient_redirection(line))
   {
-    return_value = exec_pipeline_cmds(line);
+    return_value = exec_cmd_redirection(cmd);
   }
   else if (is_internal_cmd(cmd->nom))
   {
@@ -82,7 +80,6 @@ int exec_internal_cmds(char *line)
       val = cmd->args[1];
     }
     cmd_exit(val);
-    // Pas besoin de return car exit termine le programme (NIC SUPPRIME MOI SI TU ME VOIS)
   }
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strncmp(cmd->nom, "pwd", 3) == 0)
@@ -166,7 +163,7 @@ int exec_structured_cmds(char *line)
 int exec_for_cmds(command *cmd)
 {
   int return_value;
-  //   créer une structure de commande for à partir de la cmd
+  //  créer une structure de commande for à partir de la cmd
   comFor *command = fillCommandFor(cmd);
   if (command == NULL)
   {
@@ -218,6 +215,3 @@ int is_line_empty(char *line)
   }
   return 1;
 }
-
-
-

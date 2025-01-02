@@ -3,6 +3,8 @@
  * @brief Fichier contenant les fonctions pour les commandes structurées de type if.
  */
 #include "../../headers/cmd-utils.h"
+#include "../../headers/redir.h"
+
 
 cmd_if *initialiser_cmd_if()
 {
@@ -66,6 +68,14 @@ cmd_if *remplir_cmd_if(command *cmd)
         }
         fin = i - 1; // on ne prend pas le ]
         i++;
+    }
+    else{
+        debut = i ;
+        while (strcmp(cmd->args[i], "{") != 0)
+        {
+            i++;
+        }
+        fin = i - 1;
     }
 
     int test_taille = 0;
@@ -143,6 +153,14 @@ int exec_cmd_if(cmd_if *cmd_if)
 
 int exec_test(char *test)
 {
+    if(contient_redirection(test)){
+        command *cmd = fillCommand(test);
+        if (cmd == NULL)
+        {
+            return 1;
+        }
+        return exec_cmd_redirection(cmd);
+    }
     char *args[256];
     int i = 0;
 
