@@ -11,6 +11,7 @@ SRCS = src/main.c \
 	src/commandes/internes/ftype.c \
 	src/commandes/external_cmds.c \
 	src/commandes/cmd_utils.c \
+	src/commandes/pipelines.c \
 	src/redirections/redir_handler.c \
 	src/redirections/redir_in_out.c \
 	src/structures/str-cmd-for.c \
