@@ -115,3 +115,68 @@ error:
 
     return 1;
 }
+
+int redir_in(command *cmd,redirection *redir)
+{
+    int flags = extraire_flags(redir);
+    int fd = open(redir->fichier, flags);
+    if (fd == -1) {
+        if(errno == EEXIST)
+        {
+            dprintf(STDERR_FILENO, "Error opening file %s: %s\n", redir->fichier, strerror(errno));
+        }else{
+            dprintf(STDERR_FILENO, "Error opening file %s: %s\n", redir->fichier, strerror(errno));
+        }
+        clearCommands(cmd);
+        return 1;
+    } 
+
+    if (dup2(fd, redir->fd) == -1) {
+        dprintf(STDERR_FILENO, "Error redirecting stdin: %s\n", strerror(errno));
+        close(fd);
+        clearCommands(cmd);
+        return 1;
+    }
+    close(fd);
+
+    /*
+    // vérifier si la commande est "exit"
+    if(strcmp(cmd->nom, "exit") == 0 && (cmd->ligne[4] == '\0' || is_space(cmd->ligne[4])))
+    {
+        fclose(stdin);
+        exit(0);
+    }
+
+    pid_t pid = fork();
+    switch(pid)
+    {
+        case -1:
+            dprintf(STDERR_FILENO, "Error: fork failed: %s\n", strerror(errno));
+            return 1;
+        case 0:
+        {
+            if(execvp(cmd->nom, cmd->args) == -1)
+            {
+                dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
+                exit(1);
+            }
+        }
+        default:
+        {
+            int status;
+            if(waitpid(pid, &status, 0) == -1)
+            {
+                dprintf(STDERR_FILENO, "Error: waitpid failed: %s\n", strerror(errno));
+                return 1;
+            }
+            if(dup2(STDIN_FILENO, redir->fd) == -1)
+            {
+                dprintf(STDERR_FILENO, "Error restoring stdin: %s\n", strerror(errno));
+                return 1;
+            }
+            return WEXITSTATUS(status);
+        }
+    }
+    */
+    return 0;
+}

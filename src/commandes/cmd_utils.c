@@ -40,10 +40,10 @@ int execute_commande(char *line)
   {
     return_value = exec_structured_cmds(line);
   }
-  else if (is_redirection(line)!=-1)
+  else if (contient_redirection(line))
   { 
-    int type = is_redirection(line);
-    return_value = redir_handler(line, type);
+    //return_value = redir_handler(cmd);
+    return_value = execute_command_with_redirections(cmd);
   }
   else if (is_internal_cmd(cmd->nom))
     // vérifier si la commande est interne
@@ -67,6 +67,7 @@ int exec_internal_cmds(char *line)
   {
     return 1;
   }
+  //redir_handler(cmd);
   // Si l'utilisateur a tapé "exit", on arrête la boucle
   if (strncmp(cmd->nom, "exit", 4) == 0)
   {
@@ -217,6 +218,41 @@ int is_line_empty(char *line)
     }
   }
   return 1;
+}
+
+int execute_command_with_redirections(command *cmd)
+{
+  pid_t pid = fork();
+  if (pid == -1)
+  {
+    dprintf(STDERR_FILENO, "Error: fork failed: %s\n", strerror(errno));
+    return 1;
+  }
+  if (pid == 0)
+  {
+    redir_handler(cmd);
+    /*
+    if(is_internal_cmd(cmd->nom))
+    {
+      exec_internal_cmds(cmd->ligne);
+    }
+    else
+    {
+      exec_external_cmds(cmd);
+    }
+    */
+    execvp(cmd->nom, cmd->args);
+    dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
+    //clearCommands(cmd);
+    return 1;
+  }
+  else
+  {
+    waitpid(pid, NULL, 0);
+    return 0;
+  }
+
+    
 }
 
 
