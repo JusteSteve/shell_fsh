@@ -80,17 +80,16 @@ int exec_pipeline_cmds(char *line)
     {
         close(pipe_fds[i]);
     }
-
     // attendre la fin de tous les processus fils
     for (int i = 0; i < 2 * (nb_cmds - 1); i++)
     {
         wait(NULL);
     }
 
-    free(cmds);
+    free_args(cmds);
     return 0;
 
 error:
-    free(cmds);
+    free_args(cmds);
     return 1;
 }

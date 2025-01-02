@@ -32,18 +32,19 @@ int execute_commande(char *line)
     }
     return_value = exec_cmd_if(cmd_if);
   }
-  else if (strchr(line, '|') != NULL)
-  {
-    return_value = exec_pipeline_cmds(line);
-  }
   else if (strchr(line, ';') != NULL)
   {
     return_value = exec_structured_cmds(line);
+  }
+  else if (strstr(line, " | ") != NULL)
+  {
+    return_value = exec_pipeline_cmds(line);
   }
   else if (contient_redirection(line))
   {
     return_value = exec_cmd_redirection(cmd);
   }
+  
   else if (is_internal_cmd(cmd->nom))
   {
     return_value = exec_internal_cmds(line);

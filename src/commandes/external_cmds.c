@@ -59,7 +59,7 @@ char **split_cmd(char *line, char *separateur, int flag)
   if (line_copy == NULL)
   {
     perror("[split_cmd]>strdup");
-    free(args);
+    free_args(args);
     exit(1);
   }
 
@@ -80,10 +80,9 @@ char **split_cmd(char *line, char *separateur, int flag)
       if (args[i] == NULL)
       {
         perror("[split_cmd]>strdup");
-        free(line_copy);
-        for (int j = 0; j < i; i++)
+        for (int j = 0; j < i; j++)
         {
-          free(args[i]);
+          free(args[j]);
         }
         goto error;
       }
@@ -98,6 +97,7 @@ char **split_cmd(char *line, char *separateur, int flag)
 
 error:
   free(args);
+  free(line_copy);
   exit(1);
 }
 
