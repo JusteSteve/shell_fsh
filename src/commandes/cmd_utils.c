@@ -15,12 +15,11 @@ int execute_commande(char *line)
   int return_value;
   // créer une structure de commande à partir de la ligne de commande
   command *cmd = fillCommand(line);
-
   if (cmd == NULL)
   {
     return 1;
   }
-  // vérifier si la commande est un for
+
   if (strcmp(cmd->nom, "for") == 0)
   {
     return_value = exec_for_cmds(cmd);
@@ -35,18 +34,15 @@ int execute_commande(char *line)
     }
     return_value = exec_cmd_if(cmd_if);
   }
-  // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
     return_value = exec_structured_cmds(line);
   }
   else if (contient_redirection(line))
   { 
-    //return_value = redir_handler(cmd);
-    return_value = execute_command_with_redirections(cmd);
+    return_value = exec_cmd_redirection(cmd);
   }
   else if (is_internal_cmd(cmd->nom))
-    // vérifier si la commande est interne
   {
     return_value = exec_internal_cmds(line);
   }
@@ -67,7 +63,6 @@ int exec_internal_cmds(char *line)
   {
     return 1;
   }
-  //redir_handler(cmd);
   // Si l'utilisateur a tapé "exit", on arrête la boucle
   if (strncmp(cmd->nom, "exit", 4) == 0)
   {
@@ -83,7 +78,6 @@ int exec_internal_cmds(char *line)
       val = cmd->args[1];
     }
     cmd_exit(val);
-    // Pas besoin de return car exit termine le programme (NIC SUPPRIME MOI SI TU ME VOIS)
   }
   // Si l'utilisateur a tapé "pwd", on cmd_pwd de pwd.c
   if (strncmp(cmd->nom, "pwd", 3) == 0)
@@ -167,7 +161,7 @@ int exec_structured_cmds(char *line)
 int exec_for_cmds(command *cmd)
 {
   int return_value;
-  //   créer une structure de commande for à partir de la cmd
+  //  créer une structure de commande for à partir de la cmd
   comFor *command = fillCommandFor(cmd);
   if (command == NULL)
   {
@@ -220,40 +214,7 @@ int is_line_empty(char *line)
   return 1;
 }
 
-int execute_command_with_redirections(command *cmd)
-{
-  pid_t pid = fork();
-  if (pid == -1)
-  {
-    dprintf(STDERR_FILENO, "Error: fork failed: %s\n", strerror(errno));
-    return 1;
-  }
-  if (pid == 0)
-  {
-    redir_handler(cmd);
-    /*
-    if(is_internal_cmd(cmd->nom))
-    {
-      exec_internal_cmds(cmd->ligne);
-    }
-    else
-    {
-      exec_external_cmds(cmd);
-    }
-    */
-    execvp(cmd->nom, cmd->args);
-    dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
-    //clearCommands(cmd);
-    return 1;
-  }
-  else
-  {
-    waitpid(pid, NULL, 0);
-    return 0;
-  }
 
-    
-}
 
 
 
