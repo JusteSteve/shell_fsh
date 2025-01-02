@@ -10,17 +10,21 @@ int redir_in(redirection *redir)
 {
     int flags = extraire_flags(redir);
     int fd = open(redir->fichier, flags);
-    if (fd == -1) {
-        if(errno == EEXIST)
+    if (fd == -1)
+    {
+        if (errno == EEXIST)
         {
             dprintf(STDERR_FILENO, "Error opening file %s: %s\n", redir->fichier, strerror(errno));
-        }else{
+        }
+        else
+        {
             dprintf(STDERR_FILENO, "Error opening file %s: %s\n", redir->fichier, strerror(errno));
         }
         return 1;
-    } 
+    }
 
-    if (dup2(fd, redir->fd) == -1) {
+    if (dup2(fd, redir->fd) == -1)
+    {
         dprintf(STDERR_FILENO, "Error redirecting stdin: %s\n", strerror(errno));
         close(fd);
         return 1;
@@ -29,13 +33,13 @@ int redir_in(redirection *redir)
     return 0;
 }
 
-int redir_out(command *cmd, redirection *redir) 
+int redir_out(command *cmd, redirection *redir)
 {
     int flags = extraire_flags(redir);
     int fd = open(redir->fichier, flags, 0644);
-    if (fd == -1) 
+    if (fd == -1)
     {
-        if(errno == EEXIST)
+        if (errno == EEXIST)
         {
             dprintf(STDERR_FILENO, "Error: %s already exists\n", redir->fichier);
         }
@@ -47,7 +51,7 @@ int redir_out(command *cmd, redirection *redir)
         return 1;
     }
     // rediriger la sortie  vers le fichier
-    if (dup2(fd, redir->fd) == -1) 
+    if (dup2(fd, redir->fd) == -1)
     {
         dprintf(STDERR_FILENO, "Error redirecting stdout: %s\n", strerror(errno));
         close(fd);
@@ -56,6 +60,3 @@ int redir_out(command *cmd, redirection *redir)
     close(fd);
     return 0;
 }
-
-
-

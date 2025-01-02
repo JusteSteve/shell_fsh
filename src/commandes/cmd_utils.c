@@ -39,7 +39,7 @@ int execute_commande(char *line)
     return_value = exec_structured_cmds(line);
   }
   else if (contient_redirection(line))
-  { 
+  {
     return_value = exec_cmd_redirection(cmd);
   }
   else if (is_internal_cmd(cmd->nom))
@@ -213,8 +213,3 @@ int is_line_empty(char *line)
   }
   return 1;
 }
-
-
-
-
-

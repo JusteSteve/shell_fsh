@@ -6,40 +6,39 @@
 #include "../../headers/redir.h"
 #include "../../headers/internal_cmds.h"
 
-
 int exec_cmd_redirection(command *cmd)
 {
     //! FIXME : à régler car ne sert que pour le test exit < fichier 3
-    if(strncmp(cmd->nom, "exit", 4) == 0)
+    if (strncmp(cmd->nom, "exit", 4) == 0)
     {
         fclose(stdin); // Fermer stdin si redirigé
         exit(0);
     }
-  pid_t pid = fork();
-  if (pid == -1)
-  {
-    perror("[exec_cmd_redirection]>fork");
-    exit(1);
-  }
-  if (pid == 0)
-  {
-    redir_handler(cmd);
-
-    execvp(cmd->nom, cmd->args);
-    dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
-    clearCommands(cmd);
-    exit(1);
-  }
-  else
-  {
-    int status;
-    waitpid(pid, &status, 0); // Attendre la fin du processus enfant et récupérer son statut
-    if (WIFEXITED(status))
+    pid_t pid = fork();
+    if (pid == -1)
     {
-      return WEXITSTATUS(status); // Retourner le statut de sortie du processus enfant
+        perror("[exec_cmd_redirection]>fork");
+        exit(1);
     }
-    return 1; // Retourner une valeur d'erreur par défaut
-  }
+    if (pid == 0)
+    {
+        redir_handler(cmd);
+
+        execvp(cmd->nom, cmd->args);
+        dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
+        clearCommands(cmd);
+        exit(1);
+    }
+    else
+    {
+        int status;
+        waitpid(pid, &status, 0); // Attendre la fin du processus enfant et récupérer son statut
+        if (WIFEXITED(status))
+        {
+            return WEXITSTATUS(status); // Retourner le statut de sortie du processus enfant
+        }
+        return 1; // Retourner une valeur d'erreur par défaut
+    }
 }
 
 int redir_handler(command *cmd)
@@ -65,8 +64,8 @@ int redir_handler(command *cmd)
                 return 1;
             }
             // exécuter la redirection
-            return_value = (redir->type == REDIR_STDIN) ? redir_in(redir) : redir_out(cmd, redir) ;
-            
+            return_value = (redir->type == REDIR_STDIN) ? redir_in(redir) : redir_out(cmd, redir);
+
             // suppression des tokens de redirection du tableau de commandes
             int j = i;
             while (cmd->args[j + 2] != NULL)
@@ -83,7 +82,6 @@ int redir_handler(command *cmd)
     }
     return return_value;
 }
-
 
 // ****==== Fonctions auxiliaires ====****
 
