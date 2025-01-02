@@ -4,7 +4,6 @@
  * pour exécuter des commandes.
  */
 
-#include "../../headers/internal_cmds.h"
 #include "../../headers/cmd-utils.h"
 #include "../../headers/redir.h"
 
@@ -19,7 +18,6 @@ int execute_commande(char *line)
   {
     return 1;
   }
-
   if (strcmp(cmd->nom, "for") == 0)
   {
     return_value = exec_for_cmds(cmd);
@@ -33,6 +31,10 @@ int execute_commande(char *line)
       return 1;
     }
     return_value = exec_cmd_if(cmd_if);
+  }
+  else if (strchr(line, '|') != NULL)
+  {
+    return_value = exec_pipeline_cmds(line);
   }
   else if (strchr(line, ';') != NULL)
   {
@@ -141,7 +143,7 @@ int exec_structured_cmds(char *line)
 {
   int return_value;
   // diviser la ligne en tableau de commandes simples
-  char **cmds_tab = split_cmd(line, 1);
+  char **cmds_tab = split_cmd(line, ";", 1);
   if (cmds_tab == NULL)
   {
     return 1;

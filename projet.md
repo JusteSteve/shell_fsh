@@ -8,7 +8,7 @@ réfléchir avant de se lancer dans la programmation du projet.
 ## Sujet : `fsh`, un petit shell avec des boucles `for`
 
 Le but du projet est de programmer un interpréteur de commandes (aka
-*shell*) interactif reprenant quelques fonctionnalités plus ou moins
+_shell_) interactif reprenant quelques fonctionnalités plus ou moins
 classiques des shells usuels : outre la possibilité d'exécuter toutes les
 commandes externes, `fsh` devra proposer quelques commandes internes,
 permettre la redirection des flots standard ainsi que les combinaisons
@@ -18,22 +18,20 @@ conditionnelles et un certain type particulier de boucles.
 La gestion des tâches n'est pas requise : tous les processus lancés à
 partir de votre shell le seront en premier-plan.
 
-Plus précisément, `fsh` doit respecter les prescriptions suivantes : 
-
+Plus précisément, `fsh` doit respecter les prescriptions suivantes :
 
 ### Commandes externes
 
 `fsh` peut exécuter toutes les commandes externes, avec ou sans
-arguments, en tenant compte de la variable d'environnement `PATH`. 
-
+arguments, en tenant compte de la variable d'environnement `PATH`.
 
 ### Commandes internes
 
-`fsh` possède (au moins) les commandes internes listées ci-dessous.
-Elles ont comme valeur de retour 0 en cas de succès (à l'exception
-d'`exit`, naturellement), et 1 en cas d'échec.
+`fsh` possède les commandes internes listées ci-dessous. Elles ont
+comme valeur de retour 0 en cas de succès (à l'exception d'`exit`,
+naturellement), et 1 en cas d'échec.
 
-##### `pwd`
+#### `pwd`
 
 Affiche la référence physique absolue du répertoire de travail
 courant.
@@ -44,9 +42,9 @@ Change de répertoire de travail courant, qui devient le répertoire `REF`
 (s'il s'agit d'une référence valide), le précédent répertoire de travail
 si le paramètre est `-`, ou `$HOME` en l'absence de paramètre.
 
-##### `exit [VAL]` 
+##### `exit [VAL]`
 
-Termine le processus `fsh` avec comme valeur de retour `VAL` (ou par 
+Termine le processus `fsh` avec comme valeur de retour `VAL` (ou par
 défaut la valeur de retour de la dernière commande exécutée).
 
 Lorsqu'il atteint la fin de son entrée standard (ie si l'utilisateur
@@ -58,7 +56,6 @@ commande interne `exit` (sans paramètre) avait été saisie.
 Affiche le type du fichier de référence `REF` (s'il s'agit d'une
 référence valide) : `directory`, `regular file` , `symbolic link`, `named
 pipe`, `other`.
-
 
 ### Redirections vers des fichiers
 
@@ -95,16 +92,12 @@ Les espaces de part et d'autre des symboles de redirection sont requis.
 En cas d'échec d'une redirection, la ligne de commande saisie n'est pas
 exécutée, et la valeur de retour est 1.
 
-
-
 ### Hiérarchie des lignes de commande
-
 
 #### Commandes simples
 
 Une **commande simple** est une ligne de commande exécutant une unique
 commande, interne ou externe, avec ou sans redirection.
-
 
 #### Pipelines
 
@@ -116,14 +109,14 @@ redirection de la sortie standard de `CMD_1` et de l'entrée standard de
 Un **pipeline** est soit une commande simple, soit une ligne de commande
 de la forme `CMD_1 | CMD_2 | ... | CMD_N`, avec les redirections
 additionnelles éventuelles :
-- redirection de l'entrée standard de `CMD_1` 
+
+- redirection de l'entrée standard de `CMD_1`
 - redirection de la sortie standard de `CMD_N`
 - redirection des sorties erreurs des `N` commandes.
 
 Les espaces de part et d'autre du symbole `|` sont requis.
 
 La valeur de retour est celle de `CMD_N`.
-
 
 #### Commandes structurées
 
@@ -132,28 +125,26 @@ commande d'une des formes suivantes :
 
 ##### `CMD_1 ; CMD_2 ; ... ; CMD_N`
 
-Exécute `CMD_1`, **puis** après la terminaison de celle-ci, `CMD_2`, et ainsi
-de suite jusqu'à `CMD_N`. 
+Exécute la commande structurée `CMD_1`, **puis** après la terminaison
+de celle-ci, la commande structurée `CMD_2`, et ainsi de suite jusqu'à
+`CMD_N`.
 
 La valeur de retour est celle de `CMD_N`.
-
 
 ##### `if TEST { CMD }`
 
 Exécute le pipeline `TEST` puis, en cas de succès (_ie_ si sa valeur de
-retour est 0), exécute la commande structurée `CMD` entre accolades. 
+retour est 0), exécute la commande structurée `CMD` entre accolades.
 
 La valeur de retour est celle de `CMD` si celle-ci est exécutée, et 0
 sinon.
 
-
 ##### `if TEST { CMD_1 } else { CMD_2 }`
 
 Exécute le pipeline `TEST` puis, selon sa valeur de retour, exécute l'une
-ou l'autre des commandes structurées entre accolades. 
+ou l'autre des commandes structurées entre accolades.
 
 La valeur de retour est celle de `CMD_1` ou de `CMD_2` selon le cas.
-
 
 ##### `for F in REP [-A] [-r] [-e EXT] [-t TYPE] [-p MAX] { CMD }`
 
@@ -172,7 +163,7 @@ Effet des options :
 - `-e EXT` : filtrage des résultats selon l'extension : les fichiers dont
   le nom de base ne se termine pas par `.EXT` sont ignorés; pour les
   autres fichiers, la variable de boucle `F` prend pour valeur la
-  référence du fichier *amputée de son extension*, pour permettre des
+  référence du fichier _amputée de son extension_, pour permettre des
   usages tels que `for F in . -e jpg { convert $F.jpg $F.png }`;
 
 - `-t TYPE` : filtrage des résultats selon le type de fichier : `f` pour
@@ -182,11 +173,13 @@ Effet des options :
 - `-p MAX` : permet le traitement en parallèle d'un maximum de `MAX`
   tours de boucle.
 
-La valeur de retour est le **maximum** des valeurs de retour des
+_**Addendum :** si `REP` est une référence invalide, ou si une option non
+reconnue est fournie, la commande échoue avec valeur de retour 1._
+
+Sinon, la valeur de retour est le **maximum** des valeurs de retour des
 différents tours de boucle.
 
 Les espaces de part et d'autre des symboles `;`, `{` et `}` sont requis.
-
 
 #### Autres lignes de commande
 
@@ -195,19 +188,35 @@ que `fsh` doit savoir interpréter et exécuter. En particulier, il n'est
 pas demandé de pouvoir rediriger l'entrée ou la sortie d'une commande
 structurée, que ce soit vers un fichier ou dans un pipeline.
 
+_**Addendum :** en cas d'erreur de syntaxe, la valeur de retour est 2.
+La frontière entre erreur de syntaxe et arguments erronés étant ténue,
+certains cas limites peuvent retourner 1 ou 2 selon l'interprétation.
+Ces cas ne seront pas testés._
 
+**Exemples et contre-exemples :**
+
+- `if test { echo a } else motEnTrop { echo b }` ou `for f in { echo }`
+  sont des erreurs de syntaxe : des constituants attendus à une certaine
+  position n'y sont pas;
+- `for f in in { echo }` ne l'est pas : la validité de la commande dépend
+  de l'existence d'un répertoire de nom `in` dans le répertoire courant;
+- les erreurs de parenthésages comme `if test { echo } }` sont plutôt des
+  erreurs de syntaxe;
+- `for f in . aaaa { echo }` est un cas limite qui peut être considéré
+  comme une erreur de syntaxe ou un usage d'options erronées selon le moment
+  où l'erreur est décelée.
 
 ### Gestion de la ligne de commande
 
 `fsh` fonctionne en mode interactif : il affiche une invite de commande
-(*prompt*), lit la ligne de commande saisie par l'utilisateur, la découpe
+(_prompt_), lit la ligne de commande saisie par l'utilisateur, la découpe
 en mots selon les (blocs d')espaces, interprète les éventuels caractères
-spéciaux (`<`, `>`, `|`, `[`, `}`, `;`, `$`), puis exécute la ou les
+spéciaux (`<`, `>`, `|`, `{`, `}`, `;`, `$`), puis exécute la ou les
 commandes correspondantes.
 
 `fsh` ne fournit aucun mécanisme d'échappement; les arguments de la
 ligne de commande ne peuvent donc pas contenir de caractères spéciaux
-(espaces en particulier). 
+(espaces en particulier).
 
 Il est fortement recommandé d'utiliser la bibliothèque
 [`readline`](https://tiswww.cwru.edu/php/chet/readline/rltop.html) pour
@@ -218,7 +227,7 @@ entrer dans les détails, un usage basique de la fonction `char *readline
 (const char *prompt)` fournit déjà un résultat très satisfaisant :
 
 ```c
-char * ligne = readline("mon joli prompt $ ");  
+char * ligne = readline("mon joli prompt $ ");
 /* alloue et remplit ligne avec une version "propre" de la ligne saisie,
  * ie nettoyée des éventuelles erreurs et corrections (et du '\n' final) */
 add_history(ligne);
@@ -230,7 +239,6 @@ L'affichage du prompt de `fsh` est réalisé **sur sa sortie erreur**.
 Avec la bibliothèque `readline`, ce comportement s'obtient en indiquant
 `rl_outstream = stderr;` avant le premier appel à la fonction
 `readline()`.
-
 
 #### Formatage du prompt
 
@@ -246,9 +254,9 @@ indications de couleur), et est formé des éléments suivants :
   `"\033[36m"` (cyan);
 - la référence du **répertoire courant**, éventuellement tronquée (par la
   gauche) pour respecter la limite de 30 caractères; dans ce cas la
-  référence commencera par trois points (`"..."`);  
-- la bascule `"\033[00m"` (retour à la normale);  
-- un dollar puis un espace (`"$ "`).  
+  référence commencera par trois points (`"..."`);
+- la bascule `"\033[00m"` (retour à la normale);
+- un dollar puis un espace (`"$ "`).
 
 Pour que l'affichage s'adapte correctement à la géométrie de la fenêtre,
 chaque bascule de couleur doit être entourée des balises `'\001'` et
@@ -257,6 +265,7 @@ formée de caractères non imprimables et doit donc être ignorée dans le
 calcul de la longueur du texte à afficher).
 
 Par exemple (sans la coloration) :
+
 ```bash
 [0]/home/titi$ cd /tmp/pas/trop/long
 [0]/tmp/pas/trop/long$ cd mais/la/ca/depasse
@@ -264,28 +273,39 @@ Par exemple (sans la coloration) :
 /tmp/pas/trop/long/mais/la/ca/depasse
 [0]...ong/mais/la/ca/depasse$ cd repertoire-inexistant
 cd: no such file or directory: repertoire-inexistant
-[1]...ong/mais/la/ca/depasse$ 
+[1]...ong/mais/la/ca/depasse$
 ```
-
 
 ### Sensibilité aux signaux
 
-`fsh` ignore les signaux `SIGINT` et `SIGTERM`, contrairement aux
-processus exécutant des commandes externes.
+`fsh` ignore le signal `SIGTERM`,
+contrairement aux processus exécutant des commandes externes.
 
 Lorsque l'exécution d'une commande est interrompue par la réception d'un
 signal, le prompt commence par la chaîne `"[SIG]"` en lieu et place de la
-valeur de retour, qui est considérée comme valant 255 au cas où un appel 
+valeur de retour, qui est considérée comme valant 255 au cas où un appel
 à `exit` sans paramètre (ou un `ctrl-D`) suit.
 
+##### Addendum : comportement vis-à-vis de `SIGINT`
 
+`fsh` capte `SIGINT` pour permettre l'interruption des commandes
+structurées, en particulier les boucles; plus précisément, si durant
+l'exécution d'une commande structurée ne contenant pas de boucle
+parallèle, `fsh` reçoit `SIGINT` ou que l'une des commandes simples
+constituant cette commande structurée est interrompue par un signal
+`SIGINT`, la commande structurée termine : `fsh` ne lance plus de nouveau
+processus, attend la terminaison de tous les processus déjà en cours puis
+affiche un nouveau prompt commençant par `[SIG]`.
+
+**\_Bonus :** faire en sorte que les boucles parallèles puissent
+également être interrompues.\_
 
 ## Modalités de réalisation (et de test)
 
 Le projet est à faire par équipes de 3 étudiants, exceptionnellement 2 si
 une situation particulière le justifie. La composition de chaque équipe
-devra être envoyée par mail à Dominique Poulalhon avec pour sujet [SY5]
-équipe projet **au plus tard le 10 novembre 2024**, avec copie à chaque
+devra être envoyée par mail à Dominique Poulalhon avec pour sujet `[SY5]
+équipe projet` **au plus tard le 10 novembre 2024**, avec copie à chaque
 membre de l'équipe.
 
 Chaque équipe doit créer un dépôt `git` **privé** sur le [gitlab de
@@ -299,9 +319,10 @@ prénom, numéro étudiant et pseudo(s) sur le gitlab).
 
 En plus du code source de votre programme, vous devez fournir un
 `Makefile` tel que :
-  - l'exécution de `make` à la racine du dépôt crée (dans ce même
-    répertoire) l'exécutable `fsh`,
-  - `make clean` efface tous les fichiers compilés,
+
+- l'exécution de `make` à la racine du dépôt crée (dans ce même
+  répertoire) l'exécutable `fsh`,
+- `make clean` efface tous les fichiers compilés,
 
 ainsi qu'un fichier `ARCHITECTURE.md` expliquant la stratégie adoptée
 pour répondre au sujet (notamment l'architecture logicielle, les
@@ -323,9 +344,7 @@ plagiat. L'emprunt de code en citant sa source est autorisé, mais bien
 sûr vous n'êtes notés que sur ce que vous avez effectivement produit.
 Donc si vous copiez l'intégralité de votre projet en le spécifiant
 clairement, vous aurez quand même 0 (mais vous éviterez une demande de
-convocation de la section disciplinaire). 
-
-
+convocation de la section disciplinaire).
 
 ## Modalités de rendu
 
@@ -335,27 +354,28 @@ intermédiaires seront évalués par des tests automatiques.
 
 ### Premier jalon jeudi 28 novembre
 
-La version à évaluer devra être spécifiée à l'aide du tag `jalon-1`. 
+La version à évaluer devra être spécifiée à l'aide du tag `jalon-1` sur
+la branche `main`.
 
 Pour créer le tag : se placer sur le commit à étiqueter et faire :
-```
+
+```bash
 git tag jalon-1
 git push origin --tags
 ```
 
 Points testés :
 
- - existence du dépôt git
- - présence du fichier `AUTHORS.md`
- - compilation sans erreur avec `make` à la racine du dépôt
- - exécution de `fsh` à la racine du dépôt
- - commandes internes
- - exécution des commandes externes simples (avec arguments mais sans
-   redirections)
- - conformité du prompt (y compris valeur de retour)
- - boucles `for` sans option, avec corps de boucle limité à une commande
-   simple
-
+- existence du dépôt git
+- présence du fichier `AUTHORS.md`
+- compilation sans erreur avec `make` à la racine du dépôt
+- exécution de `fsh` à la racine du dépôt
+- commandes internes
+- exécution des commandes externes simples (avec arguments mais sans
+  redirections)
+- conformité du prompt (y compris valeur de retour)
+- boucles `for` sans option, avec corps de boucle limité à une commande
+  simple
 
 ### Deuxième jalon jeudi 19 décembre
 
@@ -363,18 +383,19 @@ La version à évaluer devra être spécifiée à l'aide du tag `jalon-2`.
 
 Points testés : le projet complet **à l'exception** :
 
- - des pipelines formés de strictement plus d'une commande simple
- - des boucles `for` avec parallélisation (option `-p`)
- - de la gestion des signaux
+- des pipelines formés de strictement plus d'une commande simple
+- des boucles `for` avec parallélisation (option `-p`)
+- de la gestion des signaux
 
 Par exemple, on demande que cette ligne de commande-ci fonctionne correctement :
 
-```
+```bash
 for F in dir { echo $F ; if test -d $F { for G in $F -A { echo $G } } }
 ```
 
 mais pas forcément celle-là :
-```
+
+```bash
 cat fichier | tr a A
 ```
 
@@ -385,7 +406,6 @@ La version à évaluer devra être spécifiée à l'aide du tag `rendu-final`.
 Le projet final devra être rendu à une date encore à définir mais au plus
 tard le 10 janvier, pour des soutenances entre le 13 et le 17 janvier.
 
-
 ### Participation effective
 
 **Les projets sont des travaux de groupe, pas des travaux à répartir
@@ -394,9 +414,8 @@ Systèmes"). La participation effective d'un étudiant au projet de son
 groupe sera évaluée grâce, entre autres, aux statistiques du dépôt git et
 aux réponses aux questions pendant la soutenance, et les notes des
 étudiants d'un même groupe pourront être modulées en cas de participation
-déséquilibrée. 
+déséquilibrée.
 
 **En particulier, un étudiant n'ayant aucun commit sur les aspects
 réellement "système" du code et incapable de répondre de manière
 satisfaisante sera noté "DEF".**
-

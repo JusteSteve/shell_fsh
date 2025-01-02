@@ -21,18 +21,19 @@ command *initialiseCommand()
 
 command *fillCommand(char *line)
 {
-  command *commande = initialiseCommand();
-  if (commande == NULL)
-  {
-    goto error;
-  }
-  // mettre la ligne de commande dans un tableau
-  char **tableau_args = split_cmd(line, 0);
-  if (tableau_args == NULL)
-  {
-    perror("[fillCommand]>Erreur de split_cmd");
-    goto error;
-  }
+    command *commande = initialiseCommand();
+    if (commande == NULL)
+    {
+        goto error;
+    }
+    
+    // mettre la ligne de commande dans un tableau
+    char **tableau_args = split_cmd(line, " ",0);
+    if (tableau_args == NULL)
+    {
+        perror("[fillCommand]>Erreur de split_cmd");
+        goto error;
+    }
 
   // remplir les champs de la commande
   commande->nom = strdup(tableau_args[0]);
