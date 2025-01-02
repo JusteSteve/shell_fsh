@@ -4,7 +4,7 @@
  * pour exécuter des commandes.
  */
 
-#include "../../headers/cmd-utils.h"
+#include "../../headers/internal_cmds.h"
 #include "../../headers/redir.h"
 
 int prev_status; // pour stocker le status précédent
