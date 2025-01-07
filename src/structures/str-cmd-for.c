@@ -23,6 +23,7 @@ comFor *initialiseCommandFor()
     com->type = 0;
     com->fic_caches = 0;
     com->recursive = 0;
+    com->max_parallel = 0;
     return com;
 
 error:
@@ -155,6 +156,11 @@ int parcoursFor(comFor *cmd_for)
         return 1;
     }
     struct dirent *entry;
+    int processus_actifs = 0;
+    // liste des pipes pour chaque processus actif
+    //int pipe_fds[cmd_for->max_parallel][2];
+    int pipe_fds[2];
+    int return_value = 0;
     int last_return_value = 0;
 
     while ((entry = readdir(parent)))
@@ -234,24 +240,128 @@ int parcoursFor(comFor *cmd_for)
             snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, nom_sans_ext);
             free(nom_sans_ext);
         }
-
-        // remplacer $F par le nom du fichier
-        char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
-        if (cmd_avec_f == NULL)
+        
+        // vérifier si l'option -p est activée
+        if(cmd_for->max_parallel > 0)
         {
-            goto error;
-        }
+            /*
+            if(pipe(pipe_fds[processus_actifs]) == -1){
+                perror("[parcoursFor]>pipe");
+                goto error;
+            }
+            */
+            if(pipe(pipe_fds) == -1){
+                perror("[parcoursFor]>pipe");
+                goto error;
+            }
 
-        int return_value = execute_commande(cmd_avec_f);
+            // lancer un processus pour chaque fichier
+            pid_t pid = fork();
+            switch(pid)
+            {
+                case -1:
+                    perror("[parcoursFor]>fork");
+                    goto error;
+                case 0: // enfant : exécuter la commande sur le fichier 
+                {
+                    //close(pipe_fds[processus_actifs][0]);
+                    close(pipe_fds[0]);
+                    // remplacer $F par le nom du fichier
+                    char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
+                    if (cmd_avec_f == NULL)
+                    {
+                        exit(1);
+                        //goto error;
+                    }
+                    //dprintf(2,"enfant commande: %s\n", cmd_avec_f);
+                    return_value = execute_commande(cmd_avec_f);
+                    free(cmd_avec_f);
+                    /*
+                    if(write(pipe_fds[processus_actifs][1], &return_value, sizeof(return_value)) == -1)
+                    {
+                        perror("[parcoursFor]>write");
+                    }
+                    */
+                    if(write(pipe_fds[1], &return_value, sizeof(return_value)) == -1)
+                    {
+                        perror("[parcoursFor]>write");
+                    }
+                    //close(pipe_fds[processus_actifs][1]);
+                    close(pipe_fds[1]);
+                    //dprintf(2,"enfant retour: %d\n", return_value);
+                    exit(return_value); // le fils termine avec la valeur de retour de la commande
+
+                }
+                default:
+                {
+
+                    //close(pipe_fds[processus_actifs][1]);
+                    close(pipe_fds[1]);
+
+                    processus_actifs++;
+                    int fils_val_ret;
+                    if (processus_actifs >= cmd_for->max_parallel)
+                    {
+                        wait(NULL);
+                        //int status;
+                        //waitpid(pid, NULL, 0);
+                        processus_actifs--;
+                        /*
+                        if(read(pipe_fds[processus_actifs][0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
+                        {
+                            last_return_value = (last_return_value < fils_val_ret ) ? fils_val_ret : last_return_value;  
+                        }
+                        */
+                        if(read(pipe_fds[0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
+                        {
+                            last_return_value = (last_return_value < fils_val_ret ) ? fils_val_ret : last_return_value;  
+                        }
+                        //dprintf(2,"parent retour: %d\n", last_return_value);
+                    }
+                    //close(pipe_fds[processus_actifs][0]);
+                    close(pipe_fds[0]);
+
+                    break;
+                }
+            }
+        }
+        else
+        {
+            // remplacer $F par le nom du fichier
+            char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
+            if (cmd_avec_f == NULL)
+            {
+                goto error;
+            }
+
+            return_value = execute_commande(cmd_avec_f);
+            last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
+            free(cmd_avec_f);
+        }
         // si la commande a échoué, on garde le code de retour le plus élevé
         if (return_value != 0 && last_return_value < return_value)
         {
             last_return_value = return_value;
         }
-
-        free(cmd_avec_f);
     }
+    // attendre la fin des processus fils
+    /*
+    while (processus_actifs > 0)
+    {
+        dprintf(2,"Dans while\n");   
+        wait(NULL);
+        processus_actifs--;
+        int fils_val_ret;
+        if(read(pipe_fds[processus_actifs][0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
+        {
+            last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
+        }
+        close(pipe_fds[processus_actifs][0]);
+    }
+    */
+    //last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
     closedir(parent);
+    //dprintf(2,"Sortie retour: %s\n", last_return_value);
     return last_return_value;
 
 error:
