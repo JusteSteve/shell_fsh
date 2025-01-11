@@ -7,7 +7,6 @@
 
 comFor *initialiseCommandFor()
 {
-    // Création d'un nouveau commandFor
     comFor *com = malloc(sizeof(comFor));
     if (com == NULL)
     {
@@ -17,7 +16,6 @@ comFor *initialiseCommandFor()
     com->var = NULL;
     com->dir = NULL;
     com->path = NULL;
-    com->options = NULL;
     com->ligne = NULL;
     com->extention = NULL;
     com->type = 0;
@@ -151,15 +149,11 @@ int parcoursFor(comFor *cmd_for)
     DIR *parent = opendir(cmd_for->dir);
     if (parent == NULL)
     {
-        fprintf(stderr, "command_for_run: %s\n", cmd_for->dir);
-        perror("command_for_run");
+        perror("[parcoursFor]>opendir");
         return 1;
     }
     struct dirent *entry;
     int processus_actifs = 0;
-    // liste des pipes pour chaque processus actif
-    //int pipe_fds[cmd_for->max_parallel][2];
-    int pipe_fds[2];
     int return_value = 0;
     int last_return_value = 0;
 
@@ -240,89 +234,45 @@ int parcoursFor(comFor *cmd_for)
             snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, nom_sans_ext);
             free(nom_sans_ext);
         }
-        
-        // vérifier si l'option -p est activée
-        if(cmd_for->max_parallel > 0)
-        {
-            /*
-            if(pipe(pipe_fds[processus_actifs]) == -1){
-                perror("[parcoursFor]>pipe");
-                goto error;
-            }
-            */
-            if(pipe(pipe_fds) == -1){
-                perror("[parcoursFor]>pipe");
-                goto error;
-            }
 
+        // vérifier si l'option -p est activée
+        if (cmd_for->max_parallel > 0)
+        {
+            int status;
             // lancer un processus pour chaque fichier
             pid_t pid = fork();
-            switch(pid)
+            switch (pid)
             {
-                case -1:
-                    perror("[parcoursFor]>fork");
-                    goto error;
-                case 0: // enfant : exécuter la commande sur le fichier 
+            case -1:
+                perror("[parcoursFor]>fork");
+                goto error;
+            case 0: // enfant : exécuter la commande sur le fichier
+            {
+                // remplacer $F par le nom du fichier
+                char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
+                if (cmd_avec_f == NULL)
                 {
-                    //close(pipe_fds[processus_actifs][0]);
-                    close(pipe_fds[0]);
-                    // remplacer $F par le nom du fichier
-                    char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
-                    if (cmd_avec_f == NULL)
-                    {
-                        exit(1);
-                        //goto error;
-                    }
-                    //dprintf(2,"enfant commande: %s\n", cmd_avec_f);
-                    return_value = execute_commande(cmd_avec_f);
-                    free(cmd_avec_f);
-                    /*
-                    if(write(pipe_fds[processus_actifs][1], &return_value, sizeof(return_value)) == -1)
-                    {
-                        perror("[parcoursFor]>write");
-                    }
-                    */
-                    if(write(pipe_fds[1], &return_value, sizeof(return_value)) == -1)
-                    {
-                        perror("[parcoursFor]>write");
-                    }
-                    //close(pipe_fds[processus_actifs][1]);
-                    close(pipe_fds[1]);
-                    //dprintf(2,"enfant retour: %d\n", return_value);
-                    exit(return_value); // le fils termine avec la valeur de retour de la commande
-
+                    exit(1);
                 }
-                default:
+                return_value = execute_commande(cmd_avec_f);
+                free(cmd_avec_f);
+                exit(return_value); // le fils termine avec la valeur de retour de la commande
+            }
+            default:
+            {
+                processus_actifs++;
+                if (processus_actifs >= cmd_for->max_parallel)
                 {
-
-                    //close(pipe_fds[processus_actifs][1]);
-                    close(pipe_fds[1]);
-
-                    processus_actifs++;
-                    int fils_val_ret;
-                    if (processus_actifs >= cmd_for->max_parallel)
+                    wait(&status);
+                    processus_actifs--;
+                    if (WIFEXITED(status))
                     {
-                        wait(NULL);
-                        //int status;
-                        //waitpid(pid, NULL, 0);
-                        processus_actifs--;
-                        /*
-                        if(read(pipe_fds[processus_actifs][0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
-                        {
-                            last_return_value = (last_return_value < fils_val_ret ) ? fils_val_ret : last_return_value;  
-                        }
-                        */
-                        if(read(pipe_fds[0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
-                        {
-                            last_return_value = (last_return_value < fils_val_ret ) ? fils_val_ret : last_return_value;  
-                        }
-                        //dprintf(2,"parent retour: %d\n", last_return_value);
+                        return_value = WEXITSTATUS(status);
+                        last_return_value = (last_return_value < return_value) ? return_value : last_return_value;
                     }
-                    //close(pipe_fds[processus_actifs][0]);
-                    close(pipe_fds[0]);
-
-                    break;
                 }
+                break;
+            }
             }
         }
         else
@@ -333,35 +283,12 @@ int parcoursFor(comFor *cmd_for)
             {
                 goto error;
             }
-
             return_value = execute_commande(cmd_avec_f);
-            last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
+            last_return_value = (last_return_value < return_value) ? return_value : last_return_value;
             free(cmd_avec_f);
         }
-        // si la commande a échoué, on garde le code de retour le plus élevé
-        if (return_value != 0 && last_return_value < return_value)
-        {
-            last_return_value = return_value;
-        }
     }
-    // attendre la fin des processus fils
-    /*
-    while (processus_actifs > 0)
-    {
-        dprintf(2,"Dans while\n");   
-        wait(NULL);
-        processus_actifs--;
-        int fils_val_ret;
-        if(read(pipe_fds[processus_actifs][0], &fils_val_ret, sizeof(fils_val_ret)) > 0)
-        {
-            last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
-        }
-        close(pipe_fds[processus_actifs][0]);
-    }
-    */
-    //last_return_value = (last_return_value < return_value ) ? return_value : last_return_value; 
     closedir(parent);
-    //dprintf(2,"Sortie retour: %s\n", last_return_value);
     return last_return_value;
 
 error:
@@ -397,7 +324,6 @@ char *remplacer_variable(char *ligne, char *var, char *valeur)
         perror("malloc");
         exit(1);
     }
-
     i = 0;
     while (*ligne)
     {
@@ -483,10 +409,6 @@ void clearCommandFor(comFor *com)
     if (com->path != NULL)
     {
         free(com->path);
-    }
-    if (com->options != NULL)
-    {
-        free(com->options);
     }
     if (com->dir != NULL)
     {
