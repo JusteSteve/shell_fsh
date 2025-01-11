@@ -7,7 +7,6 @@
 
 comFor *initialiseCommandFor()
 {
-    // Création d'un nouveau commandFor
     comFor *com = malloc(sizeof(comFor));
     if (com == NULL)
     {
@@ -17,12 +16,12 @@ comFor *initialiseCommandFor()
     com->var = NULL;
     com->dir = NULL;
     com->path = NULL;
-    com->options = NULL;
     com->ligne = NULL;
     com->extention = NULL;
     com->type = 0;
     com->fic_caches = 0;
     com->recursive = 0;
+    com->max_parallel = 0;
     return com;
 
 error:
@@ -150,11 +149,12 @@ int parcoursFor(comFor *cmd_for)
     DIR *parent = opendir(cmd_for->dir);
     if (parent == NULL)
     {
-        fprintf(stderr, "command_for_run: %s\n", cmd_for->dir);
-        perror("command_for_run");
+        perror("[parcoursFor]>opendir");
         return 1;
     }
     struct dirent *entry;
+    int processus_actifs = 0;
+    int return_value = 0;
     int last_return_value = 0;
 
     while ((entry = readdir(parent)))
@@ -235,21 +235,58 @@ int parcoursFor(comFor *cmd_for)
             free(nom_sans_ext);
         }
 
-        // remplacer $F par le nom du fichier
-        char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
-        if (cmd_avec_f == NULL)
+        // vérifier si l'option -p est activée
+        if (cmd_for->max_parallel > 0)
         {
-            goto error;
+            int status;
+            // lancer un processus pour chaque fichier
+            pid_t pid = fork();
+            switch (pid)
+            {
+            case -1:
+                perror("[parcoursFor]>fork");
+                goto error;
+            case 0: // enfant : exécuter la commande sur le fichier
+            {
+                // remplacer $F par le nom du fichier
+                char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
+                if (cmd_avec_f == NULL)
+                {
+                    exit(1);
+                }
+                return_value = execute_commande(cmd_avec_f);
+                free(cmd_avec_f);
+                exit(return_value); // le fils termine avec la valeur de retour de la commande
+            }
+            default:
+            {
+                processus_actifs++;
+                if (processus_actifs >= cmd_for->max_parallel)
+                {
+                    wait(&status);
+                    processus_actifs--;
+                    if (WIFEXITED(status))
+                    {
+                        return_value = WEXITSTATUS(status);
+                        last_return_value = (last_return_value < return_value) ? return_value : last_return_value;
+                    }
+                }
+                break;
+            }
+            }
         }
-
-        int return_value = execute_commande(cmd_avec_f);
-        // si la commande a échoué, on garde le code de retour le plus élevé
-        if (return_value != 0 && last_return_value < return_value)
+        else
         {
-            last_return_value = return_value;
+            // remplacer $F par le nom du fichier
+            char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
+            if (cmd_avec_f == NULL)
+            {
+                goto error;
+            }
+            return_value = execute_commande(cmd_avec_f);
+            last_return_value = (last_return_value < return_value) ? return_value : last_return_value;
+            free(cmd_avec_f);
         }
-
-        free(cmd_avec_f);
     }
     closedir(parent);
     return last_return_value;
@@ -287,7 +324,6 @@ char *remplacer_variable(char *ligne, char *var, char *valeur)
         perror("malloc");
         exit(1);
     }
-
     i = 0;
     while (*ligne)
     {
@@ -373,10 +409,6 @@ void clearCommandFor(comFor *com)
     if (com->path != NULL)
     {
         free(com->path);
-    }
-    if (com->options != NULL)
-    {
-        free(com->options);
     }
     if (com->dir != NULL)
     {
