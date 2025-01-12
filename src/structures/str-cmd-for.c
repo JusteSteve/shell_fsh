@@ -6,6 +6,7 @@
 #include "../../headers/cmd-utils.h"
 #include "../../headers/signal.h"
 
+volatile sig_atomic_t parallel = 0;
 
 int is_type1(char type, struct stat *stat);
 

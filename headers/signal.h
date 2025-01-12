@@ -5,8 +5,10 @@
 
 extern volatile sig_atomic_t last_signal;
 extern volatile sig_atomic_t signalint;
+extern volatile sig_atomic_t parallel;
 
 void handler_othersignals (int sig);
 void handler_gather (int sig);
+
 
 #endif // SIGNAL_H
