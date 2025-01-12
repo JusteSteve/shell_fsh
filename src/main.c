@@ -9,13 +9,22 @@ volatile sig_atomic_t signalint = 0;
 
 
 
-void handler_othersignals (int sig) {
+/* void handler_othersignals (int sig) {
   last_signal = 1;
 }
 
 void handler_gather (int sig) {
   if (sig >= 0){
   signalint = 1;
+  }
+} */
+
+void handler_gather (int sig){
+  switch (sig){
+    case SIGINT: 
+    signalint = 1;
+    default : 
+    last_signal = 1;
   }
 }
 
@@ -25,7 +34,7 @@ int main()
   struct sigaction action_gather = {0};
   struct sigaction action_term = {0};
 	
-	action_return.sa_handler = handler_othersignals; 
+	action_return.sa_handler = handler_gather; 
   action_gather.sa_handler = handler_gather;
 	action_term.sa_handler = SIG_IGN;
 	
