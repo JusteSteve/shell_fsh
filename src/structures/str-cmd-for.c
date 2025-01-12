@@ -5,6 +5,8 @@
 
 #include "../../headers/cmd-utils.h"
 
+int is_type1(char type, struct stat *stat);
+
 comFor *initialiseCommandFor()
 {
     // Création d'un nouveau commandFor
@@ -225,7 +227,7 @@ int parcoursFor(comFor *cmd_for)
         }
 
         // si l'option -t est activée, on vérifie que le fichier est du type voulu
-        if (cmd_for->type != 0 && !is_type(cmd_for->type, &sb))
+        if (cmd_for->type != 0 && !is_type1(cmd_for->type, &sb))
         {
             continue;
         }
@@ -339,7 +341,7 @@ bool has_extention(char *fichier, char *extention)
     return rst;
 }
 
-int is_type(char type, struct stat *stat)
+int is_type1(char type, struct stat *stat)
 {
     switch (type)
     {

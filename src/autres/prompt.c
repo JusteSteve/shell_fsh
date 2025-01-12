@@ -29,7 +29,15 @@ char *display_prompt(int last_return_value)
   {
     idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
   }
+
+  //différencier le cas interrompu par signal ou retour de fonction
+  
+  if (last_return_value == 255){
+    idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[SIG]");
+  }
+  else{
   idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[%d]", last_return_value);
+  }
 
   // récupérer le chemin du répertoire courant
   char *dir = getcwd(NULL, 0);
