@@ -4,6 +4,8 @@
  */
 
 #include "../../headers/cmd-utils.h"
+#include "../../headers/signal.h"
+
 
 int is_type1(char type, struct stat *stat);
 

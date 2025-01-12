@@ -6,6 +6,7 @@
 
 #include "../../headers/internal_cmds.h"
 #include "../../headers/cmd-utils.h"
+#include "../../headers/signal.h"
 
 int prev_status; // pour stocker le status précédent
 

@@ -4,6 +4,7 @@
  */
 
 #include "../../headers/cmd-utils.h"
+#include "../../headers/signal.h"
 
 int exec_external_cmds(command *cmd)
 {

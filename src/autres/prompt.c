@@ -4,6 +4,8 @@
  */
 
 #include "../../headers/fsh.h"
+#include "../../headers/signal.h"
+
 
 char *display_prompt(int last_return_value)
 {

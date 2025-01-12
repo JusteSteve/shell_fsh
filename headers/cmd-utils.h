@@ -9,11 +9,7 @@
 // ***=== Inclusions ===***
 #include "str-cmd.h"
 
-volatile sig_atomic_t last_signal = 0;
-volatile sig_atomic_t signalint = 0;
 
-void handler_othersignals (int sig);
-void handler_gather (int sig);
 
 /**
  * Analyse et exécute la ligne de commande passée en paramètre
