@@ -51,7 +51,6 @@ int execute_commande(char *line)
   return return_value;
 
   signal:
-  signalint = 0;
   return 255;
 }
 

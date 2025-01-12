@@ -10,7 +10,7 @@ volatile sig_atomic_t signalint = 0;
 
 
 void handler_othersignals (int sig) {
-  last_signal = sig;
+  last_signal = 1;
 }
 
 void handler_gather (int sig) {
