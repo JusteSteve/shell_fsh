@@ -18,7 +18,7 @@ int main()
     line = readline(prompt);
     free(prompt);
 
-    if (line == NULL) // gerer ctrl+d (EOF)
+    if (line == NULL)
     {
       break;
     }

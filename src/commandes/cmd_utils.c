@@ -125,12 +125,9 @@ int exec_internal_cmds(char *line)
       return prev_status;
     }
     else
-    { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
+    { 
       fprintf(stderr, "ftype: missing reference argument\n");
       goto error;
-      // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
-      // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
-      // donc ça va retourner !prev_status, à voir pour l'instant donc.
     }
   }
   clearCommands(cmd);
