@@ -3,6 +3,8 @@
  * @brief Fichier contenant l'implémentation des fonctions pour les commandes simples.
  */
 #include "../../headers/cmd-utils.h"
+#include "../../headers/signal.h"
+
 
 command *initialiseCommand()
 {

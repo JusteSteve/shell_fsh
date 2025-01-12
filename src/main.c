@@ -3,6 +3,11 @@
  */
 #include "../headers/fsh.h"
 #include "../headers/cmd-utils.h"
+#include "../headers/signal.h"
+volatile sig_atomic_t last_signal = 0;
+volatile sig_atomic_t signalint = 0;
+
+
 
 void handler_othersignals (int sig) {
   last_signal = sig;

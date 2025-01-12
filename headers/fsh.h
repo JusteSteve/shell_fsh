@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 // ===***=== Prototypes ===***===
 
