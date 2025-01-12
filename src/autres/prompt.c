@@ -52,10 +52,10 @@ char *display_prompt(int last_return_value)
   // tronquer le chemin si nécessaire
   int return_value_len;
   if (last_return_value == 255){
-    return_value_len = snprintf(NULL, 0, "%d", last_return_value);
+    return_value_len = snprintf(NULL, 0, "SIG");
   }
   else{
-  return_value_len = snprintf(NULL, 0, "SIG");
+  return_value_len = snprintf(NULL, 0, "%d", last_return_value);
   }
   //int return_value_len = snprintf(NULL, 0, "%d", last_return_value);
   int visible_elements = 4 + return_value_len; // $, espace et []
