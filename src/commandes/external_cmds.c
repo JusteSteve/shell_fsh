@@ -97,7 +97,7 @@ char **split_cmd(char *line, int flag)
   free(line_copy);
   return args;
 
-error:
+error: 
 
   free(args);
   exit(1);

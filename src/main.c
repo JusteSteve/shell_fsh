@@ -23,8 +23,10 @@ void handler_gather (int sig){
   switch (sig){
     case SIGINT: 
     signalint = 1;
+    break;
     default : 
     last_signal = 1;
+    break;
   }
 }
 
@@ -61,10 +63,10 @@ int main()
   rl_outstream = stderr;
   while (1)
   {
-    if (last_signal != 0){
+    /* if (last_signal){
       last_signal = 0;
       last_return_value = 255;
-    }
+    } */
 
     prompt = display_prompt(last_return_value);
     line = readline(prompt);

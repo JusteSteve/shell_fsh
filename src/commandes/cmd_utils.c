@@ -32,7 +32,7 @@ int execute_commande(char *line)
   // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
-    if (signalint == 1) {goto signal;}
+    //if (signalint == 1) {goto signal;}
     return_value = exec_structured_cmds(line);
   }
   else
