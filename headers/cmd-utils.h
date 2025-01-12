@@ -11,6 +11,7 @@
 
 volatile sig_atomic_t last_signal = 0;
 volatile sig_atomic_t signalint = 0;
+volatile sig_atomic_t parallel = 0;
 
 void handler_othersignals (int sig);
 void handler_gather (int sig);

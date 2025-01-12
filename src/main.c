@@ -17,8 +17,8 @@ void handler_gather (int sig) {
 int main()
 {
   struct sigaction action_return = {0};
-	struct sigaction action_term = {0};
   struct sigaction action_gather = {0};
+  struct sigaction action_term = {0};
 	
 	action_return.sa_handler = handler_othersignals; 
   action_gather.sa_handler = handler_gather;

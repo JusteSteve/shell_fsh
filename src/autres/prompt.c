@@ -31,7 +31,7 @@ char *display_prompt(int last_return_value)
   }
 
   //différencier le cas interrompu par signal ou retour de fonction
-  
+
   if (last_return_value == 255){
     idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[SIG]");
   }
@@ -48,7 +48,14 @@ char *display_prompt(int last_return_value)
   }
 
   // tronquer le chemin si nécessaire
-  int return_value_len = snprintf(NULL, 0, "%d", last_return_value);
+  int return_value_len;
+  if (last_return_value == 255){
+    return_value_len = snprintf(NULL, 0, "%d", last_return_value);
+  }
+  else{
+  return_value_len = snprintf(NULL, 0, "SIG");
+  }
+  //int return_value_len = snprintf(NULL, 0, "%d", last_return_value);
   int visible_elements = 4 + return_value_len; // $, espace et []
   int path_max_len = 30 - visible_elements;
   char *new_path = truncate_path(dir, path_max_len);

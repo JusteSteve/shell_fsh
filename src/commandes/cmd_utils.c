@@ -31,6 +31,7 @@ int execute_commande(char *line)
   // vérifier si la contient un ;
   else if (strchr(line, ';') != NULL)
   {
+    if (signalint == 1) {goto signal;}
     return_value = exec_structured_cmds(line);
   }
   else
@@ -47,6 +48,10 @@ int execute_commande(char *line)
 
   prev_status = return_value;
   return return_value;
+
+  signal:
+  signalint = 0;
+  return 255;
 }
 
 int exec_internal_cmds(char *line)
@@ -126,6 +131,7 @@ int exec_internal_cmds(char *line)
   }
   clearCommands(cmd);
   return 1; // si la commande n'est pas reconnue
+
 error:
   clearCommands(cmd);
   return 1;
@@ -136,6 +142,7 @@ int exec_structured_cmds(char *line)
   int return_value;
   // diviser la ligne en tableau de commandes simples
   char **cmds_tab = split_cmd(line, 1);
+  if (signalint == 1) {goto signal;}
   if (cmds_tab == NULL)
   {
     return 1;
@@ -144,12 +151,17 @@ int exec_structured_cmds(char *line)
   // exécuter toutes les commandes
   while (cmds_tab[cmd_i] != NULL)
   {
+    if (signalint == 1) {goto signal;}
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
     cmd_i++;
   }
   free_args(cmds_tab);
   return return_value;
+
+  signal:
+  signalint = 0;
+  return 255;
 }
 
 int exec_for_cmds(command *cmd)
@@ -161,8 +173,15 @@ int exec_for_cmds(command *cmd)
   {
     return 1;
   }
+  
   // exécuter la commande for
   return_value = parcoursFor(command);
+  
+  if (parallel == 1){
+    if (signalint == 1) {
+      goto signal;
+    }
+  }
   if (return_value != 0)
   {
     clearCommandFor(command);
@@ -187,6 +206,11 @@ int exec_for_cmds(command *cmd)
   }
   clearCommandFor(command);
   return return_value;
+
+  signal:
+  signalint = 0;
+  parallel = 0;
+  return 255;
 }
 
 // ***=== Fonctions auxiliaires ===***

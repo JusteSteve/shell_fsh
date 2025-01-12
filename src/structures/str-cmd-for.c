@@ -206,6 +206,7 @@ int parcoursFor(comFor *cmd_for)
             new_cmd_for->max_parallel = cmd_for->max_parallel;
             parcoursFor(new_cmd_for);
             clearCommandFor(new_cmd_for);
+            parallel = 1;
         }
 
         // si l'option -e est activée, on vérifie que le fichier a l'extention voulue
