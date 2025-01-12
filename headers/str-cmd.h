@@ -7,23 +7,11 @@
 #ifndef STR_CMD_H
 #define STR_CMD_H
 
-// ***=== Inclusions ===***
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-#include <errno.h>
-#include <stdbool.h>
+#include "fsh.h"
+
 
 // ***=== Structure pour les commandes simples ===***
 
-#define PATH_MAX 4096 // taille maximale d'un chemin
-#define MAX_CMDS 1024 // nombre maximal d'arguments dans une commande
 
 /**
  * @brief Structure de données pour les commandes simples
@@ -52,13 +40,14 @@ command *initialiseCommand();
 command *fillCommand(char *line);
 
 /**
- * divise une ligne de commande en arguments
- * avec les espaces comme séparateurs.
+ * divise une ligne de commande en arguments ou en sous-commandes
+ * avec le séparateur donné en argument.
  * @param cmd : ligne de commande à exécuter
- * @param flag : 1 si c'est une ligne de commande structurée, 0 sinon
+ * @param separateur : séparateur de commande
+ * @param flag : 0 si le séparateur est un espace, 1 sinon
  * @return tableau de pointeur de char contenant les arguments de la commande
  */
-char **split_cmd(char *line, int flag);
+char **split_cmd(char *line, char *separateur, int flag);
 
 /**
  * @param args : tableau de chaines de caracteres
@@ -214,5 +203,24 @@ int exec_cmd_if(cmd_if *cmd_if);
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_test(char *cmd);
+
+/**
+ * @brief Extrait la taille de la commande entre les accolades
+ * @param cmd : pointeur sur la structure command
+ * @param nb_accolades : nombre d'accolades
+ * @param i : indice
+ * @return la taille de la commande entre les accolades
+ */
+int extraire_taille(command *cmd, int nb_acc, int i);
+
+/**
+ * @brief reconstruit la commande entre les accolades
+ * @param cmd : pointeur sur la structure command
+ * @param debut : indice de début
+ * @param fin : indice de fin
+ * @return la commande entre les accolades
+ */
+char *reconstruire_commande(command *cmd, int debut, int fin);
+
 
 #endif

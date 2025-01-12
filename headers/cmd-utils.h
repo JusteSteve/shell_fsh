@@ -66,8 +66,22 @@ int exec_structured_cmds(char *line);
  * @brief reconstruit la commande for ... { ... } dans une seule case
  * si elle est dans une commande structurée
  * @param tokens : chaine de caractères
+ * @param separateur : séparateur
  * @return commande for ... { ... }
  */
-char *build_for_cmd(char *tokens);
+char *build_for_cmd(char *tokens, char *separateur);
+
+
+// ***=== Fonctions utilitaires pour les pipelines ===***
+
+
+/**
+ * @brief Exécute les commandes d'un pipeline
+ * @param line : ligne de commande
+ * @return 0 si tout s'est bien passé, 1 sinon
+ */
+int exec_pipeline_cmds(char *line);
+
+
 
 #endif
