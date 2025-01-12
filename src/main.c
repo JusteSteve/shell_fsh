@@ -52,6 +52,11 @@ int main()
   rl_outstream = stderr;
   while (1)
   {
+    if (last_signal != 0){
+      last_signal = 0;
+      last_return_value = 255;
+    }
+
     prompt = display_prompt(last_return_value);
     line = readline(prompt);
     free(prompt);
@@ -65,10 +70,6 @@ int main()
     {
       free(line);
       continue;
-    }
-
-    if (last_signal != 0){
-      return 255;
     }
 
     last_return_value = execute_commande(line);

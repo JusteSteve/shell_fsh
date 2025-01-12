@@ -95,7 +95,7 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
   if (strncmp(cmd->nom, "cd", 2) == 0)
   {
-    printf("youhou");
+    //printf("youhou\n");
     // si il ya trop d'arguments, on affiche un message d'erreur
     if (cmd->taille > 2)
     {
