@@ -32,16 +32,16 @@ int main()
 	for (int i = 1; i < NSIG; i++){
 		if (i == SIGTERM || i == SIGINT) {continue;}
 		if (sigaction(i, &action_return, NULL) != 0){
-			fprintf(stderr, "%d (%s): %s\n", i, strsignal(i), strerror(errno));
+			//fprintf(stderr, "%d (%s): %s\n", i, strsignal(i), strerror(errno));
 		}
 	}
 
   if (sigaction(SIGINT, &action_gather, NULL) != 0){
-			fprintf(stderr, "%d (%s): %s\n", SIGINT, strsignal(SIGINT), strerror(errno));
+			//fprintf(stderr, "%d (%s): %s\n", SIGINT, strsignal(SIGINT), strerror(errno));
   }
 	
 	if (sigaction(SIGTERM, &action_term, NULL) != 0){
-			fprintf(stderr, "%d (%s): %s\n", SIGTERM, strsignal(SIGTERM), strerror(errno));
+			//fprintf(stderr, "%d (%s): %s\n", SIGTERM, strsignal(SIGTERM), strerror(errno));
   }
 
   char *prompt;

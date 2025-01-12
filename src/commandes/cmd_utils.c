@@ -95,6 +95,7 @@ int exec_internal_cmds(char *line)
   // Si l'utilisateur a tapé "cd", on cmd_cd de cd.c
   if (strncmp(cmd->nom, "cd", 2) == 0)
   {
+    printf("youhou");
     // si il ya trop d'arguments, on affiche un message d'erreur
     if (cmd->taille > 2)
     {
@@ -177,7 +178,7 @@ int exec_for_cmds(command *cmd)
   
   // exécuter la commande for
   return_value = parcoursFor(command);
-  
+
   if (parallel == 1){
     if (signalint == 1) {
       goto signal;
