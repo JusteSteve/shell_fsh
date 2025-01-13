@@ -9,7 +9,6 @@
 extern volatile sig_atomic_t signal_recu;
 extern volatile sig_atomic_t signal_sigint;
 
-
 int exec_external_cmds(command *cmd)
 {
   if (cmd == NULL)
@@ -29,21 +28,21 @@ int exec_external_cmds(command *cmd)
   case 0: // processus enfant
   {
     restaurer_signal();
-    cmd->args[cmd->taille] = NULL; // on fini le tableau par NULL
+    cmd->args[cmd->taille] = NULL;
     execvp(cmd->nom, cmd->args);
     dprintf(2, "fsh: command not found: %s\n", cmd->nom);
-    exit(1); // si execvp échoue, on sort avec un 1
+    exit(1);
   }
 
   default: // processus parent
   {
     int status;
-    waitpid(child_pid, &status, 0); // Attendre la fin du processus enfant et récupérer son statut
+    waitpid(child_pid, &status, 0);
     if (WIFEXITED(status))
     {
       return WEXITSTATUS(status); // Retourner le statut de sortie du processus enfant
     }
-    if (WIFSIGNALED(status) )
+    if (WIFSIGNALED(status))
     {
       signal_recu = 1;
       signal_sigint = (WTERMSIG(status) == SIGINT) ? 1 : 0;

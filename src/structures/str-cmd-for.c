@@ -8,6 +8,7 @@
 
 extern volatile sig_atomic_t signal_sigint;
 extern volatile sig_atomic_t signal_recu;
+
 comFor *initialiseCommandFor()
 {
     comFor *com = malloc(sizeof(comFor));
@@ -162,9 +163,9 @@ int parcoursFor(comFor *cmd_for)
 
     while ((entry = readdir(parent)))
     {
-        if(signal_sigint)
+        if (signal_sigint)
         {
-            last_return_value = 255 ;
+            last_return_value = 255;
             break;
         }
         errno = 0;
@@ -217,9 +218,8 @@ int parcoursFor(comFor *cmd_for)
         {
             continue;
         }
-
+        
         // construire le chemin complet du fichier
-        // hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
         char entry_path[PATH_MAX];
         snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, fichier);
 

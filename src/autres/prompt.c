@@ -4,10 +4,9 @@
  */
 
 #include "../../headers/fsh.h"
+
 extern volatile sig_atomic_t signal_recu;
 extern volatile sig_atomic_t signal_sigint;
-
-
 
 char *display_prompt(int last_return_value)
 {
@@ -33,10 +32,12 @@ char *display_prompt(int last_return_value)
   {
     idx += add_to_prompt(prompt + idx, COLOR_YELLOW);
   }
-  if(last_return_value == 255 && (signal_recu || signal_sigint)) 
+  if (last_return_value == 255 && (signal_recu || signal_sigint))
   {
     idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[SIG]");
-  }else{
+  }
+  else
+  {
     idx += snprintf(prompt + idx, PROMPT_MAX_LENGTH - idx, "[%d]", last_return_value);
   }
 

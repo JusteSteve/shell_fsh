@@ -29,7 +29,6 @@
 #define PATH_MAX 4096
 #define MAX_CMDS 1024 // nombre maximal d'arguments dans une commande
 
-
 #define COLOR_GREEN "\033[32m"
 #define COLOR_YELLOW "\033[33m"
 #define COLOR_BLUE "\033[34m"

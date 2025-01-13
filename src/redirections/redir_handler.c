@@ -8,7 +8,6 @@
 
 int exec_cmd_redirection(command *cmd)
 {
-    //! FIXME : à régler car ne sert que pour le test exit < fichier 3
     if (strncmp(cmd->nom, "exit", 4) == 0)
     {
         fclose(stdin); // Fermer stdin si redirigé
@@ -23,7 +22,6 @@ int exec_cmd_redirection(command *cmd)
     if (pid == 0)
     {
         redir_handler(cmd);
-
         execvp(cmd->nom, cmd->args);
         dprintf(STDERR_FILENO, "Error: execvp failed: %s\n", strerror(errno));
         clearCommands(cmd);

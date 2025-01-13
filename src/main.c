@@ -20,7 +20,7 @@ int main()
   rl_outstream = stderr;
   while (1)
   {
-    if(signal_recu)
+    if (signal_recu)
     {
       last_return_value = 255;
     }
@@ -29,8 +29,6 @@ int main()
 
     line = readline(prompt);
     free(prompt);
-    signal_recu = 0;
-
     if (line == NULL) // gerer ctrl+d (EOF)
     {
       break;
@@ -45,7 +43,6 @@ int main()
     last_return_value = execute_commande(line);
     add_history(line);
     free(line);
-
   }
   return last_return_value;
 }

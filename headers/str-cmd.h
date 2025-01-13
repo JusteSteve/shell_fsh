@@ -9,9 +9,7 @@
 
 #include "fsh.h"
 
-
 // ***=== Structure pour les commandes simples ===***
-
 
 /**
  * @brief Structure de données pour les commandes simples
@@ -80,14 +78,11 @@ void free_cmds_tab(command **cmds_tab);
  */
 typedef struct comFor
 {
-    char *ligne;   // toute la ligne de commande
-    char *command; // renseigne le nom de la commande
-    char *var;     // renseigne la variable de boucle
-    char *dir;     // renseigne le répertoire courant
-    char *path;    // renseigne le chemin du fichier dont l'on désire l'exécution
-    char *options; // donne les options de boucle
-
-    // C POUR LES OPTIONS PLUSTARDS
+    char *ligne;      // toute la ligne de commande
+    char *command;    // renseigne le nom de la commande
+    char *var;        // renseigne la variable de boucle
+    char *dir;        // renseigne le répertoire courant
+    char *path;       // renseigne le chemin du fichier dont l'on désire l'exécution
     int fic_caches;   // fichiers cachés -A
     int recursive;    // récursivité -r
     char *extention;  // extension -e
@@ -221,6 +216,5 @@ int extraire_taille(command *cmd, int nb_acc, int i);
  * @return la commande entre les accolades
  */
 char *reconstruire_commande(command *cmd, int debut, int fin);
-
 
 #endif
