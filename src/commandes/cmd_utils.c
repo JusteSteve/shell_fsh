@@ -6,8 +6,11 @@
 
 #include "../../headers/internal_cmds.h"
 #include "../../headers/redir.h"
+#include "../../headers/signal.h"
 
 int prev_status; // pour stocker le status précédent
+extern volatile sig_atomic_t signal_sigint;
+extern volatile sig_atomic_t signal_recu;
 
 int execute_commande(char *line)
 {
@@ -44,7 +47,7 @@ int execute_commande(char *line)
   {
     return_value = exec_cmd_redirection(cmd);
   }
-  
+
   else if (is_internal_cmd(cmd->nom))
   {
     return_value = exec_internal_cmds(line);
@@ -125,12 +128,9 @@ int exec_internal_cmds(char *line)
       return prev_status;
     }
     else
-    { // faudrait que je fasse la gestion d'erreur dans les fichiers .c respectifs
+    {
       fprintf(stderr, "ftype: missing reference argument\n");
       goto error;
-      // si on gère l'erreur dans main, ça permet justement de décider si on veut continuer
-      // malgré l'erreur en printant un msg, alors que dans .c, on va juste faire return 1
-      // donc ça va retourner !prev_status, à voir pour l'instant donc.
     }
   }
   clearCommands(cmd);
@@ -143,7 +143,6 @@ error:
 int exec_structured_cmds(char *line)
 {
   int return_value;
-  // diviser la ligne en tableau de commandes simples
   char **cmds_tab = split_cmd(line, ";", 1);
   if (cmds_tab == NULL)
   {
@@ -153,6 +152,11 @@ int exec_structured_cmds(char *line)
   // exécuter toutes les commandes
   while (cmds_tab[cmd_i] != NULL)
   {
+    signal_recu = 0;
+    if (signal_sigint)
+    {
+      break;
+    }
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
     cmd_i++;

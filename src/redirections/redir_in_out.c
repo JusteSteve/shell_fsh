@@ -5,7 +5,6 @@
 
 #include "../../headers/redir.h"
 
-//! FIXME: régler problème du exit < fichier
 int redir_in(redirection *redir)
 {
     int flags = extraire_flags(redir);

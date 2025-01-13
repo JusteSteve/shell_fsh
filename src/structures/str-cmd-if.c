@@ -5,7 +5,6 @@
 #include "../../headers/cmd-utils.h"
 #include "../../headers/redir.h"
 
-
 cmd_if *initialiser_cmd_if()
 {
     cmd_if *cmd_if = malloc(sizeof(*cmd_if));
@@ -69,8 +68,9 @@ cmd_if *remplir_cmd_if(command *cmd)
         fin = i - 1; // on ne prend pas le ]
         i++;
     }
-    else{
-        debut = i ;
+    else
+    {
+        debut = i;
         while (strcmp(cmd->args[i], "{") != 0)
         {
             i++;
@@ -95,7 +95,7 @@ cmd_if *remplir_cmd_if(command *cmd)
         strcat(cmd_if->test, cmd->args[j]);
         strcat(cmd_if->test, " ");
     }
-    
+
     // ** extraire la commande if **
     debut = ++i; // on passe le {
     int nb_accolades = 1;
@@ -153,7 +153,8 @@ int exec_cmd_if(cmd_if *cmd_if)
 
 int exec_test(char *test)
 {
-    if(contient_redirection(test)){
+    if (contient_redirection(test))
+    {
         command *cmd = fillCommand(test);
         if (cmd == NULL)
         {

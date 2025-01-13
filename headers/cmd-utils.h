@@ -71,9 +71,7 @@ int exec_structured_cmds(char *line);
  */
 char *build_for_cmd(char *tokens, char *separateur);
 
-
 // ***=== Fonctions utilitaires pour les pipelines ===***
-
 
 /**
  * @brief Exécute les commandes d'un pipeline
@@ -81,7 +79,5 @@ char *build_for_cmd(char *tokens, char *separateur);
  * @return 0 si tout s'est bien passé, 1 sinon
  */
 int exec_pipeline_cmds(char *line);
-
-
 
 #endif
