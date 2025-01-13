@@ -6,8 +6,11 @@
 
 #include "../../headers/internal_cmds.h"
 #include "../../headers/redir.h"
+#include "../../headers/signal.h"
 
 int prev_status; // pour stocker le status précédent
+extern volatile sig_atomic_t signal_sigint;
+extern volatile sig_atomic_t signal_recu;
 
 int execute_commande(char *line)
 {
@@ -142,6 +145,7 @@ error:
 
 int exec_structured_cmds(char *line)
 {
+  //init_signal();
   int return_value;
   // diviser la ligne en tableau de commandes simples
   char **cmds_tab = split_cmd(line, ";", 1);
@@ -153,6 +157,11 @@ int exec_structured_cmds(char *line)
   // exécuter toutes les commandes
   while (cmds_tab[cmd_i] != NULL)
   {
+    signal_recu = 0;
+    if(signal_sigint)
+    {
+      break;
+    }
     return_value = execute_commande(cmds_tab[cmd_i]);
     prev_status = return_value;
     cmd_i++;

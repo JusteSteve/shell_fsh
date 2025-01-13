@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
+#include <signal.h>
 
 // ===***=== Prototypes ===***===
 
