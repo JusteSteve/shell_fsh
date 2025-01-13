@@ -10,7 +10,6 @@
 // ***=== Inclusions ===***
 #include "fsh.h"
 
-
 extern int prev_status; // pour stocker le status précédent
 
 /**

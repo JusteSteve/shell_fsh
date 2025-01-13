@@ -5,6 +5,7 @@ CFLAGS = -Wall -g -Werror -Wextra -D_DEFAULT_SOURCE -I./include
 # fichiers sources
 SRCS = src/main.c \
 	src/autres/prompt.c \
+	src/autres/signal.c \
 	src/commandes/internes/pwd.c \
 	src/commandes/internes/cd.c \
 	src/commandes/internes/exit.c \

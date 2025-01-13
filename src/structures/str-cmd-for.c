@@ -4,6 +4,10 @@
  */
 
 #include "../../headers/cmd-utils.h"
+#include "../../headers/signal.h"
+
+extern volatile sig_atomic_t signal_sigint;
+extern volatile sig_atomic_t signal_recu;
 
 comFor *initialiseCommandFor()
 {
@@ -159,6 +163,11 @@ int parcoursFor(comFor *cmd_for)
 
     while ((entry = readdir(parent)))
     {
+        if (signal_sigint)
+        {
+            last_return_value = 255;
+            break;
+        }
         errno = 0;
         // si readdir rencontre une erreur, errno est modif avec une valeur non nulle, et si fin de fichiers à lire, errno ne change pas de valeur
         // car si on ne trouve pas le répertoire que l'on cherche dans son parent, c'est une erreur
@@ -209,9 +218,8 @@ int parcoursFor(comFor *cmd_for)
         {
             continue;
         }
-
+        
         // construire le chemin complet du fichier
-        // hypothèse que le chemin fasse au moins PATH_MAX, ce n'est pas judicieux, mais sans c'est compliqué
         char entry_path[PATH_MAX];
         snprintf(entry_path, PATH_MAX, "%s/%s", cmd_for->dir, fichier);
 
@@ -248,6 +256,7 @@ int parcoursFor(comFor *cmd_for)
                 goto error;
             case 0: // enfant : exécuter la commande sur le fichier
             {
+                restaurer_signal();
                 // remplacer $F par le nom du fichier
                 char *cmd_avec_f = remplacer_variable(cmd_for->ligne, cmd_for->var, entry_path);
                 if (cmd_avec_f == NULL)
@@ -269,6 +278,12 @@ int parcoursFor(comFor *cmd_for)
                     {
                         return_value = WEXITSTATUS(status);
                         last_return_value = (last_return_value < return_value) ? return_value : last_return_value;
+                    }
+                    if (WIFSIGNALED(status))
+                    {
+                        signal_recu = 1;
+                        signal_sigint = (WTERMSIG(status) == SIGINT) ? 1 : 0;
+                        return 255;
                     }
                 }
                 break;
